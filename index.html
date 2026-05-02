@@ -898,12 +898,36 @@ main { position: relative; z-index: 10; }
 }
 .radar-grid-line {
   fill: none;
-  stroke: var(--line);
-  stroke-width: 0.5;
+  stroke: var(--line-strong);
+  stroke-width: 0.8;
+  stroke-opacity: 0.7;
 }
 .radar-axis {
-  stroke: var(--line);
-  stroke-width: 0.5;
+  stroke: var(--line-strong);
+  stroke-width: 0.8;
+  stroke-opacity: 0.6;
+}
+/* Dark theme: brighten radar grid */
+html:not([data-theme="light"]) .radar-grid-line {
+  stroke: rgba(244, 237, 224, 0.18);
+  stroke-width: 0.8;
+  stroke-opacity: 1;
+}
+html:not([data-theme="light"]) .radar-axis {
+  stroke: rgba(244, 237, 224, 0.14);
+  stroke-width: 0.8;
+  stroke-opacity: 1;
+}
+/* Light theme: keep grid subtle */
+html[data-theme="light"] .radar-grid-line {
+  stroke: rgba(20, 17, 13, 0.14);
+  stroke-width: 0.7;
+  stroke-opacity: 1;
+}
+html[data-theme="light"] .radar-axis {
+  stroke: rgba(20, 17, 13, 0.12);
+  stroke-width: 0.7;
+  stroke-opacity: 1;
 }
 .radar-fill {
   fill: var(--amber);
@@ -921,14 +945,34 @@ main { position: relative; z-index: 10; }
 }
 .radar-point:hover { r: 4; }
 .radar-label {
-  fill: var(--ivory-2);
+  fill: var(--ivory-1);
   font-family: var(--sans);
   font-size: 11px;
   letter-spacing: 0.02em;
-  font-weight: 500;
+  font-weight: 600;
 }
-.radar-label.lvl0 { fill: var(--ivory-4); }
-.radar-label.lvl1 { fill: var(--ivory-3); }
+.radar-label.lvl0 { fill: var(--ivory-3); font-weight: 500; }
+.radar-label.lvl1 { fill: var(--ivory-2); font-weight: 500; }
+/* Dark theme: bright labels */
+html:not([data-theme="light"]) .radar-label {
+  fill: #f4ede0;
+}
+html:not([data-theme="light"]) .radar-label.lvl0 {
+  fill: #b8afa3;
+}
+html:not([data-theme="light"]) .radar-label.lvl1 {
+  fill: #d4cabb;
+}
+/* Light theme: dark labels */
+html[data-theme="light"] .radar-label {
+  fill: #14110d;
+}
+html[data-theme="light"] .radar-label.lvl0 {
+  fill: #8a8077;
+}
+html[data-theme="light"] .radar-label.lvl1 {
+  fill: #5a514a;
+}
 
 /* ============================================================
    ACTIVE QUEST — main CTA
@@ -1573,14 +1617,24 @@ main { position: relative; z-index: 10; }
   background: var(--abyss);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-sm);
-  padding: 18px 20px;
+  padding: 22px 24px 22px 22px;
   font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.7;
+  font-size: 13.5px;
+  line-height: 1.85;
+  letter-spacing: 0.015em;
   color: var(--ivory-1);
   white-space: pre-wrap;
-  margin: 14px 0;
+  word-spacing: 0.05em;
+  margin: 16px 0;
   position: relative;
+}
+@media (max-width: 640px) {
+  .prompt-card {
+    font-size: 14px;
+    line-height: 1.95;
+    padding: 20px 18px;
+    letter-spacing: 0.02em;
+  }
 }
 .prompt-card .copy {
   position: absolute;
@@ -3393,23 +3447,27 @@ html[data-theme="light"] .track-modal-bg { background: rgba(20,17,13,0.40); }
 }
 .squirrel-widget-bubble {
   position: absolute;
-  bottom: 70%;
+  bottom: 75%;
   right: 100%;
-  margin-right: 8px;
+  margin-right: 10px;
   background: var(--char);
   border: 1.5px solid var(--amber);
   border-radius: 16px 16px 4px 16px;
-  padding: 8px 14px;
+  padding: 10px 16px;
   font-family: var(--display);
   font-style: italic;
-  font-size: 14px;
+  font-size: 14.5px;
+  line-height: 1.35;
   color: var(--ivory-0);
-  white-space: nowrap;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.3), 0 0 20px rgba(212, 164, 55, 0.3);
+  white-space: normal;
+  max-width: 220px;
+  width: max-content;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35), 0 0 24px rgba(212, 164, 55, 0.32);
   opacity: 0;
   pointer-events: none;
-  transform: translateX(8px) scale(0.9);
+  transform: translateX(8px) scale(0.92);
   transition: all 0.3s var(--ease-spring);
+  z-index: 200;
 }
 .squirrel-widget-bubble.show {
   opacity: 1;
@@ -4801,6 +4859,467 @@ html[data-theme="light"] body::after {
     linear-gradient(135deg, var(--card-accent-soft, var(--amber-glow)), transparent 60%),
     var(--surface-elevated) !important;
 }
+
+/* Modal section text — better breathing on iOS */
+.modal-section pre,
+.modal-section code {
+  font-family: var(--mono);
+  font-size: 13.5px !important;
+  line-height: 1.85 !important;
+  letter-spacing: 0.015em !important;
+  word-spacing: 0.05em !important;
+}
+@media (max-width: 640px) {
+  .modal-section pre,
+  .modal-section code {
+    font-size: 14px !important;
+    line-height: 1.95 !important;
+    letter-spacing: 0.02em !important;
+  }
+}
+.modal-section p,
+.modal-section li {
+  line-height: 1.7 !important;
+  letter-spacing: 0.005em;
+}
+@media (max-width: 640px) {
+  .modal-section p,
+  .modal-section li {
+    line-height: 1.75 !important;
+    font-size: 16px !important;
+  }
+}
+.modal-section h3 {
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+/* Path legend — visually distinct items */
+.path-legend-card {
+  grid-column: 1 / -1;
+  padding: 16px 18px;
+  background: var(--surface-elevated, var(--deep));
+  border: 1px solid var(--line-mid, var(--line));
+  border-radius: var(--r-sm);
+  margin-bottom: 8px;
+}
+.legend-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+@media (max-width: 720px) {
+  .legend-row { grid-template-columns: 1fr; gap: 8px; }
+}
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-xs, 6px);
+  border: 1px solid transparent;
+}
+.legend-item.legend-review {
+  opacity: 0.65;
+  background: transparent;
+}
+.legend-item.legend-current {
+  background: linear-gradient(135deg, var(--amber-glow), transparent 70%);
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px var(--amber-glow);
+}
+.legend-item.legend-ahead {
+  border-color: var(--line-mid, var(--line));
+  border-style: dashed;
+  opacity: 0.85;
+}
+.legend-marker {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  position: relative;
+  margin-top: 4px;
+}
+.legend-dot {
+  position: absolute;
+  top: 0; left: 0;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+.legend-dot-review {
+  background: var(--ink-quaternary, var(--ivory-4));
+  opacity: 0.5;
+}
+.legend-dot-current {
+  background: var(--amber);
+  box-shadow: 0 0 12px var(--amber-glow), 0 0 0 2px var(--amber-glow);
+  animation: legendPulse 2s ease-in-out infinite;
+}
+.legend-dot-ahead {
+  background: transparent;
+  border: 1.5px dashed var(--ink-tertiary, var(--ivory-3));
+}
+.legend-pulse {
+  position: absolute;
+  top: -2px; left: -2px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--amber);
+  opacity: 0;
+  animation: legendRing 2s ease-out infinite;
+}
+@keyframes legendPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+@keyframes legendRing {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.legend-text {
+  flex: 1;
+  min-width: 0;
+}
+.legend-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--ink-primary, var(--ivory-0));
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.legend-item.legend-review .legend-label {
+  color: var(--ink-tertiary, var(--ivory-3));
+  letter-spacing: 0.16em;
+}
+.legend-item.legend-current .legend-label {
+  color: var(--amber);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+.legend-item.legend-ahead .legend-label {
+  color: var(--ink-secondary, var(--ivory-2));
+  letter-spacing: 0.16em;
+}
+.legend-arrow {
+  color: var(--amber);
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.85;
+  margin: 0 2px;
+}
+.legend-start {
+  font-style: italic;
+  color: var(--amber);
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.legend-desc {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-secondary, var(--ivory-2));
+}
+.legend-item.legend-review .legend-desc {
+  color: var(--ink-tertiary, var(--ivory-3));
+  font-style: italic;
+}
+.legend-item.legend-current .legend-desc {
+  color: var(--ink-primary, var(--ivory-1));
+  font-weight: 500;
+}
+.legend-item.legend-ahead .legend-desc {
+  color: var(--ink-tertiary, var(--ivory-3));
+}
+@media (max-width: 640px) {
+  .legend-label { font-size: 11px; }
+  .legend-desc { font-size: 13px; }
+}
+
+/* Light theme adjustments */
+html[data-theme="light"] .legend-item.legend-current {
+  background: linear-gradient(135deg, rgba(184, 146, 74, 0.10), transparent 70%);
+  border-color: var(--amber);
+}
+html[data-theme="light"] .legend-item.legend-current .legend-label,
+html[data-theme="light"] .legend-item.legend-current .legend-arrow,
+html[data-theme="light"] .legend-start {
+  color: var(--amber-deep, #8a6b2f);
+}
+html[data-theme="light"] .legend-dot-current {
+  background: var(--amber-deep, #8a6b2f);
+  box-shadow: 0 0 12px rgba(184, 146, 74, 0.35), 0 0 0 2px rgba(184, 146, 74, 0.20);
+}
+html[data-theme="light"] .legend-pulse {
+  border-color: var(--amber-deep, #8a6b2f);
+}
+
+/* ============================================================
+   QUICK NAV — top shortcuts to Conquistas / Trilhas / Entregas
+   ============================================================ */
+.quick-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 24px 0;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+@media (max-width: 720px) {
+  .quick-nav {
+    padding: 10px 16px 0;
+    gap: 8px;
+  }
+}
+.quick-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: var(--surface-elevated, var(--deep));
+  border: 1px solid var(--line-mid, var(--line));
+  border-radius: var(--r-sm);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-primary, var(--ivory-1));
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+  text-align: center;
+}
+.quick-nav-item:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 164, 55, 0.12);
+}
+.quick-nav-item:active {
+  transform: translateY(0);
+}
+.quick-nav-item svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.quick-nav-item:hover svg {
+  opacity: 1;
+}
+.quick-nav-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quick-nav-count {
+  font-style: normal;
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--amber);
+  font-weight: 700;
+  margin-left: 2px;
+}
+@media (max-width: 480px) {
+  .quick-nav-item {
+    padding: 10px 8px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    gap: 6px;
+  }
+  .quick-nav-item span {
+    font-size: 10px;
+  }
+  .quick-nav-count {
+    font-size: 12px;
+  }
+}
+
+/* Light theme quick nav adjustments */
+html[data-theme="light"] .quick-nav-item {
+  background: var(--surface-elevated, #fff);
+  color: var(--ink-primary, #14110d);
+}
+html[data-theme="light"] .quick-nav-item:hover {
+  border-color: var(--amber-deep, #8a6b2f);
+  color: var(--amber-deep, #8a6b2f);
+}
+html[data-theme="light"] .quick-nav-count {
+  color: var(--amber-deep, #8a6b2f);
+}
+
+/* ============================================================
+   SQUIRRELS GALLERY — collection of all 9 rank avatars
+   ============================================================ */
+.squirrels-gallery {
+  margin-top: 48px;
+}
+.squirrels-intro {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-secondary, var(--ivory-2));
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+  max-width: 640px;
+}
+.squirrels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+@media (max-width: 640px) {
+  .squirrels-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+.sq-card {
+  background: var(--surface-elevated, var(--deep));
+  border: 1px solid var(--line-mid, var(--line));
+  border-radius: var(--r-sm);
+  padding: 16px 12px 14px;
+  text-align: center;
+  position: relative;
+  transition: all 0.25s var(--ease-out);
+}
+.sq-card.unlocked {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, var(--amber-glow), transparent 70%), var(--surface-elevated, var(--deep));
+}
+.sq-card.unlocked:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(212, 164, 55, 0.18);
+}
+.sq-card.current {
+  border: 1.5px solid var(--amber);
+  box-shadow: 0 0 0 3px rgba(212, 164, 55, 0.18), 0 6px 14px rgba(0,0,0,0.18);
+}
+.sq-card.current::before {
+  content: 'ATUAL';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--amber);
+  color: var(--abyss);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  padding: 2.5px 8px;
+  border-radius: 4px;
+  z-index: 2;
+}
+.sq-card.locked {
+  opacity: 0.55;
+}
+.sq-svg-wrap {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: var(--surface-page, var(--abyss));
+  border: 1.5px solid var(--line-mid, var(--line));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.sq-card.unlocked .sq-svg-wrap {
+  border-color: var(--amber);
+}
+.sq-svg-wrap svg {
+  width: 86%;
+  height: 86%;
+  display: block;
+}
+.sq-card.locked .sq-svg-wrap svg {
+  filter: grayscale(0.85) brightness(0.6);
+}
+.sq-card.locked .sq-svg-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(0,0,0,0.45) 80%);
+  z-index: 1;
+}
+.sq-lock-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  opacity: 0.85;
+}
+.sq-lock-icon svg {
+  width: 28px !important;
+  height: 28px !important;
+  color: var(--ivory-1);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+.sq-rank {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--ink-tertiary, var(--ivory-3));
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+.sq-name {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-primary, var(--ivory-1));
+  margin-bottom: 4px;
+  letter-spacing: 0.005em;
+}
+.sq-card.locked .sq-name {
+  color: var(--ink-tertiary, var(--ivory-3));
+}
+.sq-xp {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.sq-card.locked .sq-xp {
+  color: var(--ink-tertiary, var(--ivory-3));
+}
+
+/* Light theme tweaks */
+html[data-theme="light"] .sq-card.unlocked {
+  background: linear-gradient(135deg, rgba(184, 146, 74, 0.10), transparent 70%), #fff;
+  border-color: var(--amber-deep, #8a6b2f);
+}
+html[data-theme="light"] .sq-card.unlocked .sq-svg-wrap {
+  border-color: var(--amber-deep, #8a6b2f);
+}
+html[data-theme="light"] .sq-card.current {
+  border-color: var(--amber-deep, #8a6b2f);
+  box-shadow: 0 0 0 3px rgba(184, 146, 74, 0.18), 0 6px 14px rgba(0,0,0,0.06);
+}
+html[data-theme="light"] .sq-card.current::before {
+  background: var(--amber-deep, #8a6b2f);
+  color: #fff;
+}
+html[data-theme="light"] .sq-svg-wrap {
+  background: #faf6ec;
+}
+html[data-theme="light"] .sq-xp {
+  color: var(--amber-deep, #8a6b2f);
+}
 </style>
 </head>
 <body>
@@ -4872,6 +5391,32 @@ html[data-theme="light"] body::after {
 </header>
 
 <main>
+  <!-- Quick navigation bar -->
+  <nav class="quick-nav" aria-label="Atalhos">
+    <button class="quick-nav-item" onclick="jumpTo('achievements')" type="button">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 21V13H16V21M19 14V21H5V14M3 9V14H21V9L17 4H7L3 9Z"/>
+      </svg>
+      <span>Conquistas</span>
+      <em class="quick-nav-count" id="qn-ach">0</em>
+    </button>
+    <button class="quick-nav-item" onclick="jumpTo('tracks-section')" type="button">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>
+      </svg>
+      <span>Trilhas</span>
+      <em class="quick-nav-count" id="qn-tracks">6</em>
+    </button>
+    <button class="quick-nav-item" onclick="jumpTo('build-log')" type="button">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+      </svg>
+      <span>Entregas</span>
+      <em class="quick-nav-count" id="qn-shipped">0</em>
+    </button>
+  </nav>
   <div class="dashboard">
 
     <!-- Hero: identity + skill radar -->
@@ -4916,7 +5461,7 @@ html[data-theme="light"] body::after {
             <div class="radar-pct-label">Nível médio</div>
           </div>
         </div>
-        <svg class="radar-svg" id="radar-svg" viewBox="-150 -150 300 300"></svg>
+        <svg class="radar-svg" id="radar-svg" viewBox="-180 -150 360 300" preserveAspectRatio="xMidYMid meet"></svg>
       </section>
 
     </div>
@@ -4951,19 +5496,35 @@ html[data-theme="light"] body::after {
       <div class="section-title">O <em>caminho</em></div>
       <div class="section-meta" id="path-meta">48 quests · 7 atos</div>
     </div>
-    <div id="path-legend" style="grid-column: 1 / -1; padding: 16px 20px; background: var(--deep); border: 1px solid var(--line); border-radius: var(--r-sm); margin-bottom: 8px; display: none;">
-      <div style="display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--ivory-3); align-items: center;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ivory-3); opacity: 0.6;"></span>
-          REVISÃO · antes do seu ponto recomendado, opcional
+    <div id="path-legend" class="path-legend-card" style="display: none;">
+      <div class="legend-row">
+        <div class="legend-item legend-review">
+          <div class="legend-marker">
+            <span class="legend-dot legend-dot-review"></span>
+          </div>
+          <div class="legend-text">
+            <div class="legend-label">REVISÃO</div>
+            <div class="legend-desc">já passou — opcional revisitar</div>
+          </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber-glow);"></span>
-          CAMINHO · seu trajeto recomendado, a partir de <em id="path-start" style="font-style: normal; color: var(--amber); font-weight: 600;">Q01</em>
+        <div class="legend-item legend-current">
+          <div class="legend-marker">
+            <span class="legend-dot legend-dot-current"></span>
+            <span class="legend-pulse"></span>
+          </div>
+          <div class="legend-text">
+            <div class="legend-label">CAMINHO <span class="legend-arrow">←</span> <em id="path-start" class="legend-start">Q01</em></div>
+            <div class="legend-desc">seu trajeto agora — siga aqui</div>
+          </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ivory-4); border: 1px dashed var(--ivory-3);"></span>
-          PULAR · adiante do caminho, acessível mas não recomendado
+        <div class="legend-item legend-ahead">
+          <div class="legend-marker">
+            <span class="legend-dot legend-dot-ahead"></span>
+          </div>
+          <div class="legend-text">
+            <div class="legend-label">PULAR</div>
+            <div class="legend-desc">adiante — acessível mas não recomendado</div>
+          </div>
         </div>
       </div>
     </div>
@@ -4979,6 +5540,17 @@ html[data-theme="light"] body::after {
       <div class="ach-grid" id="ach-grid"></div>
     </section>
 
+    <!-- Esquilos gallery: all 9 rank avatars, locked/unlocked -->
+    <section class="squirrels-gallery" id="squirrels-gallery">
+      <header class="section-h">
+        <div class="section-tag">ESQUILOS</div>
+        <h2 class="section-title">Galeria de <em>esquilos</em></h2>
+        <div class="section-meta" id="sq-count">0 / 9 destravados</div>
+      </header>
+      <p class="squirrels-intro" id="sq-intro">Cada rank desbloqueia um esquilo único. Suba de XP pra completar a coleção.</p>
+      <div class="squirrels-grid" id="squirrels-grid"></div>
+    </section>
+
     <section class="tracks" id="tracks-section">
       <header class="section-h">
         <div class="section-tag">TRILHAS ESPECIALIZADAS</div>
@@ -4990,7 +5562,7 @@ html[data-theme="light"] body::after {
     </section>
 
     
-        <section class="build-log">
+        <section class="build-log" id="build-log">
       <div class="bl-head">
         <div class="bl-title">Registro de <em>entregas</em></div>
         <div class="section-meta" id="bl-count">0 entregas</div>
@@ -9851,26 +10423,29 @@ function calibratePath(a) {
   const mode       = a.mode || 'mix';
   const commitment = a.commitment || 'curious';
 
-  // Calibrate where to start based on USAGE LEVEL
+  // ============================================================
+  // PHASE 1: Determine startQuest based on level + pain + interests
+  // ============================================================
   let startQuest = 1;
-  let title = 'Aprendiz';
-  let deck = 'Você começa do início pra construir fundação sólida.';
+  let title;
+  let deck;
 
+  // Base from level
   if (level >= 4) {
-    startQuest = 31;
-    title = 'Aluno Sênior · pronto para Multimodal';
+    startQuest = 31;       // Ato V (Multimodal)
+    title = 'Aluno Sênior';
     deck = 'Você já roda produção. Começa direto no Ato V (Multimodal).';
   } else if (level === 3) {
-    startQuest = 15;
-    title = 'Construtor · pronto para API';
-    deck = 'Fundamentos firmes. Você começa no Ato III (Construtor), direto à API.';
+    startQuest = 15;       // Ato III (Construtor)
+    title = 'Construtor';
+    deck = 'Fundamentos firmes. Começa no Ato III (Construtor), direto à API.';
   } else if (level === 2) {
-    startQuest = 8;
-    title = 'Aluno · pronto para o Domínio';
+    startQuest = 8;        // Ato II (Domínio)
+    title = 'Aluno avançado';
     deck = 'Você pula a fundação básica — começa direto no Ato II (Domínio).';
   } else if (level === 1) {
     startQuest = 1;
-    title = 'Praticante · firmar fundação';
+    title = 'Praticante';
     deck = 'Você usa, mas vale solidificar. Começa do início pra fazer certo.';
   } else {
     startQuest = 1;
@@ -9878,43 +10453,103 @@ function calibratePath(a) {
     deck = 'Você começa do Dia 1. Esse é o melhor lugar pra começar.';
   }
 
-  // Pain point overrides
-  if ((pain === 'prompting' || pain === 'discovery') && startQuest > 1) {
+  // Pain point overrides — coherent titles, no judgmental "reset"
+  if (pain === 'discovery' && startQuest > 1 && level >= 2) {
+    // Has experience but discovery is the gap — start at beginning to map territory
     startQuest = 1;
-    title = 'Reset recomendado';
-    deck = 'Você marcou que prompting/descoberta é a maior dor. Vale começar do Ato I pra firmar antes de avançar.';
+    title = 'Mapeamento completo';
+    deck = 'Você usa Claude mas sente que falta visão do que ele consegue. Começa do Ato I pra mapear TUDO antes de avançar.';
+  } else if (pain === 'discovery' && level <= 1) {
+    // Beginner with discovery — already at start, just affirm
+    startQuest = 1;
+    title = (level === 0) ? 'Aprendiz · dia um' : 'Praticante';
+    deck = 'Foco em descoberta: o Ato I cobre exatamente o que existe. Você está no lugar certo.';
+  } else if (pain === 'prompting' && level >= 2) {
+    // User has experience but prompting is the gap — start mid-Act I
+    startQuest = Math.max(1, Math.min(startQuest, 4));
+    title = 'Foco em prompting';
+    deck = 'Você sabe muito mas prompting trava. Começa nas quests de prompting (Ato I) pra firmar.';
   } else if (pain === 'organization' && startQuest > 8) {
     startQuest = 8;
     title = 'Foco em organização';
     deck = 'Sua dor é organização persistente. Começa no Ato II (Domínio) — Projects, Skills, MCP.';
-  } else if (pain === 'production' && startQuest < 37 && level >= 3) {
+  } else if (pain === 'organization' && startQuest <= 8 && level >= 1) {
+    // Push slightly forward to org content
+    startQuest = Math.max(startQuest, 8);
+    title = 'Foco em organização';
+    deck = 'Sua dor é organização. Vamos direto no Ato II (Domínio).';
+  } else if (pain === 'building' && level >= 2) {
+    startQuest = Math.min(startQuest, 15);
+    if (startQuest < 15) startQuest = 15;
+    title = 'Foco em construção';
+    deck = 'Quer construir mas falta técnica. Começa no Ato III (Construtor).';
+  } else if (pain === 'production' && level >= 3) {
     startQuest = 37;
     title = 'Foco em produção';
     deck = 'Você já constrói mas falta confiabilidade. Começa no Ato VI (Produção).';
   }
 
-  // Code level affects scope
-  let totalQuests = 54 - startQuest;
+  // Interest-based fine-tune (small nudge — not too aggressive)
+  if (interests.includes('production') && level >= 3 && startQuest < 37) {
+    // Bump forward a bit
+    startQuest = Math.min(37, Math.max(startQuest, 25));
+  }
+  if (interests.includes('multimodal') && level >= 3 && startQuest < 31) {
+    startQuest = Math.min(31, Math.max(startQuest, 22));
+  }
+
+  // ============================================================
+  // PHASE 2: Determine totalQuests (scope)
+  // ============================================================
+  let totalQuests = 49 - startQuest;  // 48 quests total, so range from startQuest to 48
   let codeNote = '';
+
   if (codeLevel === 'no-code') {
+    // No-code path: stop at end of Ato II (D14), since Ato III starts the API
     if (startQuest <= 14) {
       totalQuests = 14 - startQuest + 1;
-      codeNote = ' · Foco em quests sem código (até D14).';
+      codeNote = ' · Trilha sem código (até D14).';
     } else {
-      codeNote = ' · Algumas quests envolvem código.';
+      // If they're already past 14 but no-code, still cover their range
+      codeNote = ' · Algumas quests envolvem código — pode pular.';
     }
   } else if (codeLevel === 'low-code') {
     codeNote = ' · Quests de código são opcionais.';
+  } else if (codeLevel === 'dev') {
+    codeNote = ' · Quests de código incluídas.';
+  } else if (codeLevel === 'senior') {
+    codeNote = ' · Trilha técnica completa.';
   }
 
-  // Estimate weeks based on minutes/day + commitment
-  const totalMinutes = totalQuests * 35;
-  let dailyMinutes = minutes;
-  if (commitment === 'curious') dailyMinutes *= 0.5;
-  else if (commitment === 'priority') dailyMinutes *= 1.3;
-  const weeks = Math.max(2, Math.round(totalMinutes / (dailyMinutes * 5)));
+  // Mode (depth vs speed) affects quests per week
+  // Doesn't change totalQuests, but affects how we estimate weeks
 
-  // Build goal-aware focus line based on multiple goals + interests
+  // ============================================================
+  // PHASE 3: Estimate weeks
+  // ============================================================
+  // Average quest takes 35 min hands-on + maybe 15 min reflection = ~50 min
+  // But user-provided minutes is per-day, not per-quest
+  let avgQuestMin = 40;
+  if (mode === 'depth') avgQuestMin = 55;       // deep mode = longer per quest
+  else if (mode === 'speed') avgQuestMin = 25;  // fast mode = faster
+
+  const totalMinutes = totalQuests * avgQuestMin;
+
+  // Daily minutes adjusted by commitment
+  let dailyMinutes = minutes;
+  if (commitment === 'curious') dailyMinutes = Math.max(10, minutes * 0.5);     // probably won't hit target
+  else if (commitment === 'serious') dailyMinutes = minutes * 0.85;             // realistic
+  else if (commitment === 'priority') dailyMinutes = minutes * 1.0;             // hits target
+  // Weekly: assume different days/week by commitment
+  const daysPerWeek = commitment === 'priority' ? 6 : (commitment === 'serious' ? 5 : 4);
+  const weeklyMinutes = dailyMinutes * daysPerWeek;
+  // Cap weeks to reasonable range: min 2 (even rushed), max 24 (~6 months)
+  let weeks = Math.round(totalMinutes / weeklyMinutes);
+  weeks = Math.max(2, Math.min(24, weeks));
+
+  // ============================================================
+  // PHASE 4: Goal/interest-aware focus line
+  // ============================================================
   const goalMap = {
     personal: 'aceleração pessoal',
     triage:   'triagem de informação',
@@ -9944,14 +10579,20 @@ function calibratePath(a) {
   if (interests.length > 0) {
     const intLabels = interests.map(i => interestMap[i]).filter(Boolean);
     if (intLabels.length > 0) {
-      focusLine += ' · Áreas de interesse: ' + intLabels.join(', ') + '.';
+      focusLine += ' · Áreas: ' + intLabels.join(', ') + '.';
     }
   }
+
+  // Commitment-aware deck addendum
+  let pacingNote = '';
+  if (commitment === 'curious') pacingNote = ` · Ritmo curioso: ~${dailyMinutes|0}min/dia.`;
+  else if (commitment === 'serious') pacingNote = ` · Compromisso sério: ~${dailyMinutes|0}min/dia.`;
+  else if (commitment === 'priority') pacingNote = ` · Prioridade alta: ~${dailyMinutes|0}min/dia.`;
 
   return {
     startQuest,
     role: title,
-    deck: deck + codeNote + focusLine,
+    deck: deck + codeNote + pacingNote + focusLine,
     weeks,
     totalQuests
   };
@@ -9980,7 +10621,7 @@ function finishOnboard() {
 function renderRadar() {
   const svg = document.getElementById('radar-svg');
   const N = SKILLS.length;
-  const R = 120;
+  const R = 110;
   let html = '';
 
   // Concentric grid circles (5 levels)
@@ -10028,17 +10669,23 @@ function renderRadar() {
     }
   });
 
-  // Labels (around the outside)
+  // Labels (around the outside) — extra offset for side labels to avoid clipping
   SKILLS.forEach((skill, i) => {
     const angle = (i / N) * Math.PI * 2 - Math.PI / 2;
-    const labelR = R + 22;
-    const x = Math.cos(angle) * labelR;
-    const y = Math.sin(angle) * labelR;
+    const labelR = R + 14;
+    let x = Math.cos(angle) * labelR;
+    let y = Math.sin(angle) * labelR;
     const lvl = state.skillLevels[skill.id] || 0;
     const cls = lvl === 0 ? 'lvl0' : lvl < 3 ? 'lvl1' : '';
     let anchor = 'middle';
-    if (x > 8) anchor = 'start';
-    else if (x < -8) anchor = 'end';
+    // Add horizontal padding for side labels so they don't get clipped
+    if (x > 8) {
+      anchor = 'start';
+      x += 4;
+    } else if (x < -8) {
+      anchor = 'end';
+      x -= 4;
+    }
     html += `<text class="radar-label ${cls}" x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="${anchor}">${skill.name}</text>`;
   });
 
@@ -10332,6 +10979,11 @@ function openTrackQuestModal(q, track) {
   bg.classList.add('active');
   modal.classList.add('active');
   state.currentQuest = q.n;
+
+  // Reset scroll to top
+  if (modal) modal.scrollTop = 0;
+  const tmBody = modal.querySelector('.modal-body, [class*="body"]');
+  if (tmBody) tmBody.scrollTop = 0;
 }
 
 function markTrackQuestComplete(trackKey, questId) {
@@ -10596,6 +11248,16 @@ function openQuest(n) {
 
   document.getElementById('modal-bg').classList.add('active');
   document.getElementById('modal').classList.add('active');
+
+  // Reset scroll to top so user always starts at the beginning of the lesson
+  const modalBody = document.getElementById('modal-body');
+  if (modalBody) {
+    modalBody.scrollTop = 0;
+  }
+  const modalEl = document.getElementById('modal');
+  if (modalEl) {
+    modalEl.scrollTop = 0;
+  }
 }
 
 function closeModal() {
@@ -11036,6 +11698,8 @@ function initDashboard() {
   safe('renderSquirrelWidget', () => {
     if (typeof renderSquirrelWidget === 'function') renderSquirrelWidget();
   });
+  safe('updateQuickNavCounts', () => updateQuickNavCounts());
+  safe('renderSquirrelsGallery', () => renderSquirrelsGallery());
 }
 
 function loadTheme() {
@@ -11300,9 +11964,13 @@ function showSquirrelMsg(text, durationMs) {
   msg.textContent = text;
   bubble.classList.add('show');
   clearTimeout(window.__squirrelMsgTimer);
+  // Default duration is now longer (5.5s) so user has time to read
+  // Caller can override but we boost short durations
+  let dur = durationMs || 5500;
+  if (dur < 4000) dur = 4000;  // minimum visible time = 4s
   window.__squirrelMsgTimer = setTimeout(() => {
     bubble.classList.remove('show');
-  }, durationMs || 2800);
+  }, dur);
 }
 
 // Click on squirrel itself shows random encouragement
@@ -11371,6 +12039,94 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(checkIdle, 30000);
 })();
 
+
+// ============================================================
+// QUICK NAV — smooth scroll to section
+// ============================================================
+function jumpTo(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+  // Account for sticky topbar height
+  const topbar = document.querySelector('.topbar');
+  const offset = topbar ? topbar.getBoundingClientRect().height + 12 : 80;
+  const targetY = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top: targetY, behavior: 'smooth' });
+}
+
+function updateQuickNavCounts() {
+  const qnAch = document.getElementById('qn-ach');
+  if (qnAch && typeof unlockedAchievements === 'function') {
+    try {
+      qnAch.textContent = unlockedAchievements().length;
+    } catch(e) { qnAch.textContent = '0'; }
+  }
+  const qnShipped = document.getElementById('qn-shipped');
+  if (qnShipped) {
+    qnShipped.textContent = (state.shipped || []).length;
+  }
+  const qnTracks = document.getElementById('qn-tracks');
+  if (qnTracks && typeof TRACKS !== 'undefined') {
+    qnTracks.textContent = Object.keys(TRACKS).length;
+  }
+}
+
+// ============================================================
+// SQUIRRELS GALLERY — render all 9 rank avatars
+// ============================================================
+function renderSquirrelsGallery() {
+  const grid = document.getElementById('squirrels-grid');
+  if (!grid) return;
+  if (typeof RANKS === 'undefined' || typeof AVATARS === 'undefined') return;
+
+  const currentRank = (typeof rankFor === 'function') ? rankFor(state.xp || 0) : { lvl: 1 };
+  const xp = state.xp || 0;
+
+  let unlockedCount = 0;
+  const cards = RANKS.map(r => {
+    const avatarSvg = AVATARS[r.lvl] || AVATARS[1];
+    const isUnlocked = xp >= r.min;
+    const isCurrent = r.lvl === currentRank.lvl;
+    if (isUnlocked) unlockedCount++;
+
+    let stateClass = 'locked';
+    if (isCurrent) stateClass = 'current unlocked';
+    else if (isUnlocked) stateClass = 'unlocked';
+
+    const lockSvg = isUnlocked ? '' : `
+      <div class="sq-lock-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>`;
+
+    const xpLabel = isUnlocked
+      ? `+${r.min.toLocaleString('pt-BR')} XP`
+      : `${r.min.toLocaleString('pt-BR')} XP`;
+
+    return `
+      <div class="sq-card ${stateClass}" title="${r.deck}">
+        <div class="sq-svg-wrap">
+          ${avatarSvg}
+          ${lockSvg}
+        </div>
+        <div class="sq-rank">Rank ${String(r.lvl).padStart(2, '0')}</div>
+        <div class="sq-name">${r.name}</div>
+        <div class="sq-xp">${xpLabel}</div>
+      </div>
+    `;
+  }).join('');
+
+  grid.innerHTML = cards;
+
+  const cnt = document.getElementById('sq-count');
+  if (cnt) cnt.textContent = `${unlockedCount} / ${RANKS.length} destravados`;
+
+  const intro = document.getElementById('sq-intro');
+  if (intro && unlockedCount === RANKS.length) {
+    intro.innerHTML = 'Coleção <em>completa</em>. Você desbloqueou todos os esquilos.';
+  }
+}
 
 init();
 
