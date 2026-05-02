@@ -6,7 +6,7 @@
 <title>Claude Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    CLAUDE OPERATOR ACADEMY · DESIGN SYSTEM
@@ -58,7 +58,7 @@
 
   /* Typography */
   --display:      'Fraunces', 'Times New Roman', serif;
-  --serif:        'Instrument Serif', 'Georgia', serif;
+  --serif:        'Lora', 'Georgia', 'Times New Roman', serif;
   --sans:         'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono:         'JetBrains Mono', ui-monospace, Menlo, monospace;
 
@@ -5320,6 +5320,139 @@ html[data-theme="light"] .sq-svg-wrap {
 html[data-theme="light"] .sq-xp {
   color: var(--amber-deep, #8a6b2f);
 }
+
+/* ============================================================
+   v26 Typography boost — make serif text more readable
+   Lora is wider than Instrument Serif. Bump sizes slightly,
+   improve line-height, and ensure good contrast.
+   ============================================================ */
+
+/* Quest deck (the italic 1-2 line description on each card) */
+.quest-deck {
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+  letter-spacing: 0.005em;
+}
+@media (max-width: 640px) {
+  .quest-deck {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* Section "deck" subtitles in italic serif */
+.section-h .section-title em,
+.modal-deck,
+.track-modal-deck,
+.onboard-deck,
+.onboard-final-deck {
+  font-style: italic;
+  letter-spacing: 0.005em;
+}
+
+.modal-deck,
+.track-modal-deck {
+  font-size: 16.5px !important;
+  line-height: 1.55 !important;
+}
+@media (max-width: 640px) {
+  .modal-deck,
+  .track-modal-deck {
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* Onboarding decks (the italic explanation lines under each question) */
+.onboard-deck {
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+@media (max-width: 640px) {
+  .onboard-deck {
+    font-size: 16.5px !important;
+    line-height: 1.65 !important;
+  }
+}
+
+/* Onboarding "final" deck (calibration result) */
+.onboard-final-deck {
+  font-size: 17px !important;
+  line-height: 1.55 !important;
+}
+
+/* Squirrel speech bubble — readable italic */
+.squirrel-widget-bubble {
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.005em !important;
+  font-weight: 500 !important;
+}
+
+/* Active quest deck */
+.active-quest-deck {
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+}
+
+/* Achievement decks (when unlocked) */
+.ach-deck {
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
+}
+
+/* Track card decks */
+.track-card .track-deck {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+/* Path legend description — make italic version readable */
+.legend-item.legend-review .legend-desc {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+/* Squirrels gallery intro (italic serif) */
+.squirrels-intro {
+  font-size: 15.5px !important;
+  line-height: 1.65 !important;
+}
+
+/* Identity card — id-rank-sub (italic deck under rank name) */
+.id-rank-sub {
+  font-style: italic;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  font-weight: 400;
+}
+
+/* Build log empty / list */
+.bl-empty,
+.bl-empty em {
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
+
+/* Footer text */
+.footer em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Modal-section paragraphs that use serif emphasis */
+.modal-section p em,
+.modal-section li em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Better italic weight in Lora — italic 500 reads better than 400 */
+[class*="deck"],
+.onboard-deck,
+.modal-deck {
+  font-weight: 500;
+}
 </style>
 </head>
 <body>
@@ -5494,7 +5627,7 @@ html[data-theme="light"] .sq-xp {
     <!-- Path / Quests -->
     <div class="section-head">
       <div class="section-title">O <em>caminho</em></div>
-      <div class="section-meta" id="path-meta">48 quests · 7 atos</div>
+      <div class="section-meta" id="path-meta">52 quests · 8 atos</div>
     </div>
     <div id="path-legend" class="path-legend-card" style="display: none;">
       <div class="legend-row">
@@ -5577,7 +5710,7 @@ html[data-theme="light"] .sq-xp {
   </div>
 
   <footer class="footer">
-    <div>Claude Academy · <em>Protocolo Mastery · 48 dias</em></div>
+    <div>Claude Academy · <em>Protocolo Mastery · 52 dias</em></div>
     <div id="foot-xp">0 XP</div>
   </footer>
 </main>
@@ -5687,7 +5820,7 @@ html[data-theme="light"] .sq-xp {
           // Filter completed array to only valid quests (1-48)
           // and clamp startingPath
           const wasCompleted = parsed.completed.length;
-          parsed.completed = parsed.completed.filter(n => Number.isInteger(n) && n >= 1 && n <= 48);
+          parsed.completed = parsed.completed.filter(n => Number.isInteger(n) && n >= 1 && n <= 52);
           if (parsed.startingPath > 48) parsed.startingPath = 48;
           if (parsed.completed.length !== wasCompleted) {
             console.warn(`Cleaned ${wasCompleted - parsed.completed.length} invalid quest IDs from state`);
@@ -5739,13 +5872,14 @@ const SKILLS = [
 ];
 
 const ACTS = [
-  { num: 1, roman: 'I',   tag: 'Fundação',    range: [1,7],   color: '#9c7a3a' },
-  { num: 2, roman: 'II',  tag: 'Domínio',     range: [8,14],  color: '#7fa8c8' },
-  { num: 3, roman: 'III', tag: 'Construtor',  range: [15,21], color: '#c46838' },
-  { num: 4, roman: 'IV',  tag: 'Autonomia',   range: [22,30], color: '#7ec898' },
-  { num: 5, roman: 'V',   tag: 'Multimodal',  range: [31,36], color: '#c8a4e8' },
-  { num: 6, roman: 'VI',  tag: 'Produção',    range: [37,42], color: '#e07060' },
-  { num: 7, roman: 'VII', tag: 'Aplicação',   range: [43,48], color: '#fae888' }
+  { num: 1, roman: 'I',    tag: 'Fundação',    range: [1,7],   color: '#9c7a3a' },
+  { num: 2, roman: 'II',   tag: 'Domínio',     range: [8,14],  color: '#7fa8c8' },
+  { num: 3, roman: 'III',  tag: 'Construtor',  range: [15,21], color: '#c46838' },
+  { num: 4, roman: 'IV',   tag: 'Autonomia',   range: [22,30], color: '#7ec898' },
+  { num: 5, roman: 'V',    tag: 'Multimodal',  range: [31,36], color: '#c8a4e8' },
+  { num: 6, roman: 'VI',   tag: 'Produção',    range: [37,42], color: '#e07060' },
+  { num: 7, roman: 'VII',  tag: 'Aplicação',   range: [43,48], color: '#fae888' },
+  { num: 8, roman: 'VIII', tag: 'Deploy',      range: [49,52], color: '#5da3c4' }
 ];
 
 // QUESTS — placeholder mínimo
@@ -9433,7 +9567,7 @@ QUESTS[48] = {
   skills: ['application'],
   act: 7, xp: 600, time: '180 min', boss: true,
   title: 'BOSS FINAL · Sistema Integrado',
-  deck: 'Último dia. Não é mais aluno. Você combina TUDO — Atos I-VII — num sistema unificado que automatiza camadas reais da sua função. Esse é o sistema que você vai usar todo dia. Esse é o ROI dos 48 dias.',
+  deck: 'Último dia. Não é mais aluno. Você combina TUDO — Atos I-VII — num sistema unificado que automatiza camadas reais da sua função. Esse é o sistema que você vai usar todo dia. Esse é o ROI dos 52 dias.',
   sections: [
     { type: 'study', label: 'BRIEFING', body: `
       <h3>O contrato final</h3>
@@ -9485,7 +9619,7 @@ QUESTS[48] = {
           <div class="mission-rewards"><span class="reward-chip xp">+600 XP</span><span class="reward-chip time">180 min</span></div>
         </div>
         <div class="mission-body">
-          <p>Sem dicas hoje. Sem prompt pronto. Sem template. Você tem 48 dias de fundamento. Vai.</p>
+          <p>Sem dicas hoje. Sem prompt pronto. Sem template. Você tem 52 dias de fundamento. Vai.</p>
           <p>Quando terminar e marcar este Boss, você fecha o protocolo. Mas o jogo de verdade começa aí: aplicar isso no seu trabalho todos os dias, sustentar, compor, e (se for o caso) treinar seu time pra fazer igual.</p>
           <div class="callout tip">Daqui em diante: você não é usuário do Claude. Você é operador que usa Claude como infraestrutura. Essa diferença vale carreira inteira.</div>
         </div>
@@ -9493,6 +9627,239 @@ QUESTS[48] = {
     ` }
   ]
 };
+
+// ============================================================
+// ATO VIII · DEPLOY & OPERAÇÃO (Q49-Q52)
+// Como tirar do laptop e colocar no mundo: pessoal, time, ou multi-usuário.
+// Cobre os gaps entre "rodo um script" e "tenho um app que outras pessoas usam"
+// ============================================================
+
+QUESTS[49] = {
+  n: 49,
+  type: 'study',
+  skills: ['production', 'application'],
+  act: 8, xp: 150, time: '40 min', boss: false,
+  title: 'Local-First · onde os dados moram',
+  deck: 'Antes de pensar em deploy, decida: precisa? Muita coisa que parece "app" funciona melhor como ferramenta local. Onde dados ficam, quem precisa ver, qual a fricção real.',
+  sections: [
+    { type: 'study', label: 'BRIEFING', body: `
+      <h3>A primeira pergunta: quantos usuários?</h3>
+      <p>A maior parte dos sistemas que pessoas constroem com Claude tem <strong>1 usuário</strong> — você. Forçar deploy em servidor pra uso pessoal é over-engineering. Custa dinheiro, gera surface de ataque, exige manutenção, e não traz benefício.</p>
+
+      <h3>3 cenários, 3 arquiteturas</h3>
+      <ol>
+        <li><strong>Eu, sozinho</strong> — Script Python local, HTML single-file, app desktop. Dados em SQLite/JSON/localStorage. Zero servidor.</li>
+        <li><strong>Eu + 2-10 pessoas</strong> — Compartilhar via Slack/email. HTML hospedado em GitHub Pages/Netlify (frontend) + serverless function (se precisa de API key). Auth simples ou compartilhada.</li>
+        <li><strong>10-1000+ usuários</strong> — Aí sim: backend dedicado, banco multi-tenant, autenticação, monitoring. Outro nível de complexidade.</li>
+      </ol>
+
+      <h3>Onde os dados moram</h3>
+      <p>Decisão crítica que define tudo o resto:</p>
+      <ul>
+        <li><strong>localStorage</strong> — Bom pra preferências e cache. Limitado a ~5MB, perde se limpar navegador.</li>
+        <li><strong>IndexedDB</strong> — Bom pra apps locais com muito dado. Roda no navegador. Bom pra PWA.</li>
+        <li><strong>Arquivo local (JSON, SQLite)</strong> — Quando você roda Python/Node localmente. Backup é "copiar arquivo".</li>
+        <li><strong>Banco em servidor</strong> — Quando múltiplas pessoas precisam ver os mesmos dados, ou você acessa de vários dispositivos.</li>
+      </ul>
+
+      <h3>Sinal de que você NÃO precisa de deploy</h3>
+      <p>"Quero automatizar X pra mim" → ferramenta local resolve. Faça em HTML+JS num arquivo, abra do desktop. Quer rodar todo dia? Atalho no desktop ou cron local. Quer compartilhar resultado? Manda o output, não o app.</p>
+    ` },
+    { type: 'build', label: 'MISSÃO', body: `
+      <div class="mission">
+        <div class="mission-head">
+          <div class="mission-head-left">
+            <div class="mission-icon">M</div>
+            <div class="mission-meta"><div class="label">QUEST 49</div><div class="name">Decisão de arquitetura</div></div>
+          </div>
+          <div class="mission-rewards"><span class="reward-chip xp">+150 XP</span><span class="reward-chip time">40 min</span></div>
+        </div>
+        <div class="mission-body">
+          <p>Pegue 1 ideia que você quer implementar. Responda em 1 página:</p>
+          <ol>
+            <li>Quantos usuários reais? (Liste por nome se for &lt;10.)</li>
+            <li>Os dados são pessoais ou compartilhados?</li>
+            <li>Se ficasse só na sua máquina, isso seria um problema?</li>
+            <li>Você acessaria de outro dispositivo? Quantas vezes por mês?</li>
+            <li>Conclusão: cenário 1, 2 ou 3.</li>
+          </ol>
+          <div class="callout tip">A maioria das ideias cai no cenário 1. Construir como local-first primeiro, evoluir depois se precisar é mais barato e mais seguro do que partir pra deploy direto.</div>
+        </div>
+      </div>
+    ` }
+  ]
+};
+
+QUESTS[50] = {
+  n: 50,
+  type: 'build',
+  skills: ['production', 'api'],
+  act: 8, xp: 180, time: '50 min', boss: false,
+  title: 'Backend mínimo · esconder a chave de API',
+  deck: 'Frontend não pode ter chave de API exposta — qualquer pessoa que abrir o DevTools rouba sua chave e gasta seu crédito. Backend mínimo resolve: serverless function que recebe pedido do frontend e chama Claude.',
+  sections: [
+    { type: 'study', label: 'BRIEFING', body: `
+      <h3>O problema das chaves no frontend</h3>
+      <p>Se seu HTML chama <code>https://api.anthropic.com</code> diretamente com a chave no JS, qualquer pessoa que abrir as ferramentas de desenvolvedor vê a chave. Em horas, seu crédito vai pro zero. Não é teórico — acontece toda semana com gente nova.</p>
+
+      <h3>A solução: proxy serverless</h3>
+      <p>Você cria uma "function" que roda num servidor (não no navegador) e tem a chave em variável de ambiente. O frontend chama sua função, a função chama Claude, retorna a resposta. Custo: zero ou centavos por mês pra uso pessoal.</p>
+
+      <h3>Plataformas serverless (free tier generoso)</h3>
+      <ul>
+        <li><strong>Cloudflare Workers</strong> — 100 mil requests/dia grátis. Deploy via Git ou CLI. Cold start &lt; 50ms. Recomendado pra começar.</li>
+        <li><strong>Vercel Functions</strong> — Bom se você usa Next.js. Deploy automático ao push.</li>
+        <li><strong>Netlify Functions</strong> — Similar ao Vercel.</li>
+        <li><strong>Supabase Edge Functions</strong> — Bom se você já vai usar Supabase pra banco/auth.</li>
+      </ul>
+
+      <h3>Anatomia de um proxy mínimo</h3>
+      <p>O código de uma function que faz proxy pra Claude tem ~30 linhas. Recebe POST, valida origem (CORS), chama Claude com a chave da env var, retorna a resposta. Pronto.</p>
+
+      <h3>Riscos remanescentes</h3>
+      <ul>
+        <li><strong>Abuso</strong> — Sua function tá pública. Alguém pode chamar 10 mil vezes. <em>Solução</em>: rate limiting (Cloudflare tem nativo), allow-list de domínios.</li>
+        <li><strong>Custo descontrolado</strong> — Configure alerta de billing na Anthropic. Use modelo barato (Haiku) por padrão.</li>
+        <li><strong>Cache</strong> — Se múltiplos pedidos iguais, cacheie a resposta no edge.</li>
+      </ul>
+    ` },
+    { type: 'build', label: 'MISSÃO', body: `
+      <div class="mission">
+        <div class="mission-head">
+          <div class="mission-head-left">
+            <div class="mission-icon">M</div>
+            <div class="mission-meta"><div class="label">QUEST 50</div><div class="name">Proxy serverless</div></div>
+          </div>
+          <div class="mission-rewards"><span class="reward-chip xp">+180 XP</span><span class="reward-chip time">50 min</span></div>
+        </div>
+        <div class="mission-body">
+          <p>Subir 1 proxy serverless pra Claude — nem que seja pra um app de teste. Roteiro:</p>
+          <ol>
+            <li>Cloudflare Workers: criar conta (grátis), instalar CLI <code>wrangler</code>.</li>
+            <li>Pedir pra Claude gerar o código do worker (~30 linhas) que recebe <code>{ messages }</code> e retorna a resposta da API.</li>
+            <li>Configurar a chave como secret: <code>wrangler secret put ANTHROPIC_API_KEY</code>.</li>
+            <li>Deploy: <code>wrangler deploy</code>. Você ganha uma URL <code>seu-app.workers.dev</code>.</li>
+            <li>Adaptar 1 frontend seu pra chamar essa URL em vez da Anthropic direta. Testar no navegador.</li>
+          </ol>
+          <div class="callout tip">Em 50 minutos você sai do "não posso compartilhar meu app porque expõe a chave" pra "posso mandar URL pra qualquer pessoa". Esse é um upgrade enorme.</div>
+        </div>
+      </div>
+    ` }
+  ]
+};
+
+QUESTS[51] = {
+  n: 51,
+  type: 'build',
+  skills: ['production', 'application'],
+  act: 8, xp: 200, time: '60 min', boss: false,
+  title: 'Multi-usuário · login + dados separados',
+  deck: 'Quando o app tem usuários reais, cada um precisa ver SÓ os próprios dados. Erro aqui é vazamento — usuário A vê dados de B. A engenharia disso é mais sutil do que parece.',
+  sections: [
+    { type: 'study', label: 'BRIEFING', body: `
+      <h3>A primeira regra: não confie no frontend</h3>
+      <p>Frontend pode mentir. Sempre. Se sua segurança depende de "o JavaScript só vai pedir os dados desse usuário", você tá frito. A separação de dados precisa ser garantida no <em>backend</em> ou no <em>banco</em>.</p>
+
+      <h3>A stack mais simples que funciona</h3>
+      <ul>
+        <li><strong>Auth</strong>: Clerk, Supabase Auth, ou Auth0. Ganham login com Google/email em 30 minutos.</li>
+        <li><strong>Banco</strong>: Supabase (Postgres) ou Firebase (Firestore). Têm Row-Level Security nativa.</li>
+        <li><strong>Frontend</strong>: o que você já usa.</li>
+      </ul>
+
+      <h3>Row-Level Security (RLS)</h3>
+      <p>Mecanismo do Postgres (e Supabase) que aplica regra no banco: "linha só é visível se <code>user_id = auth.uid()</code>". Mesmo se o frontend pedir <code>SELECT * FROM users</code>, o banco filtra automaticamente. Sua proteção não depende do código da aplicação — depende do banco. Muito mais robusto.</p>
+
+      <h3>Anatomia de uma tabela multi-tenant</h3>
+      <p>Toda tabela de dados de usuário tem coluna <code>user_id</code> referenciando o usuário logado. Política RLS: "permitir SELECT/INSERT/UPDATE/DELETE só onde user_id = auth.uid()". O usuário literalmente não consegue ver dados de outros, mesmo se quisesse hackear.</p>
+
+      <h3>Cuidados extras</h3>
+      <ul>
+        <li><strong>Rate limit por usuário</strong> — não só global. Senão um usuário gasta o crédito de todos.</li>
+        <li><strong>Custo por usuário</strong> — calcular ANTES de abrir pra todos. Se cada usuário custa R$5/mês em API e você cobra R$0, você quebra.</li>
+        <li><strong>LGPD</strong> — política de privacidade obrigatória. Botão de "deletar minha conta + meus dados" também.</li>
+        <li><strong>Não armazene prompts/respostas sem necessidade</strong> — se armazena, encripte. Se possível, retenção curta (30-90 dias).</li>
+      </ul>
+    ` },
+    { type: 'build', label: 'MISSÃO', body: `
+      <div class="mission">
+        <div class="mission-head">
+          <div class="mission-head-left">
+            <div class="mission-icon">M</div>
+            <div class="mission-meta"><div class="label">QUEST 51</div><div class="name">App multi-usuário básico</div></div>
+          </div>
+          <div class="mission-rewards"><span class="reward-chip xp">+200 XP</span><span class="reward-chip time">60 min</span></div>
+        </div>
+        <div class="mission-body">
+          <p>Subir 1 app com 2 usuários reais (você + um amigo) e dados separados:</p>
+          <ol>
+            <li>Criar projeto Supabase (grátis).</li>
+            <li>Habilitar auth por email/senha (ou Google OAuth).</li>
+            <li>Criar tabela <code>tasks</code> (ou similar) com <code>user_id uuid</code>.</li>
+            <li>Configurar RLS: <code>USING (user_id = auth.uid())</code>.</li>
+            <li>Frontend: tela de login + tela de tasks. SDK do Supabase resolve.</li>
+            <li><strong>Teste o vazamento</strong>: logado como usuário A, tente ver dados do B via SQL/DevTools. Tem que falhar.</li>
+          </ol>
+          <div class="callout tip">Esse passo do "tente vazar" é onde gente intermediária aprende segurança real. Se você não conseguir vazar mesmo tentando, sua arquitetura tá certa.</div>
+        </div>
+      </div>
+    ` }
+  ]
+};
+
+QUESTS[52] = {
+  n: 52,
+  type: 'boss',
+  skills: ['production', 'application'],
+  act: 8, xp: 500, time: '180 min', boss: true,
+  title: 'BOSS VIII · App em produção real',
+  deck: 'Pegar 1 sistema seu, levar do "rodando no laptop" até "no ar com domínio próprio, monitoring, e custo controlado". Esse é o boss final do Deploy.',
+  sections: [
+    { type: 'study', label: 'BRIEFING', body: `
+      <h3>Critérios de "produção real"</h3>
+      <ol>
+        <li><strong>Domínio próprio</strong> — não <code>seu-app.netlify.app</code>, mas <code>seuapp.com</code> (ou subdomínio). Custa ~R$50/ano em registrador.</li>
+        <li><strong>HTTPS</strong> — obrigatório. Cloudflare/Netlify/Vercel dão de graça via Let's Encrypt.</li>
+        <li><strong>Variáveis de ambiente</strong> — chaves API nunca no código. Sempre via env do provedor.</li>
+        <li><strong>Logs + alertas</strong> — você sabe quando quebra, antes do usuário reclamar. Cloudflare Analytics, Sentry, ou Logtail.</li>
+        <li><strong>Backup</strong> — banco com snapshot diário automático (Supabase tem nativo).</li>
+        <li><strong>Custo monitorado</strong> — alerta de billing configurado em todas as plataformas (Anthropic, banco, hosting).</li>
+        <li><strong>Política de privacidade + termos</strong> — em /privacy e /terms. Pode ser texto curto pra começar.</li>
+      </ol>
+
+      <h3>O que isso ENSINA</h3>
+      <p>Construir um protótipo é 20% do trabalho. Os outros 80% são: deploy, autenticação, separação de dados, monitoring, custo, segurança, conformidade. Esse boss te força a passar por todas essas camadas <em>uma vez</em>. Da próxima vez que você for fazer um app, vai ser muito mais rápido.</p>
+
+      <h3>Saída esperada</h3>
+      <p>1 link público funcionando. Você manda pra 3 pessoas, elas usam, dão feedback. Mais um documento curto explicando arquitetura: stack, custo mensal estimado, riscos identificados, próximos passos.</p>
+    ` },
+    { type: 'build', label: 'MISSÃO', body: `
+      <div class="mission">
+        <div class="mission-head">
+          <div class="mission-head-left">
+            <div class="mission-icon">M</div>
+            <div class="mission-meta"><div class="label">BOSS VIII</div><div class="name">Em produção, no mundo</div></div>
+          </div>
+          <div class="mission-rewards"><span class="reward-chip xp">+500 XP</span><span class="reward-chip time">180 min</span></div>
+        </div>
+        <div class="mission-body">
+          <p>Aplicar os 7 critérios em 1 sistema seu. Pode ser pequeno (uma ferramenta interna que 5 pessoas usam) — mas <em>real</em>.</p>
+          <ol>
+            <li>Escolher o sistema (de preferência, um que você usa toda semana).</li>
+            <li>Comprar/configurar domínio.</li>
+            <li>Subir frontend em Netlify/Vercel/Cloudflare Pages.</li>
+            <li>Subir backend (proxy + auth + dados) — usar Q50/Q51 como base.</li>
+            <li>Configurar logs, alertas de billing, backup.</li>
+            <li>Escrever páginas /privacy e /terms.</li>
+            <li>Convidar 3 pessoas. Documentar arquitetura no 1-pager.</li>
+          </ol>
+          <div class="callout tip">Esse boss leva mais tempo que os outros porque envolve coordenar várias plataformas. Faz uma vez bem feito — e tudo que vier depois fica fácil.</div>
+        </div>
+      </div>
+    ` }
+  ]
+};
+
 
 
 /* ============================================================
@@ -9532,7 +9899,7 @@ const ACT_PALETTES = {
   8: { accent: '#d8a4e8', soft: 'rgba(216,164,232,0.13)' }
 };
 
-function actOf(n) { if (n <= 7) return 1; if (n <= 14) return 2; if (n <= 21) return 3; if (n <= 30) return 4; if (n <= 36) return 5; if (n <= 42) return 6; return 7; }
+function actOf(n) { if (n <= 7) return 1; if (n <= 14) return 2; if (n <= 21) return 3; if (n <= 30) return 4; if (n <= 36) return 5; if (n <= 42) return 6; if (n <= 48) return 7; return 8; }
 
 
 // Avatar evolution — 9 forms, simple geometric mascot
@@ -9556,7 +9923,7 @@ function avatarFor(lvl) {
 // ============================================================
 // SPECIALIZED TRACKS — area-specific quest collections
 // Mapped to context answer: engineering, business, product, research, founder
-// User can complete the core 48 quests at any time; tracks are extras
+// User can complete the core 52 quests at any time; tracks are extras
 // ============================================================
 const TRACKS = {
   engineering: {
@@ -9807,7 +10174,102 @@ const TRACKS = {
       }
     ]
   }
-};
+,
+
+  deploy: {
+    icon: '🚀',
+    title: 'Trilha Deploy',
+    color: '#5da3c4',
+    deck: 'Pra quem quer tirar do laptop e botar no ar — com segurança e custo sob controle.',
+    quests: [
+      {
+        id: 'deploy-1',
+        n: 'D1',
+        type: 'study',
+        title: 'Single-file HTML pra uso pessoal',
+        deck: 'O caminho mais simples: 1 arquivo HTML, abre no navegador, dados em localStorage. Quando isso resolve e quando não.',
+        time: '30 min',
+        xp: 80,
+        body: `
+          <h3>Por que single-file HTML é poderoso</h3>
+          <p>Um arquivo .html com HTML/CSS/JS embutido é o app mais barato de manter no mundo: zero dependência, zero build, abre offline, funciona em qualquer navegador, é facílimo de compartilhar (manda o arquivo).</p>
+          <h3>O que cabe nesse modelo</h3>
+          <ul>
+            <li>Calculadoras, conversores, geradores</li>
+            <li>Simuladores e dashboards pessoais</li>
+            <li>Apps de produtividade local (todos, notas, listas)</li>
+            <li>Análises ad-hoc com dados que você cola</li>
+            <li>Quizzes, jogos pequenos, ferramentas didáticas</li>
+          </ul>
+          <h3>O que NÃO cabe</h3>
+          <ul>
+            <li>Qualquer coisa que precise de chave de API protegida (vai vazar)</li>
+            <li>Dados compartilhados entre pessoas</li>
+            <li>Apps que rodam quando você não está olhando</li>
+            <li>Coisas com dados sensíveis que precisam controle de acesso</li>
+          </ul>
+          <h3>Persistência local</h3>
+          <p><code>localStorage</code> é o caminho. Limite: ~5MB por origem, perde se limpar dados do navegador. Pra mais robustez: IndexedDB (~50MB+, mais código). Pra exportar/importar: JSON via download de blob.</p>
+          <h3>Distribuição</h3>
+          <p>Manda o arquivo por email/Slack/AirDrop. A pessoa abre direto no navegador. Pra deixar acessível por URL: GitHub Pages (grátis, 1 minuto pra subir) ou jogue num bucket S3/Cloudflare R2.</p>
+        `
+      },
+      {
+        id: 'deploy-2',
+        n: 'D2',
+        type: 'build',
+        title: 'Compartilhar com 5-10 pessoas',
+        deck: 'Quando o app sai de "só eu" pra "meu time pequeno". Cloudflare Pages + Workers, sem complexidade de banco.',
+        time: '45 min',
+        xp: 130,
+        body: `
+          <h3>O ponto onde você precisa de servidor</h3>
+          <p>Assim que você precisa esconder uma chave de API ou armazenar algo compartilhado, sai do single-file. A boa notícia: a opção mais barata é quase grátis e leva 30 minutos pra subir.</p>
+          <h3>Stack mínima compartilhada</h3>
+          <ul>
+            <li><strong>Cloudflare Pages</strong> — frontend HTML/JS estático, deploy via Git push. Domínio <code>seuapp.pages.dev</code> grátis.</li>
+            <li><strong>Cloudflare Workers</strong> — backend (proxy pra Claude). Mesma plataforma, integra fácil.</li>
+            <li><strong>Cloudflare KV</strong> ou <strong>D1</strong> (SQLite) — armazenamento se precisar. Free tier generoso.</li>
+          </ul>
+          <h3>Sem auth complexa</h3>
+          <p>Pra 5-10 pessoas conhecidas: senha compartilhada simples (uma string que você manda no Slack, frontend pede e armazena em sessão). Não é seguro pra app público, mas resolve uso interno.</p>
+          <h3>Quando crescer pra 20+</h3>
+          <p>Aí migra pra Q51 (auth real + banco com RLS). Não tente prematuramente — só complexifica.</p>
+          <h3>Custo realista</h3>
+          <p>Frontend + worker proxy + KV pra 10 usuários ativos: R$0/mês de infra. O custo é só Claude API. Configure alerta de billing antes de abrir.</p>
+        `
+      },
+      {
+        id: 'deploy-3',
+        n: 'D3',
+        type: 'measure',
+        title: 'Operação 24/7 · logs, alertas, runbook',
+        deck: 'O que diferencia "tá no ar" de "tá em operação real": você descobre quebras antes dos usuários, sabe o que fazer quando quebra, e quanto tá custando.',
+        time: '40 min',
+        xp: 120,
+        body: `
+          <h3>Os 3 sinais que importam</h3>
+          <ol>
+            <li><strong>Disponibilidade</strong> — tá no ar? UptimeRobot/Better Uptime checam a cada 1-5 min, alertam por email/SMS quando cai.</li>
+            <li><strong>Erros</strong> — Sentry coleta exceções do frontend e backend. Free tier dá 5k eventos/mês, suficiente pra app pequeno.</li>
+            <li><strong>Custo</strong> — alerta de billing em TODAS as plataformas (Anthropic, banco, hosting). Configure ANTES de subir.</li>
+          </ol>
+          <h3>Logs estruturados</h3>
+          <p>JSON em vez de texto. Cada chamada vira <code>{ user, action, latency_ms, tokens, cost, error }</code>. Cloudflare Workers tem Logpush pra Logtail/Datadog. Pra começar: console.log com JSON e ver no painel do worker é suficiente.</p>
+          <h3>Runbook básico (1 página)</h3>
+          <p>Documento curto pra você (e qualquer um do time) consultar quando algo quebra:</p>
+          <ul>
+            <li>"Frontend não carrega" → checar Cloudflare Pages, status do deploy</li>
+            <li>"API retorna 500" → checar logs do Worker, status da Anthropic</li>
+            <li>"Custo subiu de repente" → checar Sentry pra loops de retry, Anthropic dashboard pra spike de uso</li>
+            <li>"Usuário não consegue logar" → checar Supabase, política RLS, expiração de token</li>
+          </ul>
+          <h3>O que NÃO precisa</h3>
+          <p>Pra app pessoal/pequeno: não precisa de Kubernetes, não precisa de pipeline CI/CD complexa, não precisa de staging environment. Cloudflare Pages faz preview automático em PRs, isso resolve.</p>
+        `
+      }
+    ]
+  }};
 
 function trackForContext(ctx) {
   // Map context answer to a track
@@ -9830,7 +10292,7 @@ const ACHIEVEMENTS = [
   { id: 'q10',       icon: '📚', name: 'Estudante',        deck: '10 quests concluídas.',   check: s => s.completed.length >= 10 },
   { id: 'q25',       icon: '🎓', name: 'Praticante',       deck: '25 quests concluídas.',   check: s => s.completed.length >= 25 },
   { id: 'q50',       icon: '👑', name: 'Mestre',           deck: '50 quests concluídas.',   check: s => s.completed.length >= 50 },
-  { id: 'allquests', icon: '🏆', name: 'Maestria Completa',deck: 'Todas as 48 quests.',     check: s => s.completed.length >= 48 },
+  { id: 'allquests', icon: '🏆', name: 'Maestria Completa',deck: 'Todas as 52 quests.',     check: s => s.completed.length >= 52 },
   { id: 'boss1',     icon: '🛡️', name: 'Fundação Forjada', deck: 'Boss do Ato I.',          check: s => s.completed.includes(7) },
   { id: 'boss2',     icon: '🏛️', name: 'Domínio',           deck: 'Boss do Ato II.',         check: s => s.completed.includes(14) },
   { id: 'boss3',     icon: '⚔️', name: 'Construtor',        deck: 'Boss do Ato III.',        check: s => s.completed.includes(21) },
@@ -10501,7 +10963,7 @@ function calibratePath(a) {
   // ============================================================
   // PHASE 2: Determine totalQuests (scope)
   // ============================================================
-  let totalQuests = 49 - startQuest;  // 48 quests total, so range from startQuest to 48
+  let totalQuests = 53 - startQuest;  // 48 quests total, so range from startQuest to 48
   let codeNote = '';
 
   if (codeLevel === 'no-code') {
@@ -10724,8 +11186,8 @@ function renderTopbar() {
   setHtml('id-rank-val', `<em>${String(r.lvl).padStart(2,'0')}</em> ${r.name}`);
   setText('id-rank-sub', r.deck);
   setText('id-done', state.completed.length);
-  setText('id-total', '48');
-  const pct = Math.round(state.completed.length / 48 * 100);
+  setText('id-total', '52');
+  const pct = Math.round(state.completed.length / 52 * 100);
   setText('id-pct', `${pct}% concluído`);
   setText('id-xp', state.xp.toLocaleString('pt-BR'));
   const next = RANKS.find(rr => rr.min > state.xp);
@@ -10742,11 +11204,11 @@ function renderTopbar() {
 
 function nextQuestNumber() {
   // Find first non-completed quest from startingPath onward
-  for (let n = state.startingPath; n <= 48; n++) {
+  for (let n = state.startingPath; n <= 52; n++) {
     if (!state.completed.includes(n)) return n;
   }
   // If all completed past startingPath, find any incomplete
-  for (let n = 1; n <= 48; n++) {
+  for (let n = 1; n <= 52; n++) {
     if (!state.completed.includes(n)) return n;
   }
   return null;
@@ -11027,7 +11489,7 @@ function renderQuests() {
 
   let lastAct = 0;
   let currentSectionGrid = null;
-  for (let n = 1; n <= 48; n++) {
+  for (let n = 1; n <= 52; n++) {
     const q = QUESTS[n];
 
     const a = actOf(n);
@@ -11202,7 +11664,7 @@ function openQuest(n) {
     if (q.boss && BOSS_HEROES[n]) {
       heroSvg = BOSS_HEROES[n];
     } else {
-      const actStarts = {1:1, 2:8, 3:15, 4:22, 5:31, 6:37, 7:43, 8:49};
+      const actStarts = {1:1, 2:8, 3:15, 4:22, 5:31, 6:37, 7:43, 8:49, 9:53};
       if (n === actStarts[actNum] && ACT_HEROES[actNum]) {
         heroSvg = ACT_HEROES[actNum];
       }
@@ -11269,7 +11731,7 @@ function closeModal() {
 function navQuest(delta) {
   if (!state.currentQuest) return;
   const next = state.currentQuest + delta;
-  if (next < 1 || next > 48) return;
+  if (next < 1 || next > 52) return;
   if (!isAvailable(next) && !state.completed.includes(next)) {
     showToast('warn', 'Bloqueada', 'Conclua a quest anterior primeiro.');
     return;
@@ -11650,7 +12112,7 @@ function ensureStateShape() {
   }
   if (typeof state.xp !== 'number') state.xp = 0;
   if (typeof state.streak !== 'number') state.streak = 0;
-  if (typeof state.startingPath !== 'number' || state.startingPath < 1 || state.startingPath > 48) state.startingPath = 1;
+  if (typeof state.startingPath !== 'number' || state.startingPath < 1 || state.startingPath > 52) state.startingPath = 1;
   if (typeof state.profileName !== 'string') state.profileName = 'Aluno';
   if (typeof state.firstName !== 'string') state.firstName = '';
   if (typeof state.context !== 'string') state.context = '';
@@ -11785,7 +12247,7 @@ function init() {
     });
     if (typeof state.xp !== 'number') state.xp = 0;
     if (typeof state.streak !== 'number') state.streak = 0;
-    if (typeof state.startingPath !== 'number' || state.startingPath < 1 || state.startingPath > 48) state.startingPath = 1;
+    if (typeof state.startingPath !== 'number' || state.startingPath < 1 || state.startingPath > 52) state.startingPath = 1;
     if (typeof state.profileName !== 'string') state.profileName = 'Aluno';
     if (typeof state.firstName !== 'string') state.firstName = '';
     if (typeof state.context !== 'string') state.context = '';
