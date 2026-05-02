@@ -5066,7 +5066,7 @@ html[data-theme="light"] .legend-pulse {
    ============================================================ */
 .quick-nav {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   padding: 12px 24px 0;
   max-width: 1280px;
@@ -5074,6 +5074,7 @@ html[data-theme="light"] .legend-pulse {
 }
 @media (max-width: 720px) {
   .quick-nav {
+    grid-template-columns: repeat(2, 1fr);
     padding: 10px 16px 0;
     gap: 8px;
   }
@@ -5533,12 +5534,20 @@ html[data-theme="light"] .sq-xp {
       <span>Conquistas</span>
       <em class="quick-nav-count" id="qn-ach">0</em>
     </button>
+    <button class="quick-nav-item" onclick="jumpTo('squirrels-gallery')" type="button">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="9" r="3"/>
+        <path d="M12 12v3M9 17h6M7 22h10v-2a3 3 0 0 0-3-3H10a3 3 0 0 0-3 3v2zM12 2v3"/>
+      </svg>
+      <span>Esquilos</span>
+      <em class="quick-nav-count" id="qn-squirrels">0</em>
+    </button>
     <button class="quick-nav-item" onclick="jumpTo('tracks-section')" type="button">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>
       </svg>
       <span>Trilhas</span>
-      <em class="quick-nav-count" id="qn-tracks">6</em>
+      <em class="quick-nav-count" id="qn-tracks">7</em>
     </button>
     <button class="quick-nav-item" onclick="jumpTo('build-log')" type="button">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -5573,7 +5582,7 @@ html[data-theme="light"] .sq-xp {
           </div>
           <div class="id-meta-cell">
             <div class="id-meta-label">Quests concluídas</div>
-            <div class="id-meta-val"><span id="id-done">0</span> <em>/ <span id="id-total">48</span></em></div>
+            <div class="id-meta-val"><span id="id-done">0</span> <em>/ <span id="id-total">52</span></em></div>
             <div class="id-meta-sub" id="id-pct">0% concluído</div>
           </div>
           <div class="id-meta-cell">
@@ -5812,16 +5821,16 @@ html[data-theme="light"] .sq-xp {
           && typeof parsed.xp === 'number'
           && typeof parsed.diagnosed === 'boolean'
           && typeof parsed.startingPath === 'number'
-          && parsed.startingPath >= 1 && parsed.startingPath <= 48;
+          && parsed.startingPath >= 1 && parsed.startingPath <= 52;
         if (!ok) {
           console.warn('Removing invalid current state');
           localStorage.removeItem(CURRENT_KEY);
         } else {
-          // Filter completed array to only valid quests (1-48)
+          // Filter completed array to only valid quests (1-52)
           // and clamp startingPath
           const wasCompleted = parsed.completed.length;
           parsed.completed = parsed.completed.filter(n => Number.isInteger(n) && n >= 1 && n <= 52);
-          if (parsed.startingPath > 48) parsed.startingPath = 48;
+          if (parsed.startingPath > 52) parsed.startingPath = 52;
           if (parsed.completed.length !== wasCompleted) {
             console.warn(`Cleaned ${wasCompleted - parsed.completed.length} invalid quest IDs from state`);
             localStorage.setItem(CURRENT_KEY, JSON.stringify(parsed));
@@ -10299,7 +10308,7 @@ const ACHIEVEMENTS = [
   { id: 'boss4',     icon: '🌌', name: 'Autonomia',         deck: 'Boss do Ato IV.',         check: s => s.completed.includes(30) },
   { id: 'boss5',     icon: '👁️', name: 'Visão Multimodal',  deck: 'Boss do Ato V.',          check: s => s.completed.includes(36) },
   { id: 'boss6',     icon: '🛡️', name: 'Endurecido',        deck: 'Boss do Ato VI.',         check: s => s.completed.includes(42) },
-  { id: 'bossfinal', icon: '✨', name: 'Sistema Integrado',  deck: 'Boss FINAL.',             check: s => s.completed.includes(48) },
+  { id: 'bossfinal', icon: '✨', name: 'Sistema Integrado',  deck: 'Boss FINAL.',             check: s => s.completed.includes(52) },
   { id: 'designer',  icon: '🎨', name: 'Trilha Design',     deck: 'Completou a trilha Claude Design.', check: s => (s.trackCompleted || []).filter(id => id.startsWith('design-')).length >= 5 },
   { id: 'shipped1',  icon: '🚀', name: 'Em Produção',       deck: '1ª entrega real.',        check: s => (s.shipped||[]).length >= 1 },
   { id: 'shipped5',  icon: '📦', name: 'Builder',           deck: '5 entregas.',             check: s => (s.shipped||[]).length >= 5 },
@@ -10358,8 +10367,8 @@ function loadState() {
       return;
     }
 
-    // Also validate diagnosed=true requires startingPath in [1, 48]
-    if (saved.diagnosed && (saved.startingPath < 1 || saved.startingPath > 48)) {
+    // Also validate diagnosed=true requires startingPath in [1, 52]
+    if (saved.diagnosed && (saved.startingPath < 1 || saved.startingPath > 52)) {
       console.warn('Saved state has invalid startingPath, discarding');
       try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
       return;
@@ -10963,7 +10972,7 @@ function calibratePath(a) {
   // ============================================================
   // PHASE 2: Determine totalQuests (scope)
   // ============================================================
-  let totalQuests = 53 - startQuest;  // 48 quests total, so range from startQuest to 48
+  let totalQuests = 53 - startQuest;  // 52 quests total, so range from startQuest to 52
   let codeNote = '';
 
   if (codeLevel === 'no-code') {
@@ -11464,13 +11473,18 @@ function markTrackQuestComplete(trackKey, questId) {
   if (typeof renderSquirrelWidget === 'function') renderSquirrelWidget();
 
   closeModal();
-  renderAll && renderAll();
-  // Force re-render of all
-  if (typeof renderTopbar === 'function') renderTopbar();
-  if (typeof renderQuests === 'function') renderQuests();
-  if (typeof renderTracks === 'function') renderTracks();
-  if (typeof renderActiveQuest === 'function') renderActiveQuest();
-  if (typeof renderAchievements === 'function') renderAchievements();
+  // Re-render everything that depends on state
+  function safeR(fn) { try { fn(); } catch(e) { console.error(e); } }
+  safeR(() => { if (typeof renderTopbar === 'function') renderTopbar(); });
+  safeR(() => { if (typeof renderRadar === 'function') renderRadar(); });
+  safeR(() => { if (typeof renderQuests === 'function') renderQuests(); });
+  safeR(() => { if (typeof renderTracks === 'function') renderTracks(); });
+  safeR(() => { if (typeof renderActiveQuest === 'function') renderActiveQuest(); });
+  safeR(() => { if (typeof renderAchievements === 'function') renderAchievements(); });
+  safeR(() => { if (typeof renderBuildLog === 'function') renderBuildLog(); });
+  safeR(() => { if (typeof renderSquirrelsGallery === 'function') renderSquirrelsGallery(); });
+  safeR(() => { if (typeof updateQuickNavCounts === 'function') updateQuickNavCounts(); });
+  safeR(() => { if (typeof renderSquirrelWidget === 'function') renderSquirrelWidget(); });
 
   showToast('success', `+${tq.xp} XP`, tq.title + ' concluída.');
 }
@@ -11848,7 +11862,7 @@ function markComplete() {
       else if (c === 5) mkey = 'milestone_5';
       else if (c === 10) mkey = 'milestone_10';
       else if (c === 25) mkey = 'milestone_25';
-      else if (c >= 48) mkey = 'milestone_all';
+      else if (c >= 52) mkey = 'milestone_all';
       else if (q && q.boss) mkey = 'milestone_act_done';
       if (mkey) {
         const w = document.getElementById('squirrel-widget');
@@ -11880,15 +11894,26 @@ function markComplete() {
 
   saveState();
 
-  // Render
-  renderTopbar();
-  renderRadar();
-  renderActiveQuest();
-  renderQuests();
-  renderAchievements();
-  renderTracks();
-  renderBuildLog();
-  if (typeof renderSquirrelWidget === 'function') renderSquirrelWidget();
+  // Render — use safe wrapper to call all dashboard render functions
+  function safeRender(name, fn) {
+    try { fn(); } catch(e) { console.error('renderError in ' + name + ':', e.message); }
+  }
+  safeRender('renderTopbar', () => renderTopbar());
+  safeRender('renderRadar', () => renderRadar());
+  safeRender('renderActiveQuest', () => renderActiveQuest());
+  safeRender('renderQuests', () => renderQuests());
+  safeRender('renderAchievements', () => renderAchievements());
+  safeRender('renderTracks', () => renderTracks());
+  safeRender('renderBuildLog', () => renderBuildLog());
+  safeRender('renderSquirrelWidget', () => {
+    if (typeof renderSquirrelWidget === 'function') renderSquirrelWidget();
+  });
+  safeRender('renderSquirrelsGallery', () => {
+    if (typeof renderSquirrelsGallery === 'function') renderSquirrelsGallery();
+  });
+  safeRender('updateQuickNavCounts', () => {
+    if (typeof updateQuickNavCounts === 'function') updateQuickNavCounts();
+  });
 
   // Level up?
   if (newRank.lvl > oldRank.lvl) {
@@ -11967,7 +11992,7 @@ function resetGame() {
 
   // Progress items (apagados em ambos os modos)
   if (state.completed && state.completed.length > 0) {
-    progress.push({ label: 'Quests concluídas', count: state.completed.length + ' de 48' });
+    progress.push({ label: 'Quests concluídas', count: state.completed.length + ' de 52' });
   }
   if (state.xp > 0) {
     progress.push({ label: 'XP acumulado', count: state.xp.toLocaleString('pt-BR') + ' XP' });
@@ -12445,7 +12470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let cat;
         if (!state.diagnosed) cat = 'welcome';
         else if (c === 0) cat = 'dashboard_first';
-        else if (c >= 48) cat = 'milestone_all';
+        else if (c >= 52) cat = 'milestone_all';
         else if (c >= 25) cat = 'milestone_25';
         else {
           const cats = ['encourage', 'idle', 'idle_short'];
@@ -12529,6 +12554,13 @@ function updateQuickNavCounts() {
   const qnTracks = document.getElementById('qn-tracks');
   if (qnTracks && typeof TRACKS !== 'undefined') {
     qnTracks.textContent = Object.keys(TRACKS).length;
+  }
+  // Squirrels unlocked count
+  const qnSq = document.getElementById('qn-squirrels');
+  if (qnSq && typeof RANKS !== 'undefined') {
+    const xp = state.xp || 0;
+    const unlocked = RANKS.filter(r => xp >= r.min).length;
+    qnSq.textContent = unlocked;
   }
 }
 
