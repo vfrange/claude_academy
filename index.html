@@ -170,7 +170,15 @@ body {
   overflow-x: hidden;
   max-width: 100%;
   position: relative;
+  cursor: default; /* v100: explícito pra evitar herança de pointer fantasma */
   transition: background 0.3s var(--ease-out), color 0.3s var(--ease-out);
+}
+/* v100: containers não-clicáveis explicitamente com cursor default
+   — previne herança de cursor:pointer de filhos/elementos sobrepostos */
+main, .dashboard, .dashboard-hero, .identity, .radar-card, .quests, .tracks,
+.pro-tracks-section, .life-tracks-section, .achievements, .squirrels-gallery,
+.section-h, .section-head, .act-divider, .act-divider-inner {
+  cursor: default;
 }
 
 /* Atmospheric background — gradient mesh + grain + scanlines */
@@ -322,6 +330,102 @@ main { position: relative; z-index: 10; }
   color: var(--amber);
   font-weight: 400;
 }
+
+/* v100: Pontos Bônus em verde pra diferenciar de XP (âmbar) */
+.tb-bonus-stat .tb-stat-value {
+  color: #7fb98a;
+}
+.tb-bonus-stat .tb-stat-label {
+  color: #7fb98a;
+  opacity: 0.85;
+}
+
+/* v100: Toast quando ganha Pontos Bônus */
+.bonus-toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 300;
+  background: linear-gradient(135deg, rgba(127,185,138,0.18), rgba(127,185,138,0.06));
+  border: 1.5px solid #7fb98a;
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 30px rgba(127,185,138,0.3);
+  opacity: 0;
+  transform: translateX(20px) scale(0.95);
+  transition: all 0.4s var(--ease-spring);
+  pointer-events: none;
+  min-width: 200px;
+}
+.bonus-toast.show {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+.bonus-toast-icon {
+  font-size: 20px;
+  color: #7fb98a;
+}
+.bonus-toast-amount {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
+  color: #7fb98a;
+  line-height: 1;
+}
+.bonus-toast-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ivory-2);
+  margin-top: 4px;
+}
+@media (max-width: 720px) {
+  .bonus-toast { top: auto; bottom: 110px; right: 16px; left: 16px; min-width: auto; }
+}
+
+/* v100: Stat de Pontos Bônus no modal Journey */
+.journey-stat-bonus .journey-stat-num { color: #7fb98a; }
+.journey-stat-bonus .journey-stat-lbl { color: #7fb98a; opacity: 0.85; }
+
+/* v100: tag "+X Pontos Bônus" nos cards de aulas bônus */
+.bonus-points-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7fb98a;
+  background: rgba(127, 185, 138, 0.10);
+  border: 1px solid rgba(127, 185, 138, 0.35);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.bonus-state-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.bonus-state-done {
+  color: var(--ivory-2);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--line);
+}
+.bonus-state-reviewed {
+  color: #7fb98a;
+  background: rgba(127,185,138,0.14);
+  border: 1px solid rgba(127,185,138,0.4);
+}
+.track-quest-item.is-done { opacity: 0.78; }
+.track-quest-item.is-done:hover { opacity: 1; }
 
 .topbar-actions {
   display: flex;
@@ -1019,17 +1123,23 @@ html[data-theme="light"] .radar-label.lvl1 {
 .active-quest {
   grid-column: 1 / -1;
   background: linear-gradient(120deg, var(--char), var(--deep));
-  border: 1px solid var(--amber);
+  border: 2px solid var(--amber);
   border-radius: var(--r-lg);
   padding: 28px 32px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   cursor: pointer;
   transition: transform 0.3s var(--ease-spring);
-  box-shadow: 0 0 0 1px var(--amber-glow), var(--shadow-deep);
+  box-shadow: 0 0 0 6px rgba(212,164,55,0.18), 0 0 30px rgba(212,164,55,0.25), var(--shadow-deep);
+  animation: activeQuestGlow 2.4s ease-in-out infinite;
+  margin-top: 12px; /* espaço pro badge sair pra cima */
 }
 .active-quest:hover {
   transform: translateY(-2px);
+}
+@keyframes activeQuestGlow {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(212,164,55,0.18), 0 0 30px rgba(212,164,55,0.25), var(--shadow-deep); }
+  50%      { box-shadow: 0 0 0 8px rgba(212,164,55,0.30), 0 0 40px rgba(212,164,55,0.42), var(--shadow-deep); }
 }
 .active-quest::before {
   content: '';
@@ -1040,6 +1150,34 @@ html[data-theme="light"] .radar-label.lvl1 {
   pointer-events: none;
   animation: pulse 4s var(--ease-out) infinite;
 }
+
+/* v100: badge "VOCÊ ESTÁ AQUI" no canto superior esquerdo do active-quest, com leve movimento */
+.active-quest::after {
+  content: '⨀ VOCÊ ESTÁ AQUI';
+  position: absolute;
+  top: -10px;
+  left: 24px;
+  background: var(--amber);
+  color: var(--abyss);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  padding: 5px 12px;
+  border-radius: 4px;
+  z-index: 5;
+  white-space: nowrap;
+  animation: youAreHereFloat 2s ease-in-out infinite;
+  box-shadow: 0 4px 12px rgba(212,164,55,0.35);
+}
+@keyframes youAreHereFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .active-quest, .active-quest::after { animation: none !important; }
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.1); }
@@ -1451,6 +1589,14 @@ html[data-theme="light"] .radar-label.lvl1 {
 .modal-bg.active {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* v100: força modal interno a NÃO interceptar cliques quando bg pai está inativo
+   (necessário pra _openBonusTrack que cria <div class="modal active"> hardcoded) */
+.modal-bg:not(.active) > .modal,
+.modal-bg:not(.active) .modal {
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 
 .modal {
@@ -2031,9 +2177,44 @@ html[data-theme="light"] .radar-label.lvl1 {
 
 /* Mobile (<= 720px) — empilha tudo */
 @media (max-width: 720px) {
-  .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
-  .topbar-stats { gap: 20px; order: 3; width: 100%; justify-content: space-between; }
+  .topbar { padding: 10px 12px; flex-wrap: wrap; gap: 8px; }
+  .topbar-brand { font-size: 14px; }
+  .topbar-brand .brand-mark { width: 24px; height: 24px; }
+  .topbar-stats { gap: 10px; order: 3; width: 100%; justify-content: space-between; }
   .tb-stat::after { display: none; }
+  .tb-stat-label { font-size: 8px; letter-spacing: 0.1em; }
+  .tb-stat-value { font-size: 15px; }
+  /* Botões da topbar: scroll horizontal em vez de quebrar em várias linhas */
+  .topbar-actions {
+    order: 2;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    gap: 4px;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .topbar-actions::-webkit-scrollbar { display: none; }
+  .topbar-actions .btn-ghost,
+  .topbar-actions .meu-ano-btn {
+    padding: 5px 9px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .topbar-actions .btn-icon { padding: 5px 7px; flex-shrink: 0; }
+  /* btn-with-tooltip: mobile força nowrap pra tudo ficar em 1 linha rolável */
+  .topbar-actions .btn-with-tooltip {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 4px;
+  }
+  .topbar-actions .btn-with-tooltip > * { flex-shrink: 0; }
+  /* Tooltip não aparece em mobile (hover não rola, e ocupa espaço) */
+  .btn-tooltip { display: none; }
   .dashboard { padding: 16px; gap: 16px; }
   .identity, .radar-card, .build-log { padding: 24px; }
   .aq-content { grid-template-columns: 1fr; }
@@ -2410,6 +2591,25 @@ html[data-theme="light"] .reset-modal-foot {
 }
 @media (max-width: 768px) { .tb-xp-bar { display: none; } .tb-xp-stat { min-width: 0; } }
 
+/* v100: barra Pontos Bônus (verde, mesmo tamanho da XP bar) */
+.tb-bonus-bar {
+  width: 110px;
+  height: 7px;
+  background: var(--line-soft);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.tb-bonus-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #5fa370, #7fb98a);
+  border-radius: 4px;
+  transition: width 0.6s var(--ease-spring);
+  box-shadow: 0 0 10px rgba(127, 185, 138, 0.45);
+}
+@media (max-width: 768px) { .tb-bonus-bar { display: none; } }
+
 /* Achievements panel */
 .ach { padding: 32px 32px 16px; }
 .ach-grid {
@@ -2500,6 +2700,12 @@ html[data-theme="light"] .reset-modal-foot {
   pointer-events: none;
   animation: xpFly 1.6s var(--ease-spring) forwards;
 }
+/* v100: variante verde pra Pontos Bônus */
+.xp-pop.bonus-pop {
+  color: #7fb98a;
+  text-shadow: 0 0 20px rgba(127, 185, 138, 0.6), 0 4px 16px rgba(0,0,0,0.4);
+  font-size: 28px;  /* texto é mais longo */
+}
 @keyframes xpFly {
   0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
   20%  { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
@@ -2536,6 +2742,31 @@ html[data-theme="light"] .ahead-modal-bg { background: rgba(20, 17, 13, 0.40); }
   overflow: hidden;
 }
 .ahead-modal.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+
+/* v100: Botão X de fechar no modal "Fora da sequência" */
+.ahead-modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--line-strong);
+  color: var(--ivory-0);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s var(--ease-out);
+  padding: 0;
+}
+.ahead-modal-close svg { width: 16px; height: 16px; }
+.ahead-modal-close:hover {
+  background: rgba(214,71,49,0.18);
+  border-color: rgba(214,71,49,0.6);
+  color: #ff8b6b;
+  transform: scale(1.06);
+}
 .ahead-modal-head {
   padding: 28px 32px 16px;
   border-bottom: 1px solid var(--line);
@@ -3382,9 +3613,12 @@ body::after {
    SPECIALIZED TRACKS
    ============================================================ */
 .onboarding-track-section {
+  grid-column: 1 / -1;
   padding: 32px 32px 0;
   max-width: 1480px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 .onb-track-card {
   position: relative;
@@ -3453,6 +3687,47 @@ body::after {
   color: var(--ivory-3);
 }
 .onb-track-meta-sep { opacity: 0.4; }
+
+/* v100: meta lateral compacta (igual aos rewards do active-quest) */
+.onb-track-meta-side {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: 16px;
+  border-left: 1px solid rgba(127, 185, 138, 0.22);
+}
+.onb-meta-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 72px;
+}
+.onb-meta-num {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ivory-1);
+  line-height: 1;
+}
+.onb-meta-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-3);
+  margin-top: 6px;
+  white-space: nowrap;
+}
+.onb-meta-bonus .onb-meta-num,
+.onb-meta-bonus .onb-meta-lbl {
+  color: #7fb98a;
+}
+@media (max-width: 720px) {
+  .onb-track-meta-side { display: none; }
+}
 .onb-track-arrow {
   font-family: var(--mono); font-size: 24px;
   color: #7fb98a; flex-shrink: 0;
@@ -3943,8 +4218,10 @@ body:has(.modal-bg.active) .squirrel-widget {
   background: var(--shadow);
   border: 1px solid var(--line-strong);
   border-radius: 14px;
-  padding: 14px;
+  padding: 10px 12px;
   min-width: 220px;
+  max-height: calc(100vh - 160px);  /* nunca corta na tela */
+  overflow-y: auto;
   box-shadow: 0 12px 32px rgba(0,0,0,0.5);
   display: none;
   animation: settingsIn 0.25s var(--ease-out);
@@ -3960,16 +4237,16 @@ body:has(.modal-bg.active) .squirrel-widget {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ivory-3);
-  margin-bottom: 10px;
-  padding-bottom: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
   border-bottom: 1px solid var(--line);
 }
 .squirrel-personality-opt {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 7px;
   cursor: pointer;
   transition: background 0.15s;
   border: 1px solid transparent;
@@ -3980,9 +4257,9 @@ body:has(.modal-bg.active) .squirrel-widget {
   border-color: var(--amber);
 }
 .squirrel-personality-emoji {
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1;
-  width: 28px;
+  width: 24px;
   text-align: center;
 }
 .squirrel-personality-info {
@@ -3991,17 +4268,17 @@ body:has(.modal-bg.active) .squirrel-widget {
 }
 .squirrel-personality-name {
   font-family: var(--display);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--ivory-1);
   font-weight: 500;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 .squirrel-personality-opt.active .squirrel-personality-name {
   color: var(--amber);
 }
 .squirrel-personality-desc {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 8.5px;
   letter-spacing: 0.05em;
   color: var(--ivory-3);
 }
@@ -4228,6 +4505,51 @@ body:has(.modal-bg.active) .squirrel-widget {
 }
 .tour-balloon-btn.ghost:hover { background: var(--char); color: var(--amber); border-color: var(--amber); }
 
+/* v100: Toolbar FIXA no rodapé do tour — botões NÃO mudam de lugar a cada parada */
+.tour-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 250;
+  background: linear-gradient(180deg, rgba(20, 17, 13, 0.85), rgba(20, 17, 13, 0.97));
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line-strong);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+.tour-toolbar-hint {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ivory-3);
+  flex: 1;
+  text-align: center;
+}
+.tour-toolbar-hint kbd {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--char);
+  color: var(--ivory-1);
+  font-family: var(--mono);
+  font-size: 10px;
+  margin: 0 1px;
+}
+@media (max-width: 720px) {
+  .tour-toolbar { padding: 10px 12px; gap: 8px; }
+  .tour-toolbar-hint { display: none; }
+  .tour-balloon-skip { font-size: 9px; padding: 6px 4px; }
+  .tour-balloon-btn { padding: 8px 12px; font-size: 9px; }
+}
+
 /* Progress dots inside balloon */
 .tour-balloon-dots {
   display: flex;
@@ -4259,7 +4581,6 @@ body:has(.modal-bg.active) .squirrel-widget {
   font-style: italic;
   margin-bottom: 14px;
 }
-.tour-balloon.final .tour-balloon-actions { justify-content: center; }
 
 /* Trigger button: "🐿️ Quer um tour?" — appears once after onboarding */
 .tour-trigger {
@@ -4334,6 +4655,50 @@ body:has(.tour-overlay.active) .squirrel-widget {
   filter: drop-shadow(0 6px 18px rgba(168, 88, 40, 0.4));
   cursor: pointer;
   transition: transform 0.2s var(--ease-spring);
+}
+
+/* v100: botão "menu" ao lado do esquilo — visível em mobile/tablet */
+.squirrel-menu-btn {
+  position: absolute;
+  right: 100%;
+  bottom: 18px;
+  margin-right: 6px;
+  background: var(--char);
+  border: 1.5px solid var(--amber);
+  border-radius: 14px;
+  padding: 4px 10px 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: all 0.2s var(--ease-out);
+  z-index: 5;
+}
+.squirrel-menu-btn:hover {
+  background: var(--amber);
+  color: var(--abyss);
+  transform: scale(1.04);
+}
+.squirrel-menu-btn-icon {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+.squirrel-menu-btn-label {
+  letter-spacing: 0.22em;
+}
+/* No desktop, esconde o botão (acessível por right-click) */
+@media (min-width: 720px) {
+  .squirrel-menu-btn { display: none; }
 }
 .squirrel-widget-svg:hover {
   transform: scale(1.08);
@@ -6172,15 +6537,15 @@ html[data-theme="light"] .quick-nav-count {
   padding: 16px 12px 14px;
   text-align: center;
   position: relative;
-  transition: all 0.25s var(--ease-out);
+  transition: border-color 0.25s var(--ease-out);
+  cursor: default;  /* v100: galeria é decorativa, não clica em nada */
 }
 .sq-card.unlocked {
   border-color: var(--amber);
   background: linear-gradient(135deg, var(--amber-glow), transparent 70%), var(--surface-elevated, var(--deep));
 }
 .sq-card.unlocked:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(212, 164, 55, 0.18);
+  border-color: #f4c560;
 }
 .sq-card.current {
   border: 1.5px solid var(--amber);
@@ -6848,9 +7213,11 @@ html[data-theme="light"] .quest.is-tech-optional::after {
   top: 14px; right: 14px;
   width: 40px; height: 40px;
   border-radius: 8px;
-  background: transparent;
-  border: none;
-  color: var(--ivory-1);
+  /* v100: o journey-modal tem gradient escuro independente do tema (--char/--deep dark)
+     então o X precisa ser SEMPRE claro/branco com fundo sutil pra ser visível */
+  background: rgba(244, 237, 224, 0.10);
+  border: 1px solid rgba(244, 237, 224, 0.20);
+  color: #f4ede0 !important;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -6864,8 +7231,9 @@ html[data-theme="light"] .quest.is-tech-optional::after {
 }
 .journey-close svg { width: 18px; height: 18px; stroke-width: 2.4; }
 .journey-close:hover { 
-  background: rgba(214,71,49,0.14); 
-  color: var(--crimson); 
+  background: rgba(214,71,49,0.20); 
+  border-color: var(--crimson);
+  color: var(--crimson) !important; 
 }
 
 .journey-content {
@@ -6979,6 +7347,146 @@ html[data-theme="light"] .quest.is-tech-optional::after {
   background: #e8c46a;
   transform: translateY(-1px);
   box-shadow: 0 8px 20px var(--amber-glow);
+}
+
+/* v100: Journey share menu (modal sobreposto ao journey-modal) */
+.journey-share-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 8, 12, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+.journey-share-bg.active {
+  display: flex;
+  opacity: 1;
+}
+.journey-share-modal {
+  width: min(440px, 100%);
+  background: linear-gradient(180deg, #1c2330, #0e131b);
+  border: 1px solid var(--amber);
+  border-radius: 14px;
+  padding: 28px 24px 22px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,164,55,0.10);
+  animation: journeyShareIn 0.32s var(--ease-spring);
+}
+@keyframes journeyShareIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.journey-share-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba(244, 237, 224, 0.10);
+  border: 1px solid rgba(244, 237, 224, 0.18);
+  color: #f4ede0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s var(--ease-out);
+  padding: 0;
+}
+.journey-share-close svg { width: 16px; height: 16px; }
+.journey-share-close:hover {
+  background: rgba(214, 71, 49, 0.18);
+  border-color: var(--crimson);
+  color: var(--crimson);
+}
+.journey-share-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+.journey-share-title {
+  font-family: var(--display, Fraunces, Georgia, serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ivory-0);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.journey-share-deck {
+  font-family: var(--serif, Lora, Georgia, serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ivory-2);
+  margin-bottom: 18px;
+}
+.journey-share-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.journey-share-opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(244, 237, 224, 0.04);
+  border: 1px solid rgba(244, 237, 224, 0.10);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.18s var(--ease-out);
+  text-align: left;
+  width: 100%;
+  color: inherit;
+  font-family: inherit;
+}
+.journey-share-opt:hover {
+  background: rgba(212, 164, 55, 0.08);
+  border-color: rgba(212, 164, 55, 0.40);
+  transform: translateX(2px);
+}
+.journey-share-opt-icon {
+  font-size: 24px;
+  font-weight: 700;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--amber);
+  font-family: var(--mono);
+}
+.journey-share-opt-info {
+  flex: 1;
+  min-width: 0;
+}
+.journey-share-opt-name {
+  font-family: var(--display, Fraunces, Georgia, serif);
+  font-size: 15px;
+  color: var(--ivory-0);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.journey-share-opt-desc {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ivory-3);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+@media (max-width: 720px) {
+  .journey-share-modal { padding: 22px 18px 18px; }
+  .journey-share-title { font-size: 19px; }
+  .journey-share-opt { padding: 10px 12px; gap: 10px; }
+  .journey-share-opt-icon { font-size: 20px; width: 32px; height: 32px; }
+  .journey-share-opt-name { font-size: 14px; }
 }
 
 .cinema-trigger {
@@ -8299,7 +8807,8 @@ html[data-theme="light"] .tree-node-label.maxed { fill: #fff; }
 html[data-theme="light"] .tree-node-level.maxed { fill: #fff; }
 
 /* v43: hide squirrel when mission modal is open (was blocking 'Marcar concluída' on mobile) */
-body:has(.modal.active) .squirrel-widget,
+/* v100: fix — verificar modal-bg.active (wrapper), não .modal.active (interior sempre tem active) */
+body:has(.modal-bg.active) .squirrel-widget,
 body:has(.boss-intro-overlay.active) .squirrel-widget,
 body:has(.diary-prompt-overlay.active) .squirrel-widget,
 body:has(.ai-prompt-overlay.active) .squirrel-widget,
@@ -9477,6 +9986,7 @@ body:has(.journey-modal-bg.active) .squirrel-widget {
 
 
 .pro-tracks-section {
+  grid-column: 1 / -1;
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid var(--line);
@@ -9733,11 +10243,11 @@ body:has(.journey-modal-bg.active) .squirrel-widget {
 /* === Scroll to top floating button === */
 .scroll-to-top {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 175;
-  width: 44px;
-  height: 44px;
+  bottom: 116px; /* v100: acima do esquilo (que mora em bottom: 16px com 84px de altura) */
+  right: 36px;   /* v100: alinhado com o centro do esquilo (esquilo é 84px wide, mora a right: 24px) */
+  z-index: 185;  /* acima do esquilo (180) pra nunca ficar coberto */
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--shadow);
   border: 1px solid var(--line-strong);
@@ -9764,12 +10274,11 @@ body:has(.journey-modal-bg.active) .squirrel-widget {
   color: var(--amber);
   box-shadow: 0 6px 18px rgba(212, 164, 55, 0.3);
 }
-.scroll-to-top svg { width: 18px; height: 18px; }
+.scroll-to-top svg { width: 16px; height: 16px; }
 @media (max-width: 720px) {
-  /* No mobile o esquilo já mora bottom-right (84×84). Move o back-to-top
-     pra cima do esquilo, ainda do lado direito, pra manter padrão universal. */
-  .scroll-to-top { bottom: 120px; right: 16px; width: 40px; height: 40px; }
-  .scroll-to-top svg { width: 16px; height: 16px; }
+  /* No mobile o esquilo é menor (~73px) — fica do lado direito também, acima do esquilo */
+  .scroll-to-top { bottom: 110px; right: 22px; width: 38px; height: 38px; }
+  .scroll-to-top svg { width: 14px; height: 14px; }
 }
 html[data-theme="light"] .scroll-to-top {
   background: #fff;
@@ -9817,9 +10326,16 @@ html[data-theme="light"] .scroll-to-top {
         <div class="tb-xp-bar"><div class="tb-xp-fill" id="tb-xp-fill"></div></div>
       </div>
     </div>
-    <div class="tb-stat">
-      <div class="tb-stat-label">Sequência</div>
+    <div class="tb-stat" title="Sequência — dias consecutivos que você completou ao menos uma missão. Reseta se pular um dia inteiro.">
+      <div class="tb-stat-label">🔥 Sequência</div>
       <div class="tb-stat-value" id="tb-streak">0</div>
+    </div>
+    <div class="tb-stat tb-bonus-stat" title="Pontos Bônus — aulas extras, trilhas BÔNUS, revisões">
+      <div class="tb-stat-label">⨀ Pontos Bônus <span id="tb-bonus-pct" style="opacity:0.6;font-weight:400;"></span></div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="tb-stat-value" id="topbar-bonus-points">0</div>
+        <div class="tb-bonus-bar"><div class="tb-bonus-fill" id="tb-bonus-fill"></div></div>
+      </div>
     </div>
   </div>
   <div class="topbar-actions">
@@ -9963,18 +10479,28 @@ html[data-theme="light"] .scroll-to-top {
     </section>
 
     <!-- Onboarding track — visible only when user is early in the journey -->
-    <section class="onboarding-track-section" id="onboarding-track-section">
+    <!-- v100: Ato 0 — Primeira semana com Claude. Card full-width horizontal, igual aos atos 1-8. -->
+    <section class="onboarding-track-section act-section" id="onboarding-track-section" data-act="0">
+      <div class="act-divider" style="--act-color: #7fb98a; --act-soft: rgba(127,185,138,0.10);">
+        <div class="act-divider-inner">
+          <div class="act-divider-num">ATO 0</div>
+          <div class="act-divider-title">Primeira semana com Claude</div>
+          <div class="act-divider-range">M0a–M0g</div>
+          <div class="act-divider-badge act-divider-badge-beyond" style="background: rgba(127,185,138,0.16); color: #7fb98a; border-color: rgba(127,185,138,0.45);">BÔNUS · sem XP</div>
+        </div>
+        <div class="act-divider-line"></div>
+      </div>
       <div class="onb-track-card" onclick="openOnboardingTrack()" role="button" tabindex="0" aria-label="Primeira semana com Claude — comece aqui se nunca usou Claude">
         <div class="onb-track-icon">🌱</div>
         <div class="onb-track-content">
           <div class="onb-track-tag">⨀ COMEÇA AQUI · BÔNUS</div>
           <div class="onb-track-title">Primeira semana com <em>Claude</em></div>
-          <div class="onb-track-deck">Nunca usou Claude (ou IA generativa)? <strong>Faça esta trilha antes</strong> da M01. 7 missões curtinhas, 1 tarde inteira, e você sai sabendo o essencial pra encarar o curso.</div>
-          <div class="onb-track-meta">
-            <span>7 missões · ~75 min</span>
-            <span class="onb-track-meta-sep">·</span>
-            <span>Não exige conhecimento prévio</span>
-          </div>
+          <div class="onb-track-deck">Pra quem nunca usou Claude. <strong>Faça antes da M01</strong> — em 1 tarde você sai sabendo o essencial.</div>
+        </div>
+        <div class="onb-track-meta-side">
+          <div class="onb-meta-row"><span class="onb-meta-num">7</span><span class="onb-meta-lbl">missões</span></div>
+          <div class="onb-meta-row"><span class="onb-meta-num">~75</span><span class="onb-meta-lbl">min</span></div>
+          <div class="onb-meta-row onb-meta-bonus"><span class="onb-meta-num">+</span><span class="onb-meta-lbl">Pontos Bônus</span></div>
         </div>
         <div class="onb-track-arrow" aria-hidden="true">→</div>
       </div>
@@ -9987,6 +10513,17 @@ html[data-theme="light"] .scroll-to-top {
     </div>
 
     <div class="quests-grid" id="quests-grid"></div>
+
+    <!-- v100: Trilhas PRO movidas pra logo após o caminho -->
+    <section class="pro-tracks-section" id="pro-tracks-section">
+      <div class="pro-tracks-head">
+        <div class="pro-tracks-tag">⨀ Trilhas profissionais · BÔNUS</div>
+        <div class="pro-tracks-meta">18 TRILHAS</div>
+      </div>
+      <div class="pro-tracks-title">Por <em>profissão</em></div>
+      <div class="pro-tracks-deck">Casos, prompts e fluxos da sua área. <em>São bônus</em> — não dão XP nem chapéu da trilha principal, mas dão <strong style="color:#7fb98a;">⨀ Pontos Bônus</strong>. Recomendamos terminar a <em>Claude Mastery</em> (52 missões) antes de explorar.</div>
+      <div class="pro-tracks-grid" id="pro-tracks-grid"></div>
+    </section>
 
     <!-- Build log -->
 <section class="ach" id="achievements">
@@ -10019,23 +10556,13 @@ html[data-theme="light"] .scroll-to-top {
       <div class="tracks-grid" id="tracks-grid"></div>
     </section>
 
-    <section class="pro-tracks-section" id="pro-tracks-section">
-      <div class="pro-tracks-head">
-        <div class="pro-tracks-tag">⨀ Trilhas profissionais · BÔNUS</div>
-        <div class="pro-tracks-meta">18 TRILHAS</div>
-      </div>
-      <div class="pro-tracks-title">Por <em>profissão</em></div>
-      <div class="pro-tracks-deck">Casos, prompts e fluxos da sua área. <em>São bônus</em> — não dão XP, não sobem rank, não dão chapéu. Recomendamos terminar a <em>Claude Mastery</em> (52 missões) antes de explorar.</div>
-      <div class="pro-tracks-grid" id="pro-tracks-grid"></div>
-    </section>
-
     <section class="pro-tracks-section life-tracks-section" id="life-tracks-section">
       <div class="pro-tracks-head">
         <div class="pro-tracks-tag">⨀ Trilhas pessoais · BÔNUS</div>
         <div class="pro-tracks-meta">9 TRILHAS</div>
       </div>
       <div class="pro-tracks-title">Pra <em>vida pessoal</em></div>
-      <div class="pro-tracks-deck">Pra organizar o dia-a-dia fora do trabalho. <em>São bônus</em> — não dão XP, não sobem rank, não dão chapéu. Termine a <em>Claude Mastery</em> antes de focar aqui.</div>
+      <div class="pro-tracks-deck">Pra organizar o dia-a-dia fora do trabalho. <em>São bônus</em> — não dão XP nem chapéu da trilha principal, mas dão <strong style="color:#7fb98a;">⨀ Pontos Bônus</strong>. Termine a <em>Claude Mastery</em> antes de focar aqui.</div>
       <div class="pro-tracks-grid" id="life-tracks-grid"></div>
     </section>
 
@@ -14534,6 +15061,13 @@ const PRO_TRACKS = {
         sections: [
           { type: 'study', label: 'O QUE FAZ E NÃO FAZ', body: '<p>Não substitui modelo de risco interno do banco. Estrutura a leitura: rácios, sinais de alerta, perguntas a fazer ao cliente.</p>' },
           { type: 'build', label: 'PROMPT', body: '<div class="prompt-card"><button class="copy" onclick="copyPrompt(this)">Copiar</button>Vou colar demonstrativos. Estrutura análise de crédito.\n\nCliente: [SETOR / PORTE / GEO]\nProduto solicitado: [LIMITE / VALOR / PRAZO]\nObjeto do crédito: [PRA QUÊ — capital de giro, investimento, refinanciamento]\n\nDemonstrativos disponíveis (cola):\n- Balanço últimos 2-3 anos\n- DRE últimos 2-3 anos\n- Fluxo de caixa (se disponível)\n\nGarantias oferecidas: [DESCREVA]\nGarantidores: [DESCREVA]\n\nMe entrega:\n\n**1. Foto financeira**\n- Receita e tendência\n- Margem operacional\n- Endividamento atual (CP/LP)\n- Geração de caixa\n- Capital de giro\n\n**2. Rácios principais**\n- Endividamento / Patrimônio Líquido\n- Endividamento / EBITDA\n- Cobertura de juros\n- Liquidez corrente\n- Liquidez seca\n- ROI / ROE\n\n**3. Capacidade de pagamento**\n- Geração de caixa anual estimada\n- Serviço da dívida atual + nova\n- Margem de segurança\n- Cenário de estresse (queda de 20% na receita)\n\n**4. Sinais de alerta**\n- Crescimento desproporcional de prazo de recebimento\n- Mudança brusca de margem\n- Concentração de clientes\n- Operação intercompany suspeita\n- Movimentação fora do padrão setorial\n\n**5. Perguntas a fazer ao cliente**\n- 5-7 perguntas pra clarificar pontos ambíguos\n\n**6. Recomendação preliminar**\n- Aprovar (em quais condições)\n- Aprovar com mitigação (que mitigação)\n- Rejeitar (por quê)\n- Decisão de comitê (se for caso)\n\nNão tome decisão final — apoie a análise. Modelagem de rating fica no sistema interno.\n\nAVISO: este conteúdo é apoio operacional. Não substitui análise formal de crédito, parecer de comitê, ou conformidade regulatória (BACEN, CVM). Decisões de risco/crédito devem seguir os processos formais da instituição.</div>' }
+        
+          ,
+          { type: 'study', label: "EXEMPLO", body: "<h3>Como Claude responde — exemplo real</h3><p style=\"font-family: var(--mono); font-size: 12px; color: var(--ivory-3); margin: 8px 0;\">[INPUT — distribuidora de auto-peças, faturamento R$ 80MM/ano, solicita capital de giro R$ 8MM por 24 meses, garantia: duplicatas + aval dos sócios]</p><p><strong>Output do Claude (resumido):</strong></p><p><strong>1. Foto financeira</strong></p><table style=\"width:100%; font-size:12px; border-collapse:collapse;\"><tr style=\"background:rgba(212,164,55,0.08);\"><th style=\"padding:6px; border:1px solid var(--line);\">Indicador</th><th style=\"text-align:right; padding:6px; border:1px solid var(--line);\">2024</th><th style=\"text-align:right; padding:6px; border:1px solid var(--line);\">2023</th><th style=\"text-align:right; padding:6px; border:1px solid var(--line);\">2022</th></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Receita líquida</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 80MM</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 72MM</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 65MM</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Margem operacional</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">7,2%</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">8,1%</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">8,8%</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">EBITDA</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 6,5MM</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 6,3MM</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 6,1MM</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Endividamento total</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 18MM</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 14MM</td><td style=\"padding:6px; border:1px solid var(--line); text-align:right;\">R$ 10MM</td></tr></table><p style=\"margin-top: 8px;\">Receita cresce 11% a/a, mas margem está em compressão (8,8% → 7,2%). Endividamento subiu 80% em 2 anos enquanto EBITDA cresceu só 7%.</p><p><strong>2. Rácios principais</strong></p><ul><li>Endividamento / PL: 1,6x (era 1,1x em 2022) — <strong>elevação preocupante</strong></li><li>Endividamento / EBITDA: 2,8x (era 1,6x) — <strong>quase no limite tolerável (3x)</strong></li><li>Cobertura de juros: 4,2x (era 6,8x) — <strong>queda significativa</strong></li><li>Liquidez corrente: 1,4 (estável) — OK</li><li>ROE: 14% (era 18%)</li></ul><p><strong>3. Capacidade de pagamento</strong></p><ul><li>Geração de caixa anual estimada: ~R$ 5MM (após CapEx mínimo)</li><li>Serviço dívida atual: R$ 4MM/ano</li><li>Serviço dívida + nova operação: R$ 5,2MM/ano</li><li><strong>Margem de segurança: ~negativa em cenário base</strong></li><li>Cenário estresse (-20% receita): geração cai pra R$ 2,5MM — <strong>insuficiente</strong></li></ul><p><strong>4. 🚨 Sinais de alerta</strong></p><ul><li>🔴 <strong>Prazo médio de recebimento subiu de 45 pra 72 dias</strong> em 18 meses — pode indicar dificuldade dos clientes ou afrouxamento de política comercial pra manter receita.</li><li>🟡 Concentração: top 5 clientes = 58% do faturamento (anterior: 42%)</li><li>🟡 Fornecedor único pra 30% do CMV (importação direta)</li><li>🟢 Setor de auto-peças: estável, mas com sinais de desaceleração 2026</li></ul><p><strong>5. Perguntas a fazer</strong></p><ol><li>Por que prazo médio subiu? Política comercial mudou ou clientes pagando pior?</li><li>Margem em compressão — competição, custo de importação, mix?</li><li>Plano pra concentração de clientes? Diversificação prevista?</li><li>Fornecedor único — risco de descontinuidade? Plano B?</li><li>Detalhamento dos R$ 18MM de dívida — taxa média, vencimentos, com quem?</li><li>Capital de giro solicitado é pra financiar crescimento ou tapar déficit operacional?</li><li>Sócios estão fazendo aporte? Distribuição de lucros últimos 3 anos?</li></ol><p><strong>6. Recomendação preliminar</strong></p><p>⚠️ <strong>Aprovar com mitigação significativa</strong> ou <strong>recomendar revisão pra valor menor</strong>. Justificativa:</p><ul><li>Sinais de deterioração consistentes em 3 indicadores diferentes</li><li>Capacidade de pagamento apertada em cenário base, negativa em estresse</li><li>Garantia (duplicatas) tem qualidade questionável dado prazo médio crescente — sugerir alienação fiduciária de imóvel ou aval pessoal robusto adicional</li><li>Considerar reduzir limite pra R$ 5MM, prazo 18 meses, com covenants (limite de endividamento/EBITDA &lt; 3x, manutenção de liquidez)</li><li>Recomenda-se levar a comitê com revisão das demonstrações auditadas (2024 não deve estar fechado ainda) e plano de redução de concentração de clientes</li></ul><p style=\"margin-top: 12px; opacity: 0.8; font-size: 14px;\">Note: análise estruturada com sinais de alerta destacados. Não decide — aponta o que comitê precisa avaliar. Sugere mitigação concreta. Coloca questionamentos pertinentes pra reunião com cliente.</p>" }
+          ,
+          { type: 'study', label: "PEGADINHAS", body: "<h3>Pegadinhas em análise de crédito PJ</h3><ul><li><strong>1. Aceitar demonstrativo não auditado como verdade</strong> — empresa de R$ 80MM/ano sem auditoria tem demonstrativo \"ajustado\" pelo contador. Sempre cruze com extrato bancário, faturas, declarações fiscais.</li><li><strong>2. Calcular EBITDA \"criativo\"</strong> — cliente pode incluir \"outros resultados não recorrentes\" inflando EBITDA. Verificar composição.</li><li><strong>3. Ignorar sinais de capital de giro deteriorando</strong> — prazo de recebimento subindo + estoque crescendo + prazo de fornecedor encurtando = empresa apertada operacionalmente, mesmo com receita boa.</li><li><strong>4. Confiar em garantia ilíquida</strong> — duplicatas de cliente concentrado valem o que esse cliente vale. Imóvel sem matrícula limpa não vale na execução. Aval de sócio sem patrimônio formal não cobre.</li><li><strong>5. Não considerar exposição agregada</strong> — cliente novo aparenta bom risco isolado, mas se já tem R$ 10MM no banco em outras operações, exposição total muda análise.</li><li><strong>6. Cenário de estresse otimista demais</strong> — \"queda de 20% na receita\" é leve. Pra setor exposto a importação ou commodity, considere -40%.</li><li><strong>7. Ignorar dependência tecnológica/regulatória</strong> — empresa que depende de subsídio governamental, política tributária específica, ou tecnologia em mudança tem risco que não aparece em DRE.</li><li><strong>8. Crescimento de receita sem aumento de margem</strong> — pode ser captação predatória de clientes (preço baixo, margem compressão) ou prazo financiando o cliente (entra como receita, não cai como caixa).</li><li><strong>9. Operação intercompany não declarada</strong> — receita \"vendida\" pra empresa do mesmo grupo infla DRE sem entrada de caixa real. Sempre conferir partes relacionadas.</li><li><strong>10. Setor em transformação ignorado</strong> — auto-peças, varejo físico, agências de viagem, mídia tradicional — análise histórica não captura risco de disrupção. Adicione análise qualitativa do setor.</li><li><strong>11. Confundir \"objetivo declarado\" com \"uso real\"</strong> — cliente diz que é capital de giro mas na prática é pra tapar perda anterior. Pergunte uso específico (folha? estoque? fornecedor X? quitação de qual dívida?).</li><li><strong>12. Política de provisão do banco \"lavada\"</strong> — se rating do cliente está em B+ mas analista sente que é B, força revisão. Tomada de pedido por meta comercial é fonte clássica de inadimplência futura.</li></ul>" }
+          ,
+          { type: 'study', label: "REVISÃO PROFISSIONAL", body: "<h3>🏦 Antes de submeter ao comitê</h3><ol><li><strong>Demonstrativos auditados</strong> ou ao menos cruzados com obrigações acessórias (DEFIS, DCTF, EFD-Contribuições, ECD se aplicável) — divergências exigem explicação documentada</li><li><strong>Cadastro positivo</strong> consultado: Serasa, Boa Vista, SCR (BACEN) — exposição agregada do cliente no sistema</li><li><strong>Política interna do banco</strong>: enquadramento por porte, segmento, produto, alçada — confirme</li><li>Para operação de <strong>capital de giro acima de 12 meses</strong>: BACEN considera \"longo prazo\" — análise mais profunda e regras de provisão diferentes (Resolução 2.682)</li><li>Para cliente com <strong>operação anterior em atraso</strong>: consultar histórico interno antes de submeter — reincidência muda apetite</li><li><strong>Garantia avaliada por terceiro</strong> (não o cliente): laudo, ITBI, matrícula, escritura — nunca aceite valor declarado pelo cliente</li><li>Para <strong>aval de sócio</strong>: análise patrimonial do avalista (DIRPF, certidões) — aval sem patrimônio é figurativo</li><li><strong>Análise setorial</strong> documentada: dados macro, competidores, tendências regulatórias específicas</li><li><strong>Cenário de estresse</strong>: -20% no caso base, -40% pra setor cíclico — receita E margem juntas</li><li><strong>Pricing</strong> consistente com risco: spread de operação subprime não pode ser igual ao prime — comitê questiona se houver descalibragem</li><li>Para <strong>parte relacionada</strong> ou operação com partes ligadas: regras adicionais BACEN — Circular 3.461 e correlatas</li><li><strong>AML/PLD</strong>: cliente com origem dos recursos clara? Nada na lista de sanções? Consultas COAF / OFAC em dia?</li><li>Para <strong>BNDES e linhas direcionadas</strong>: enquadramento na finalidade da linha precisa estar explícito</li><li><strong>Resolução BACEN 4.557/2017</strong>: estrutura de gerenciamento de risco aplicável ao banco — análise compatível?</li><li>Documentação completa: <strong>cadastro, demonstrativos, comprovantes, garantias, atas societárias, procurações</strong> — incompletude trava no comitê</li></ol>" }
         ]
       },
       {
@@ -14543,6 +15077,13 @@ const PRO_TRACKS = {
         time: '50 min', xp: 0, level: 'avançada',
         sections: [
           { type: 'build', label: 'PROMPT', body: '<div class="prompt-card"><button class="copy" onclick="copyPrompt(this)">Copiar</button>Vou descrever uma operação estruturada. Monta memorando para comitê de crédito.\n\nCliente: [DESCREVA]\nProduto: [QUAL — capital de giro, investimento, BNDES, etc]\nValor: [VALOR]\nPrazo: [QUANTO]\nObjeto: [PRA QUÊ]\n\nEstruturação proposta:\n[CONDIÇÕES, GARANTIAS, AVAIS]\n\nRisco do cliente:\n[NOTA INTERNA / SCORE]\n\nMonta memorando com:\n\n**1. Sumário executivo**\n- Cliente, produto, valor, prazo, objeto, recomendação em 1 parágrafo\n\n**2. Sobre o cliente**\n- Histórico (idade, atividade, geo)\n- Posição no setor\n- Estrutura societária\n- Relacionamento atual com o banco\n\n**3. Análise financeira**\n- Foto de 3 anos\n- Tendências\n- Capacidade de pagamento\n- Cenário de estresse\n\n**4. Análise da operação**\n- Estrutura proposta\n- Comparação com mercado\n- Adequação ao perfil do cliente\n- Por que esse produto e não outro\n\n**5. Garantias**\n- Detalhe de cada garantia\n- Avaliação / cobertura\n- Risco de execução\n\n**6. Riscos identificados**\n- Risco de crédito\n- Risco operacional\n- Risco setorial\n- Risco regulatório\n- Pra cada: probabilidade, impacto, mitigação\n\n**7. Pricing proposto**\n- Spread\n- Justificativa\n- Comparação com benchmark interno\n\n**8. Recomendação**\n- Aprovar / aprovar com condicionantes / rejeitar\n- Condicionantes (se houver)\n- Limite de exposição agregada do banco com este cliente\n- Frequência de revisão\n\nLinguagem técnica de banking. Sem floreio. Pontos críticos em destaque.\n\nAVISO: este conteúdo é apoio operacional. Não substitui análise formal de crédito, parecer de comitê, ou conformidade regulatória (BACEN, CVM). Decisões de risco/crédito devem seguir os processos formais da instituição.</div>' }
+        
+          ,
+          { type: 'study', label: "EXEMPLO", body: "<h3>Como Claude responde — exemplo real</h3><p style=\"font-family: var(--mono); font-size: 12px; color: var(--ivory-3); margin: 8px 0;\">[INPUT — operação BNDES Finame de R$ 25MM, prazo 8 anos com 2 de carência, pra aquisição de máquinas industriais por indústria têxtil. Cliente: faturamento R$ 180MM, rating interno B, garantias: alienação fiduciária dos equipamentos + fiança bancária + aval dos sócios]</p><p><strong>Output do Claude — Memorando para Comitê de Crédito (estrutura):</strong></p><div style=\"background: rgba(127,185,138,0.06); padding: 14px; border-left: 3px solid #7fb98a; margin: 8px 0;\"><p><strong>MEMORANDO DE CRÉDITO Nº 2026-XXX</strong></p><p>Comitê: Crédito Corporativo<br>Data: [DATA]<br>Responsável: [NOME / MATRÍCULA]</p><p><strong>1. Sumário Executivo</strong></p><p>Solicitação: BNDES Finame R$ 25MM — prazo 96 meses (24 carência) — pra aquisição de teares automatizados, modernização industrial. Cliente: [Nome], rating B (interno), faturamento R$ 180MM. Garantias propostas: AF dos equipamentos (R$ 25MM), fiança bancária (R$ 5MM), aval dos 2 sócios. <strong>Recomendação: APROVAR com condicionantes (ver seção 8).</strong></p><p><strong>2. Sobre o cliente</strong></p><ul><li>Indústria têxtil em operação há 28 anos, sediada em Americana/SP</li><li>Produção: tecidos técnicos (40%), confecção infantil (35%), fios especiais (25%)</li><li>Exporta 18% (Mercosul, EUA)</li><li>320 funcionários diretos</li><li>Estrutura: limitada, 2 sócios PF (irmãos, 50/50)</li><li>Relacionamento com o banco: 14 anos, nunca em atraso, exposição atual R$ 12MM (capital de giro + garantias bancárias)</li></ul><p><strong>3. Análise financeira (3 anos)</strong></p><ul><li>Receita: R$ 145 → 162 → 180MM (CAGR 11%)</li><li>Margem EBITDA: 14,8% → 15,2% → 15,9% (estável-positiva)</li><li>EBITDA absoluto 2024: R$ 28,6MM</li><li>Endividamento atual: R$ 42MM (2,3x EBITDA — confortável)</li><li>Cobertura de juros: 5,8x</li><li>Capacidade de geração de caixa: R$ 18MM/ano após CapEx manutenção</li><li>Cenário estresse (-25% receita): geração cai pra R$ 9MM — ainda cobre serviço da dívida combinada</li></ul><p><strong>4. Análise da operação</strong></p><ul><li>Estrutura: BNDES Finame, taxa TLP + 2,8% a.a., prazo 96 meses, 24 meses de carência de principal (juros pagos)</li><li>Adequação: equipamentos têm vida útil 10-12 anos, prazo da operação compatível</li><li>Por BNDES Finame e não capital de giro: investimento produtivo, taxa subsidiada apropriada, prazo longo casa com retorno do investimento</li><li>Modernização aumenta produtividade estimada em 22% e reduz custo unitário em 14% (memorando técnico do fornecedor anexo)</li></ul><p><strong>5. Garantias</strong></p><ul><li><strong>AF dos equipamentos</strong> (R$ 25MM): cobre 100% nominal. Risco: equipamento usado vale 50-60% nos primeiros 3 anos, 30-40% após 5 anos. Cobertura efetiva em execução: ~70% nos 3 primeiros anos.</li><li><strong>Fiança bancária</strong> (R$ 5MM, banco AAA): líquida, executável.</li><li><strong>Aval pessoal</strong> dos sócios: patrimônio declarado conjunto R$ 18MM (imóveis residenciais + participação na empresa). Análise patrimonial em anexo.</li><li>Cobertura combinada: ~120% no início, 90% após 3 anos.</li></ul><p><strong>6. Riscos identificados</strong></p><table style=\"width:100%; font-size:12px; border-collapse:collapse;\"><tr style=\"background:rgba(212,164,55,0.08);\"><th style=\"padding:6px; border:1px solid var(--line);\">Risco</th><th style=\"padding:6px; border:1px solid var(--line);\">Prob.</th><th style=\"padding:6px; border:1px solid var(--line);\">Impacto</th><th style=\"padding:6px; border:1px solid var(--line);\">Mitigação</th></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Crédito (inadimplência)</td><td style=\"padding:6px; border:1px solid var(--line);\">Baixa</td><td style=\"padding:6px; border:1px solid var(--line);\">Alto</td><td style=\"padding:6px; border:1px solid var(--line);\">Múltiplas garantias, cobertura adequada</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Setorial (têxtil chinês)</td><td style=\"padding:6px; border:1px solid var(--line);\">Média</td><td style=\"padding:6px; border:1px solid var(--line);\">Médio</td><td style=\"padding:6px; border:1px solid var(--line);\">Cliente em nicho técnico, menor concorrência direta</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Sucessão (sócios irmãos)</td><td style=\"padding:6px; border:1px solid var(--line);\">Média</td><td style=\"padding:6px; border:1px solid var(--line);\">Médio</td><td style=\"padding:6px; border:1px solid var(--line);\">Solicitar acordo de sócios + seguro key man</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Câmbio (importação 30% CMV)</td><td style=\"padding:6px; border:1px solid var(--line);\">Alta</td><td style=\"padding:6px; border:1px solid var(--line);\">Médio</td><td style=\"padding:6px; border:1px solid var(--line);\">Cliente já opera com hedge parcial NDF</td></tr></table><p><strong>7. Pricing</strong></p><ul><li>BNDES Finame: TLP + 2,8% a.a. (spread bancário fixo conforme tabela BNDES)</li><li>Tarifas: estruturação 1%, prestação operação 0,15% a.a.</li><li>Spread bruto consistente com rating B em operações de longo prazo</li><li>ROE estimado da operação: 17,2% (acima do hurdle interno de 14%)</li></ul><p><strong>8. Recomendação</strong></p><p><strong>APROVAR</strong> com as seguintes condicionantes:</p><ol><li>Apresentação de acordo de sócios formalizado em até 60 dias da liberação (mitiga risco de sucessão)</li><li>Manutenção de covenant: Endividamento/EBITDA &lt; 3x durante toda a operação</li><li>Manutenção de covenant: Cobertura de juros &gt; 3x</li><li>Reporte trimestral de DRE e balancete</li><li>Cláusula de cross-default com operação atual de capital de giro</li><li>Limite agregado de exposição com este cliente: R$ 50MM (atual R$ 12MM + nova R$ 25MM = R$ 37MM, com headroom)</li><li>Revisão anual ou em caso de evento material (queda de receita &gt; 20%, troca de sócio, redução do hedge)</li></ol></div><p style=\"margin-top: 12px; opacity: 0.8; font-size: 14px;\">Note: estrutura completa, dados específicos, riscos quantificados com mitigação, recomendação clara com condicionantes objetivas, ROE comparado a hurdle interno. Comitê pode discutir e decidir.</p>" }
+          ,
+          { type: 'study', label: "PEGADINHAS", body: "<h3>Pegadinhas em memorando de comitê</h3><ul><li><strong>1. Sumário executivo enrolado</strong> — comitê tem 8 operações pra avaliar. Sumário precisa caber em 1 parágrafo claro com recomendação. Quem precisa ler 3 páginas pra saber a recomendação não vai aprovar.</li><li><strong>2. Esconder o que é desconfortável</strong> — sócios em divergência, cliente com operação anterior renegociada, garantia com problema — colocar no fim em letra miúda é o caminho rápido pro comitê desconfiar de tudo. <strong>Coloque o que é difícil cedo, com mitigação.</strong></li><li><strong>3. Análise financeira sem comparação</strong> — \"EBITDA R$ 28MM\" sozinho é só número. Comparado com 3 anos anteriores e com setor, vira informação.</li><li><strong>4. Garantia inflada</strong> — equipamento alienado fiduciariamente vale na execução o que vale na revenda forçada. Não 100% nominal. Sempre desconte.</li><li><strong>5. Cenário de estresse só com queda de receita</strong> — receita E margem caem em crise. Modele os dois.</li><li><strong>6. Esquecer covenant útil</strong> — operação sem covenant é \"fé e esperança\". Mínimo: alavancagem máxima, cobertura de juros mínima, reporte periódico.</li><li><strong>7. Não dimensionar exposição agregada</strong> — operação isolada parece OK, mas se levar exposição total acima do limite por cliente, comitê pode rejeitar mesmo achando bom.</li><li><strong>8. Aval de sócio sem análise patrimonial</strong> — aval só vale se o avalista tem patrimônio. DIRPF, certidões cartoriais, matrículas — sem isso, é figura.</li><li><strong>9. Mistura recomendação com narrativa</strong> — o comitê quer recomendação clara: aprovar / aprovar com condicionante / rejeitar / pendência. Hesitação não ajuda.</li><li><strong>10. Pricing fora de mercado sem justificativa</strong> — operação com spread \"atrativo\" abaixo de benchmark precisa explicar — cross-sell? Relacionamento? Senão, comitê questiona se houve \"esquecimento\" de risco.</li><li><strong>11. Hipótese sem fonte</strong> — \"setor cresce 8% ao ano\" — fonte? Se for chute, comitê desconfia de tudo no memorando.</li><li><strong>12. Não enquadrar produto à finalidade</strong> — capital de giro pra investimento de longo prazo gera mismatch e questionamento de comitê e do BACEN.</li></ul>" }
+          ,
+          { type: 'study', label: "REVISÃO PROFISSIONAL", body: "<h3>🏦 Antes de levar ao comitê</h3><ol><li><strong>Sumário executivo testado</strong>: leia em voz alta, alguém que não conhece o caso entende a recomendação?</li><li><strong>Demonstrações financeiras</strong> conferidas com obrigações acessórias e extratos bancários — divergência exige explicação</li><li><strong>Análise patrimonial dos avalistas</strong> documentada: DIRPF, certidões cartoriais, ônus reais, eventuais ações</li><li><strong>Garantia</strong>: laudo de avaliação atual + certidões + minuta de instrumento (AF, hipoteca, fiança) revisada por jurídico</li><li><strong>Política interna</strong>: enquadramento por produto, segmento, alçada — alçada certa pra esse comitê?</li><li>Para <strong>operações BNDES / direcionadas</strong>: enquadramento da finalidade verificado conforme regras da linha</li><li><strong>Cenário base + estresse</strong> documentados, com fonte das premissas (vendas, custo, capex)</li><li><strong>Covenants</strong> definidos com numerador, denominador, frequência, gatilho de aceleração</li><li><strong>Exposição agregada</strong>: limite por cliente / por grupo econômico checado — nova operação respeita?</li><li><strong>SCR/Bacen</strong> consultado — exposição do cliente em outros bancos, atrasos, recuperação</li><li><strong>AML/PLD</strong>: KYC do cliente atualizado, beneficiário final identificado, origem dos recursos compatível</li><li><strong>Concorrência</strong>: cliente está negociando com outros bancos? Se sim, é vantagem pra precificação ou risco de churn pós-aprovação?</li><li>Para <strong>operação acima de R$ X</strong> (definido pela política): segunda revisão por outro analista sênior</li><li><strong>Pricing</strong> consistente com risco e ROE alvo — fora do alvo precisa de justificativa estratégica</li><li><strong>Documentação societária</strong>: ata da reunião que aprova endividamento, procurações vigentes, contrato social atualizado</li><li>Para <strong>partes relacionadas</strong>: tratamento conforme Circular BACEN 3.461 — limites, vedações, divulgação</li><li><strong>Recomendação clara</strong>: aprovar / aprovar com condicionantes / rejeitar / pendência. Sem ambiguidade.</li><li><strong>Resolução 4.557/2017</strong>: gerenciamento de risco da instituição contemplado na decisão</li></ol>" }
         ]
       },
       {
@@ -14552,6 +15093,13 @@ const PRO_TRACKS = {
         time: '30 min', xp: 0, level: 'intermediária',
         sections: [
           { type: 'build', label: 'PROMPT', body: '<div class="prompt-card"><button class="copy" onclick="copyPrompt(this)">Copiar</button>Cliente em atraso. Estruture a abordagem de renegociação.\n\nPerfil do cliente: [PJ / PF / PORTE / RELACIONAMENTO HISTÓRICO]\nValor em atraso: [VALOR]\nDias de atraso: [QUANTOS]\nMotivo declarado pelo cliente (se conhecido): [QUAL]\nProduto: [QUAL]\nGarantias: [QUAIS]\nOutras dívidas com o banco: [LISTE]\nValor de provisão atual: [%]\n\nPolítica do banco pra renegociação: [LIMITES / PRAZOS PERMITIDOS]\n\nMe entrega:\n\n**1. Análise da situação**\n- Causa provável (problema temporário, estrutural, fraude)\n- Capacidade real do cliente em renegociar\n- Risco de inadimplência total\n\n**2. Cenários de renegociação**\nPra cada cenário, o que oferecer e por quê:\n- Cenário A: prazo estendido\n- Cenário B: redução de juros + prazo\n- Cenário C: deságio com pagamento\n- Cenário D: execução de garantia\n\n**3. Recomendação**\n- Qual cenário fazer mais sentido\n- Justificativa\n- Resultado esperado pro banco\n\n**4. Como abordar**\n- 1 contato inicial (telefone ou e-mail) com 3 frases-modelo\n- Reunião presencial / online: roteiro de 5 pontos\n- Linguagem: firme mas respeitosa, sem ameaça gratuita\n- Como ouvir antes de propor\n\n**5. Documentação**\n- O que pedir do cliente antes da reunião\n- O que registrar durante\n- Aprovações necessárias\n\n**6. Sinais críticos**\n- Quando escalar pra contencioso / cobrança terceirizada\n- Quando insistir em recuperação amigável\n\nTom: profissional, sem agressividade, mas direto sobre as opções.\n\nAVISO: este conteúdo é apoio operacional. Não substitui análise formal de crédito, parecer de comitê, ou conformidade regulatória (BACEN, CVM). Decisões de risco/crédito devem seguir os processos formais da instituição.</div>' }
+        
+          ,
+          { type: 'study', label: "EXEMPLO", body: "<h3>Como Claude responde — exemplo real</h3><p style=\"font-family: var(--mono); font-size: 12px; color: var(--ivory-3); margin: 8px 0;\">[INPUT — cliente PJ, capital de giro R$ 2MM, 67 dias de atraso, motivo declarado: queda de venda no e-commerce e perda de cliente importante. Relacionamento de 6 anos, antes nunca em atraso. Garantia: aval dos sócios. Provisão atual: 50%]</p><p><strong>Output do Claude — Estratégia de renegociação:</strong></p><p><strong>1. Análise da situação</strong></p><ul><li>Causa provável: <strong>impacto operacional real</strong> (perda de cliente + retração canal), não estrutural por enquanto</li><li>Capacidade real de renegociar: <strong>moderada</strong> — sócios têm aval, há disposição em conversar. Risco: aceitar termos irrealistas só pra adiar problema.</li><li>Risco de inadimplência total: <strong>~35-40%</strong> sem acordo, ~15% com acordo bem estruturado</li><li>Cliente sinaliza pagar — disposição existe</li></ul><p><strong>2. Cenários de renegociação</strong></p><div style=\"background: rgba(127,185,138,0.06); padding: 12px; border-left: 3px solid #7fb98a; margin: 8px 0;\"><p><strong>Cenário A — Repactuação simples (preferencial pro cliente)</strong></p><ul><li>Estender prazo de 12 pra 24 meses</li><li>Mantém juros, recapitaliza atraso</li><li>Risco pro banco: alto se causa for estrutural</li><li>Probabilidade de adimplência: ~55%</li></ul><p><strong>Cenário B — Repactuação com aporte do cliente</strong></p><ul><li>Cliente paga 30% imediato (R$ 600k)</li><li>Saldo (R$ 1,4MM) repactuado em 18 meses</li><li>Mantém juros</li><li>Risco pro banco: médio</li><li>Probabilidade de adimplência: ~75%</li><li>Sinaliza compromisso real</li></ul><p><strong>Cenário C — Deságio com pagamento concentrado</strong></p><ul><li>Cliente paga R$ 1,5MM em 60 dias (75% do principal)</li><li>Banco baixa R$ 500k em prejuízo</li><li>Resolve em 60 dias</li><li>Útil se cliente tem liquidez pontual ou novo crédito de outro banco</li><li>Probabilidade de execução: ~40%</li></ul><p><strong>Cenário D — Execução de aval</strong></p><ul><li>Última opção</li><li>Aval pessoal: análise patrimonial dos avalistas</li><li>Tempo: 18-36 meses</li><li>Recuperação esperada: ~50-60% (depende do patrimônio)</li><li>Custo de cobrança ~10-15%</li></ul></div><p><strong>3. Recomendação</strong></p><p>Iniciar com <strong>Cenário B (repactuação com aporte)</strong>. Justificativa:</p><ul><li>Sinaliza compromisso real do cliente (não é teatro)</li><li>Reduz exposição imediata do banco em 30%</li><li>Probabilidade de adimplência maior que A</li><li>Mantém relacionamento se causa for temporária</li><li>Se cliente não tem os 30%, mostra que situação é mais grave que declarado</li></ul><p><strong>4. Como abordar</strong></p><p><strong>Contato inicial (telefone)</strong>:</p><div style=\"background: rgba(212,164,55,0.06); padding: 10px; border-left: 3px solid var(--amber); font-style: italic; margin: 8px 0;\"><p>\"Sr. [Nome], é [Seu Nome] do banco [X]. Estou ligando porque vi que a operação está em atraso há mais de 60 dias e queria entender direto com o senhor a situação antes de tomarmos qualquer decisão. O senhor tem 15 minutos pra conversar agora ou prefere agendar pra amanhã?\"</p></div><p><strong>Reunião — roteiro 5 pontos</strong>:</p><ol><li><strong>Ouvir primeiro</strong> (15 min): pedir o cliente explicar o que houve, planos, projeção. Anotar.</li><li><strong>Mostrar a foto do banco</strong> (5 min): valor em atraso, juros acumulados, exposição total, situação cadastral SCR.</li><li><strong>Apresentar opções</strong> (10 min): A, B, C com prós e contras de cada. Não dar opinião ainda.</li><li><strong>Pedir contraproposta</strong> (10 min): \"qual desses faz sentido pro senhor? Tem proposta diferente?\"</li><li><strong>Fechar com próximos passos</strong> (5 min): pedir documentação (extrato bancário recente, projeção de fluxo, comprovação dos 30% se cenário B), próxima reunião em 7-10 dias com proposta formal.</li></ol><p>Tom: <strong>firme nas opções, flexível nos termos, sem ameaça gratuita</strong>. Cliente em atraso já sabe que pode ir pra cobrança — não precisa lembrar a cada frase.</p><p><strong>5. Documentação</strong></p><ul><li><strong>Pedir antes</strong>: extrato bancário 90 dias, balanço/balancete 2024, projeção de fluxo 12 meses, declaração patrimonial atualizada dos avalistas</li><li><strong>Registrar</strong>: ata da reunião, narrativa da conversa, proposta apresentada, contraproposta do cliente, decisão final</li><li><strong>Aprovações</strong>: alçada de renegociação varia — provisão de 50% requer geralmente aprovação de superintendente ou comitê</li></ul><p><strong>6. Sinais críticos</strong></p><ul><li>🔴 <strong>Escalar pra contencioso</strong>: cliente desaparece (não atende ligação por 7+ dias), tenta dar bens em garantia que não são dele, indícios de fraude/desvio, ação cível ou penal anterior contra os sócios</li><li>🟡 <strong>Insistir em recuperação amigável</strong>: cliente em diálogo aberto, apresenta documentação, propõe contrapropostas razoáveis, situação em recuperação visível</li></ul><p style=\"margin-top: 12px; opacity: 0.8; font-size: 14px;\">Note: 4 cenários quantificados com probabilidade. Recomendação justificada. Roteiro concreto. Documentação clara. Critério explícito pra escalar.</p>" }
+          ,
+          { type: 'study', label: "PEGADINHAS", body: "<h3>Pegadinhas em renegociação de dívida</h3><ul><li><strong>1. Aceitar narrativa do cliente sem cruzar dados</strong> — \"queda de venda\" pode ser desvio de caixa, sócio fraudando, problema fiscal grave. Sempre peça extrato bancário e balancete recente.</li><li><strong>2. Renegociar pra \"ganhar tempo\" sem real plano</strong> — empurrar problema 12 meses só posterga e piora cobertura de garantia (juros acumulam, valor de execução cai).</li><li><strong>3. Renegociação muito favorável \"pra preservar relacionamento\"</strong> — cliente em risco real raramente volta a ser bom. Renegociação não é favor — é gestão de perda esperada.</li><li><strong>4. Não documentar conversa</strong> — em eventual disputa judicial, conversa não documentada não existe. Ata, e-mail, gravação (com aviso) — sempre.</li><li><strong>5. Ameaça vazia</strong> — dizer \"vamos executar amanhã\" e não executar perde credibilidade. Diga só o que vai cumprir.</li><li><strong>6. Aceitar só promessa, sem ação</strong> — \"vou pagar mês que vem\" sem nenhuma garantia adicional ou aporte é apenas postergação. Pelo menos parte deve ser pago no momento da renegociação.</li><li><strong>7. Esquecer impacto regulatório</strong> — Resolução 2.682 e Resolução 4.966/2021 (CMN) classificam reescalonamentos. Renegociação muda rating, muda provisão.</li><li><strong>8. Não envolver compliance/jurídico em sinais de fraude</strong> — desvio, esquema, falsificação de documento — a partir do momento que aparece sinal, comunique. Renegociar com fraudador é cumplicidade.</li><li><strong>9. Aceitar garantia \"nova\" sem due diligence</strong> — cliente oferece imóvel pra reforçar garantia: matrícula? livre? avaliação? Se acabou de comprar, suspeita.</li><li><strong>10. Não considerar deságio</strong> — em alguns casos, recuperar 70% em 60 dias é melhor que 100% em 5 anos com 50% de chance de não receber. Calcule VPL com risco.</li><li><strong>11. Renegociar sem alçada</strong> — superintendente ou comitê. Aprovação informal por chat não tem validade.</li><li><strong>12. Esquecer cross-default com outras operações</strong> — cliente com 3 operações no banco. Renegociar uma sem revisar as outras é parcial. Olhe a posição inteira.</li></ul>" }
+          ,
+          { type: 'study', label: "REVISÃO PROFISSIONAL", body: "<h3>🏦 Antes de fechar renegociação</h3><ol><li><strong>Documentação do cliente</strong> recente (90 dias): extrato bancário, balancete, projeção, declaração patrimonial avalistas</li><li><strong>SCR/Bacen</strong>: exposição em outros bancos, atrasos generalizados, ações</li><li><strong>Cadastros restritivos</strong>: Serasa, protestos, ações em curso</li><li><strong>Análise patrimonial</strong> dos avalistas: viável ou figurativa?</li><li><strong>Sinais de fraude</strong>: mudança societária recente, transferência de ativos, novo CNPJ, holding nova — escala pra compliance</li><li><strong>Política interna de renegociação</strong>: limites de prazo, deságio máximo, alçadas — confira</li><li><strong>Resolução BACEN 2.682 / Resolução CMN 4.966/2021</strong>: classificação correta da renegociação, impacto na provisão</li><li>Para <strong>renegociação com deságio</strong>: aprovação superior, registro contábil correto, comunicação ao cliente clara sobre saldo final</li><li><strong>Cross-default</strong>: outras operações do mesmo cliente afetadas? Cláusula no contrato?</li><li><strong>Aval e fiança</strong>: avalista assina nova condição. Se não assinar, aval original pode caducar.</li><li><strong>Documentação contratual</strong>: aditivo ao contrato original, ratificação de garantias, novo cronograma</li><li><strong>Comunicação ao cliente</strong> escrita: condições, valor total, taxa, prazo, próxima parcela — sem espaço pra ambiguidade</li><li>Para <strong>cliente em recuperação judicial / extrajudicial</strong>: regras específicas (Lei 11.101/2005)</li><li><strong>Reporte</strong>: renegociação significativa pode ter impacto em divulgação (banco listado) ou em relatório à reguladora</li><li><strong>Reavaliação periódica</strong>: cliente renegociado precisa ser monitorado — política de classificação após renegociação varia</li></ol>" }
         ]
       },
       {
@@ -14561,6 +15109,13 @@ const PRO_TRACKS = {
         time: '40 min', xp: 0, level: 'avançada',
         sections: [
           { type: 'build', label: 'PROMPT', body: '<div class="prompt-card"><button class="copy" onclick="copyPrompt(this)">Copiar</button>Vou descrever o portfolio. Faz análise de risco.\n\nPortfolio analisado: [TIPO — crédito PJ / PF / consórcio / cartão / etc]\nVolume total: [VALOR]\nN de operações: [QUANTAS]\n\nDistribuição (cole o que tem):\n- Por segmento (porte, setor)\n- Por região\n- Por produto\n- Por rating de risco\n- Por safra (data de origem)\n\nIndicadores atuais:\n- Inadimplência total: [%]\n- Inadimplência por safra recente: [%]\n- Recuperação histórica: [%]\n- PDD (provisão atual): [%]\n\nMudanças recentes:\n[NOVA POLÍTICA, MUDANÇA DE MERCADO, EVENTOS RELEVANTES]\n\nMe entrega:\n\n**1. Foto consolidada**\n- Saúde geral do portfolio\n- Comparação com período anterior\n- Comparação com setor (se possível inferir)\n\n**2. Concentrações de risco**\n- Setor com exposição maior\n- Região com inadimplência mais alta\n- Faixa de valor com risco desproporcional\n- Cliente único (se houver) com peso material\n\n**3. Análise por safra**\n- Quais safras estão se deteriorando\n- Qual safra está performando melhor\n- Por quê (hipóteses)\n\n**4. Indicadores líderes de problema**\n- Aumento de prazo de pagamento\n- Reescalonamentos crescentes\n- Setor com sinais macro adversos\n\n**5. Top 5 riscos prioritários**\n- Pra cada: qual o risco, magnitude potencial, ação recomendada\n\n**6. Recomendações estratégicas**\n- Onde reduzir exposição\n- Onde manter\n- Onde expandir com cuidado\n- Mudança de política sugerida\n\n**7. Triggers pra reavaliação**\n- O que monitorar mensalmente\n- O que dispara revisão extraordinária\n\nNão substitui modelos quantitativos do banco. Apoia análise qualitativa.\n\nAVISO: este conteúdo é apoio operacional. Não substitui análise formal de crédito, parecer de comitê, ou conformidade regulatória (BACEN, CVM). Decisões de risco/crédito devem seguir os processos formais da instituição.</div>' }
+        
+          ,
+          { type: 'study', label: "EXEMPLO", body: "<h3>Como Claude responde — exemplo real</h3><p style=\"font-family: var(--mono); font-size: 12px; color: var(--ivory-3); margin: 8px 0;\">[INPUT — portfolio de crédito PJ MidMarket de banco médio, R$ 1,2bn em volume, ~480 operações, inadimplência total subiu de 4,2% pra 6,8% nos últimos 6 meses]</p><p><strong>Output do Claude (resumido):</strong></p><p><strong>1. Foto consolidada</strong></p><ul><li>Volume: R$ 1,2bn estável</li><li>Inadimplência: 6,8% (vs 4,2% há 6 meses) — <strong>aumento material de +62% relativo</strong></li><li>Recuperação histórica: 35% — sem mudança aparente</li><li>PDD atual: 5,2% — pode estar subprovisionada se inadimplência continuar subindo</li><li>vs setor (Sefaz/BCB): bancos médios em PJ MidMarket, inadimplência média ~5,5% — <strong>portfolio acima da média</strong></li></ul><p><strong>2. Concentrações de risco</strong></p><table style=\"width:100%; font-size:12px; border-collapse:collapse;\"><tr style=\"background:rgba(212,164,55,0.08);\"><th style=\"padding:6px; border:1px solid var(--line);\">Concentração</th><th style=\"padding:6px; border:1px solid var(--line);\">Exposição</th><th style=\"padding:6px; border:1px solid var(--line);\">Inadimplência</th></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">🔴 Construção civil</td><td style=\"padding:6px; border:1px solid var(--line);\">R$ 280MM (23%)</td><td style=\"padding:6px; border:1px solid var(--line);\">11,2%</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">🟡 Varejo físico</td><td style=\"padding:6px; border:1px solid var(--line);\">R$ 195MM (16%)</td><td style=\"padding:6px; border:1px solid var(--line);\">8,4%</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">🟢 Indústria alimentícia</td><td style=\"padding:6px; border:1px solid var(--line);\">R$ 145MM (12%)</td><td style=\"padding:6px; border:1px solid var(--line);\">3,1%</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">🟢 Logística/transporte</td><td style=\"padding:6px; border:1px solid var(--line);\">R$ 132MM (11%)</td><td style=\"padding:6px; border:1px solid var(--line);\">4,5%</td></tr></table><p><strong>3. Análise por safra</strong></p><ul><li><strong>Safra 2024-Q4</strong> (originação Out-Dez 2024): inadimplência 30 dias = 7,2% — <strong>pior safra dos últimos 24 meses</strong></li><li><strong>Safra 2024-Q3</strong>: inadimplência 30 dias = 5,8%</li><li><strong>Safra 2024-Q2</strong>: 4,1%</li><li><strong>Safra 2024-Q1</strong>: 3,8%</li><li>Hipóteses: (a) afrouxamento de política de crédito no Q4 pra cumprir meta de originação? (b) entrada em segmentos novos sem expertise? (c) aumento de spread atraindo cliente subprime?</li></ul><p><strong>4. Indicadores líderes de problema</strong></p><ul><li>🔴 <strong>Renegociações crescentes</strong>: 32 op./mês (vs 18/mês há 6 meses)</li><li>🔴 Prazo médio de pagamento dos clientes <strong>subindo em 11 dos top 50</strong> (DSO crescendo)</li><li>🟡 <strong>Construção civil com sinal macro adverso</strong> (taxa de juros, queda de lançamentos)</li><li>🟡 Operações em <strong>conta margem reduzindo</strong> em 8% — clientes apertados</li></ul><p><strong>5. Top 5 riscos prioritários</strong></p><ol><li><strong>Construção civil</strong> — exposição R$ 280MM, inadimplência 11,2%, sem cobertura de garantia adequada em ~40% das operações. Risco potencial: R$ 31MM em perdas se inadimplência subir pra 15%. <strong>Ação: parar originação nova nesse setor + revisar top 20 operações em curso.</strong></li><li><strong>Safra 2024-Q4</strong> deteriorando — risco de continuar piorando. <strong>Ação: auditoria de critério de aprovação dessa safra + revisão de todos os clientes que entraram com rating B-/C.</strong></li><li><strong>Renegociações</strong> em ritmo crescente — sinal estrutural, não pontual. <strong>Ação: análise dos perfis renegociados, revisar política de aprovação inicial.</strong></li><li><strong>PDD potencialmente insuficiente</strong> — se inadimplência continuar subindo, provisão atual pode ser questionada por auditoria/regulador. <strong>Ação: stress test de provisão com cenário pessimista.</strong></li><li><strong>Concentração varejo físico</strong> em segmento estrutural em queda. <strong>Ação: limite máximo de 12% no setor, redução gradual.</strong></li></ol><p><strong>6. Recomendações estratégicas</strong></p><ul><li><strong>Reduzir exposição</strong>: construção civil (de 23% pra 15% em 12 meses), varejo físico (de 16% pra 12%)</li><li><strong>Manter</strong>: indústria alimentícia, logística, agronegócio</li><li><strong>Expandir com cuidado</strong>: tecnologia/SaaS B2B, indústria de exportação</li><li><strong>Mudança de política</strong>: rating mínimo voltar pra B (estava B-), exigência de garantia real em construção civil, revisão trimestral de safras</li></ul><p><strong>7. Triggers pra reavaliação</strong></p><ul><li>Mensal: inadimplência, renegociações, originação por setor, PDD vs realizado</li><li>Trimestral: análise por safra, concentrações, top 50 maiores exposições</li><li>Reavaliação extraordinária: inadimplência setor &gt; 12%, queda macroeconômica relevante, mudança regulatória</li></ul><p style=\"margin-top: 12px; opacity: 0.8; font-size: 14px;\">Note: análise quantitativa com sinais qualitativos. Top 5 priorizados com ação concreta. Recomendações estratégicas com horizonte. Triggers explícitos.</p>" }
+          ,
+          { type: 'study', label: "PEGADINHAS", body: "<h3>Pegadinhas em análise de portfolio</h3><ul><li><strong>1. Olhar inadimplência média</strong> — 6,8% médio pode esconder setor com 15% e setor com 2%. Sempre analise por segmento, geo, safra.</li><li><strong>2. Confiar em recuperação histórica</strong> — recuperação caiu nos últimos meses? Provisão precisa subir.</li><li><strong>3. Análise de safra atrasada</strong> — safra de 6 meses atrás é tarde demais pra agir. Inadimplência inicial (30-60 dias) é indicador líder.</li><li><strong>4. Não enxergar tendência setorial</strong> — construção em ciclo de baixa antes da inadimplência aparecer no portfolio. Análise macro/setorial é leading indicator.</li><li><strong>5. Concentração de produto ignorada</strong> — só olhar por setor não basta. Concentração em capital de giro (sensível a economia) vs investimento de longo prazo (mais resiliente).</li><li><strong>6. Renegociações como solução</strong> — renegociação alta sustentada esconde inadimplência. Cliente renegocia 2-3 vezes antes de virar perda.</li><li><strong>7. PDD baseada em modelo histórico</strong> — modelo treinado em ambiente pré-COVID erra em ambiente novo. Adicione cenário de estresse pessimista.</li><li><strong>8. Top 50 exposições não monitoradas individualmente</strong> — concentração de risco em poucos clientes grandes — perda em 1-2 vira material.</li><li><strong>9. Originação meta sobre risco</strong> — pressão de meta de volume relaxa critério. Se inadimplência subiu junto com originação, é o sinal.</li><li><strong>10. Recuperação só de garantia, sem foco em prevenção</strong> — investir em monitoramento ativo (DSO, sinais leading) economiza mais que execução posterior.</li><li><strong>11. Provisão \"lavada\"</strong> — banco listado tem incentivo pra provisão menor (resultado melhor). Auditoria interna deve resistir a pressão comercial.</li><li><strong>12. Comparação com benchmark errado</strong> — banco médio se compara com Itaú? Não. Compare por porte, segmento, geografia.</li></ul>" }
+          ,
+          { type: 'study', label: "REVISÃO PROFISSIONAL", body: "<h3>🏦 Antes de submeter análise ao comitê de risco</h3><ol><li><strong>Metodologia</strong> documentada: critério de classificação, fonte de dados, período, exclusões</li><li><strong>Cruzamento de dados</strong>: sistema de crédito vs SCR/Bacen vs auditoria externa — discrepância exige investigação</li><li><strong>Análise por safra</strong> com dados primários (não médias acumuladas)</li><li><strong>Indicadores líderes</strong> claramente separados de indicadores defasados (inadimplência total)</li><li><strong>Concentrações</strong>: por cliente, grupo econômico, setor, geografia, produto, prazo</li><li>Para <strong>indicador setorial</strong>: dados macro do BCB, IBGE, IBC-Br, sociedades setoriais — fonte explícita</li><li><strong>Cenário de estresse</strong> da PDD: inadimplência +30%, +50%, +100% — qual buffer atual cobre?</li><li><strong>Comparação com benchmark</strong>: bancos pares (mesmo porte, mesmo segmento) — Anbima, Banco Central tem dados</li><li><strong>Resolução BACEN 4.557/2017</strong> (gerenciamento integrado de risco) e <strong>Resolução CMN 4.966/2021</strong> (provisões para perdas esperadas) — análise compatível?</li><li>Para <strong>banco listado</strong>: análise pode ter impacto em divulgação ou impairment — coordenação com Controladoria</li><li><strong>Recomendações com responsável e prazo</strong> — sem isso, é academia</li><li><strong>Triggers de monitoramento</strong> definidos: o que dispara reavaliação, qual a frequência</li><li>Para <strong>setor com sinal forte de deterioração</strong>: comunicação imediata ao comitê executivo, não esperar relatório regular</li><li><strong>Auditoria interna</strong> deve poder revisar a análise e questionar conclusões</li><li>Para <strong>portfolio em FIDC ou securitizado</strong>: análise específica conforme cota, série, prioridade — risco compartilhado mas tratamento contábil diferente</li></ol>" }
         ]
       },
       {
@@ -14570,6 +15125,13 @@ const PRO_TRACKS = {
         time: '40 min', xp: 0, level: 'avançada',
         sections: [
           { type: 'build', label: 'PROMPT', body: '<div class="prompt-card"><button class="copy" onclick="copyPrompt(this)">Copiar</button>Vou descrever a situação. Estrutura documentação regulatória.\n\nÓrgão regulador: [BACEN / CVM / ANBIMA / SUSEP / OUTRO]\nCircular / instrução aplicável: [QUAL — se conhecida]\nTipo de documentação: [POLÍTICA / RELATÓRIO / RESPOSTA A OFÍCIO / PARECER]\n\nContexto:\n[DESCREVA O QUE PRECISA SER REPORTADO]\n\nDados disponíveis:\n[COLE]\n\nPolíticas internas relacionadas:\n[LISTE]\n\nMe entrega:\n\n**1. Estrutura do documento**\n- Seções principais (alinhada com a circular se citada)\n- Objetivo de cada seção\n- Conteúdo mínimo esperado\n\n**2. Conteúdo de cada seção**\n- Texto-base (sujeito a revisão jurídica)\n- Dados a inserir (com placeholders se faltam)\n- Linguagem alinhada com padrão regulatório\n\n**3. Checklist de conformidade**\n- O que a circular exige (lista verificável)\n- Onde no documento cada item está coberto\n- Lacunas identificadas\n\n**4. Pontos de atenção**\n- Pontos que podem gerar questionamento do regulador\n- Como antecipar / posicionar\n- Onde precisa de revisão jurídica antes de submeter\n\n**5. Anexos sugeridos**\n- O que adicionar como evidência\n\n**6. Aprovação interna**\n- Quem precisa aprovar antes de submeter\n- Sequência de aprovação\n\nLinguagem técnica regulatória. Sem opinião. Foco em precisão e completude.\n\nAVISO: este conteúdo é apoio operacional. Não substitui análise formal de crédito, parecer de comitê, ou conformidade regulatória (BACEN, CVM). Decisões de risco/crédito devem seguir os processos formais da instituição.</div>' }
+        
+          ,
+          { type: 'study', label: "EXEMPLO", body: "<h3>Como Claude responde — exemplo real</h3><p style=\"font-family: var(--mono); font-size: 12px; color: var(--ivory-3); margin: 8px 0;\">[INPUT — banco médio precisa documentar política de crédito conforme Resolução BACEN 4.557/2017 (gerenciamento de risco). Documento solicitado pela auditoria externa antes do fechamento]</p><p><strong>Output do Claude (estrutura completa):</strong></p><p><strong>1. Estrutura do documento</strong></p><div style=\"background: rgba(127,185,138,0.06); padding: 12px; border-left: 3px solid #7fb98a; margin: 8px 0;\"><p><strong>POLÍTICA DE GERENCIAMENTO DO RISCO DE CRÉDITO</strong> (alinhada à Res. BACEN 4.557/2017)</p><ol><li><strong>Objetivo e escopo</strong> — propósito da política, áreas cobertas, definições</li><li><strong>Estrutura organizacional</strong> — papéis e responsabilidades (Conselho, Diretoria, Comitê de Risco, CRO, áreas de negócio)</li><li><strong>Apetite ao risco</strong> — declaração formal, limites globais, limites específicos</li><li><strong>Identificação de riscos</strong> — categorias (crédito de PJ, PF, soberano, contraparte, concentração)</li><li><strong>Mensuração</strong> — modelos, premissas, validação, frequência</li><li><strong>Gestão e monitoramento</strong> — limites operacionais, alçadas, gatilhos</li><li><strong>Mitigação</strong> — garantias, hedge, securitização, transferência</li><li><strong>Reporte</strong> — destinatários, conteúdo, frequência</li><li><strong>Teste de estresse</strong> — cenários, periodicidade, ações</li><li><strong>Provisões</strong> — metodologia (alinhada a Res. CMN 4.966/2021)</li><li><strong>Continuidade e revisão</strong> — periodicidade, gatilhos extraordinários, governança</li><li><strong>Anexos</strong> — definições, responsabilidades detalhadas, mapas de processo</li></ol></div><p><strong>2. Conteúdo de cada seção (texto-base)</strong></p><p><em>Seção 3 — Apetite ao Risco (exemplo):</em></p><div style=\"background: rgba(212,164,55,0.06); padding: 12px; border-left: 3px solid var(--amber); margin: 8px 0;\"><p>\"O Conselho de Administração aprova anualmente a Declaração de Apetite ao Risco da Instituição, que define a tolerância máxima a perdas em condições normais e de estresse. Os limites de exposição ao risco de crédito serão estabelecidos com base em:</p><ul><li>Capital regulatório alocado (Pilar 2)</li><li>Resultado projetado e payout target</li><li>Perda esperada e perda inesperada</li><li>Cenários macroeconômicos definidos pela área de Pesquisa Econômica</li></ul><p>Limites específicos de concentração serão observados:</p><ul><li>Por contraparte: máximo de [X]% do PR (Patrimônio de Referência)</li><li>Por grupo econômico: máximo de [Y]% do PR</li><li>Por setor de atividade econômica: máximo de [Z]% da carteira</li><li>Por geografia: limites por região conforme análise macro</li></ul><p>Excepções aos limites devem ser aprovadas pelo Comitê de Risco e ratificadas pela Diretoria, com registro formal de justificativa e plano de remediação.\"</p></div><p><strong>3. Checklist de conformidade (Res. 4.557)</strong></p><table style=\"width:100%; font-size:12px; border-collapse:collapse;\"><tr style=\"background:rgba(212,164,55,0.08);\"><th style=\"padding:6px; border:1px solid var(--line);\">Exigência da Resolução</th><th style=\"padding:6px; border:1px solid var(--line);\">Cobertura</th><th style=\"padding:6px; border:1px solid var(--line);\">Status</th></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Estrutura organizacional definida</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 2</td><td style=\"padding:6px; border:1px solid var(--line); color:#7fb98a;\">✓</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Apetite ao risco aprovado pelo CA</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 3</td><td style=\"padding:6px; border:1px solid var(--line); color:#7fb98a;\">✓</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Identificação dos riscos relevantes</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 4</td><td style=\"padding:6px; border:1px solid var(--line); color:#7fb98a;\">✓</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Modelos validados independentemente</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 5</td><td style=\"padding:6px; border:1px solid var(--line); color:#d4a437;\">⚠ pendente</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Teste de estresse periódico</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 9</td><td style=\"padding:6px; border:1px solid var(--line); color:#7fb98a;\">✓</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Reporte ao Conselho</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 8</td><td style=\"padding:6px; border:1px solid var(--line); color:#7fb98a;\">✓</td></tr><tr><td style=\"padding:6px; border:1px solid var(--line);\">Revisão periódica formal</td><td style=\"padding:6px; border:1px solid var(--line);\">Seção 11</td><td style=\"padding:6px; border:1px solid var(--line); color:#7fb98a;\">✓</td></tr></table><p><strong>4. Pontos de atenção</strong></p><ul><li>🟡 <strong>Validação independente de modelos (item 5)</strong>: precisa documentar processo formal e ter última validação registrada antes da auditoria</li><li>🟡 <strong>Limites específicos</strong>: a política não pode ter limites como \"[X]%\" no documento final — precisa de números aprovados pelo CA</li><li>🟢 <strong>Teste de estresse</strong>: já existe framework, só precisa formalizar na política</li><li>🔴 <strong>Resolução CMN 4.966/2021 (provisões)</strong>: a política atual menciona, mas precisa atualizar metodologia pra modelo de perda esperada (não apenas perda incorrida)</li></ul><p><strong>5. Anexos sugeridos</strong></p><ul><li>Mapa de processos de aprovação por alçada</li><li>Lista atual de modelos de risco e datas de validação</li><li>Cenários de estresse aprovados pelo Comitê</li><li>Estrutura de comitês com calendário e quorum</li></ul><p><strong>6. Aprovação interna</strong></p><ol><li>Diretoria de Risco — revisão técnica</li><li>Compliance — aderência regulatória</li><li>Jurídico — revisão de termos contratuais</li><li>Comitê de Risco — aprovação técnica</li><li>Diretoria Executiva — aprovação executiva</li><li>Conselho de Administração — aprovação final (mínimo anual)</li></ol><p style=\"margin-top: 12px; opacity: 0.8; font-size: 14px;\">Note: estrutura completa alinhada à Resolução. Conteúdo-base sujeito à revisão jurídica e definição numérica pelos comitês. Checklist evidencia gaps. Sequência de aprovação clara.</p>" }
+          ,
+          { type: 'study', label: "PEGADINHAS", body: "<h3>Pegadinhas em documentação regulatória bancária</h3><ul><li><strong>1. Copiar texto da resolução pra política</strong> — política é como o banco aplica a resolução, não a resolução repetida. Auditor estranha.</li><li><strong>2. Limites genéricos sem número</strong> — \"limites adequados\" não é limite. Tem que ter número específico aprovado pelo CA.</li><li><strong>3. Política sem responsabilidades claras</strong> — quem aprova, quem monitora, quem reporta — sem nome de cargo, política é decorativa.</li><li><strong>4. Não atualizar conforme novas resoluções</strong> — Res. CMN 4.966/2021 mudou regime de provisão. Política antiga ainda fala em \"perda incorrida\" — fica defasada.</li><li><strong>5. Falta de evidências de aplicação</strong> — política diz \"teste de estresse semestral\" — onde estão os testes? Auditor pede.</li><li><strong>6. Reporte não documentado</strong> — política diz \"Conselho recebe reporte mensal\" — atas? Conteúdo? Sem trilha, é declaração no papel.</li><li><strong>7. Modelo sem validação independente</strong> — modelo de rating do banco precisa ser validado por área independente. Sem isso, regulador questiona objetividade.</li><li><strong>8. Excepção sistemática aos limites</strong> — política diz limite X, mas 30% das operações estouram. Sinaliza que política é teórica.</li><li><strong>9. Teste de estresse \"soft\"</strong> — cenário pessimista pouco severo. Auditor pede comparação com cenário publicado pelo BCB.</li><li><strong>10. Não vincular apetite ao planejamento</strong> — apetite no papel desconectado do orçamento e meta comercial = teatro de governança.</li><li><strong>11. Resposta a ofício do BACEN sem precisão técnica</strong> — regulador faz pergunta específica, banco responde genericamente. Pode escalar pra processo.</li><li><strong>12. Documento sem versionamento e histórico</strong> — qual a versão vigente? Quando aprovada? Por quem? Sem isso, controle de mudanças é frágil.</li></ul>" }
+          ,
+          { type: 'study', label: "REVISÃO PROFISSIONAL", body: "<h3>🏦 Antes de submeter documento regulatório</h3><ol><li><strong>Texto da regulamentação</strong> consultado em fonte oficial (BACEN, CVM, ANBIMA, SUSEP) — NUNCA confie em texto repassado por terceiro</li><li><strong>Aderência item por item</strong>: cada exigência da resolução tem cobertura no documento — checklist documentado</li><li><strong>Linguagem regulatória</strong>: terminologia precisa, sem ambiguidade, sem \"marketingês\"</li><li>Para <strong>políticas internas</strong>: aprovação pela governança correta (Diretoria, Comitê, Conselho conforme alçada)</li><li><strong>Limites quantitativos</strong> aprovados — não use placeholders genéricos no documento final</li><li><strong>Responsabilidades</strong> claras (cargo, não pessoa) por cada processo descrito</li><li>Para <strong>resposta a ofício</strong>: pergunta específica, resposta específica — não responda além do perguntado</li><li><strong>Datas de validação</strong> de modelos atualizadas — modelo sem validação recente é red flag</li><li><strong>Evidência de aplicação</strong>: política prevê algo, prove que aconteceu (ata, relatório, teste, validação)</li><li>Para <strong>auditoria interna ou externa</strong>: peer review por outro profissional sênior antes de envio</li><li><strong>Versionamento</strong>: número de versão, data, aprovador, lista de mudanças vs versão anterior</li><li><strong>Compliance + jurídico + risco</strong>: tripla revisão antes de envio externo</li><li>Para <strong>banco listado</strong>: coordenação com Relações com Investidores e Controladoria — pode haver impacto material</li><li><strong>Prazo regulatório</strong>: respeito ao prazo, com margem mínima de 5 dias úteis pra contingência</li><li><strong>Backup do documento submetido</strong> + protocolo de envio + confirmação de recebimento — em caso de questionamento, evidência</li></ol>" }
         ]
       },
       {
@@ -16264,7 +16826,12 @@ let state = {
   completed: [],           // array of quest numbers
   shipped: [],             // array of {n, name, day, roi}
   skillLevels: {},         // { skillId: level 0-5 }
-  currentQuest: null
+  currentQuest: null,
+  // v100: Pontos Bônus — pontuação separada do XP da trilha
+  // XP = trilha principal (Claude Mastery 52 missões)
+  // Bonus Points = aulas bônus (PRO/LIFE/onboarding/gerais), revisão, extras
+  bonusPoints: 0,
+  bonusEvents: []          // log: [{at: timestamp, source: 'pro:legal-1', amount: 50, kind: 'lesson'|'review'|'streak'}]
 };
 
 // inicializa níveis de skill
@@ -16345,6 +16912,91 @@ function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
+// v100: Adicionar Pontos Bônus
+// kind: 'lesson' (aula bônus completa), 'review' (revisão de aula Claude Mastery),
+//       'extra' (atividade fora do plano), 'streak' (sequência), 'milestone' (conquista bônus)
+// source: identificador único do evento (ex: 'pro:legal-1', 'review:11', 'extra:diploma-share')
+function addBonusPoints(amount, kind, source) {
+  if (typeof amount !== 'number' || amount <= 0) return;
+  if (typeof state.bonusPoints !== 'number') state.bonusPoints = 0;
+  if (!Array.isArray(state.bonusEvents)) state.bonusEvents = [];
+  // Evita duplicação: se source já existe, não adiciona de novo (idempotente)
+  if (source && state.bonusEvents.some(e => e.source === source)) return;
+  state.bonusPoints += amount;
+  state.bonusEvents.push({
+    at: Date.now(),
+    amount: amount,
+    kind: kind || 'extra',
+    source: source || ''
+  });
+  saveState();
+  // Atualiza UI imediatamente
+  if (typeof renderBonusPointsBadge === 'function') renderBonusPointsBadge();
+  // Mensagem visual de incremento
+  if (typeof showBonusToast === 'function') showBonusToast(amount, kind);
+}
+
+// v100: render do badge "Pontos Bônus" na topbar + barra de progresso
+function renderBonusPointsBadge() {
+  const el = document.getElementById('topbar-bonus-points');
+  const fillEl = document.getElementById('tb-bonus-fill');
+  const pctEl = document.getElementById('tb-bonus-pct');
+  if (!el) return;
+  const bp = state.bonusPoints || 0;
+  el.textContent = bp.toLocaleString('pt-BR');
+  // Calcula total possível: somar pontos de todas as quests bônus de PRO_TRACKS, LIFE_TRACKS, ONBOARDING_TRACK
+  // Lessons: 25 fácil / 40 intermediária / 60 avançada
+  // Reviews: até 25 cada (tetos)
+  let totalPossible = 0;
+  const lvlPts = { 'fácil': 25, 'intermediária': 40, 'avançada': 60 };
+  function sumTrack(t) {
+    if (!t || !Array.isArray(t.quests)) return 0;
+    return t.quests.reduce((s, q) => s + (lvlPts[q.level] || 30), 0);
+  }
+  if (typeof PRO_TRACKS !== 'undefined') {
+    Object.values(PRO_TRACKS).forEach(t => { totalPossible += sumTrack(t); });
+  }
+  if (typeof LIFE_TRACKS !== 'undefined') {
+    Object.values(LIFE_TRACKS).forEach(t => { totalPossible += sumTrack(t); });
+  }
+  if (typeof ONBOARDING_TRACK !== 'undefined') {
+    totalPossible += sumTrack(ONBOARDING_TRACK);
+  }
+  const pct = totalPossible > 0 ? (bp / totalPossible) * 100 : 0;
+  // v100: barra com mínimo visual de 2% quando há QUALQUER ponto, pra dar feedback de progresso
+  // (sem isso, total possível 8000+ faz barra parecer vazia mesmo com 25 pontos ganhos)
+  const visualPct = bp > 0 ? Math.max(2, Math.min(100, pct)) : 0;
+  const displayPct = pct < 1 && pct > 0 ? pct.toFixed(1) : Math.round(pct);
+  if (fillEl) fillEl.style.width = visualPct + '%';
+  if (pctEl) pctEl.textContent = totalPossible > 0 ? `· ${displayPct}%` : '';
+}
+
+// v100: toast visual quando ganha pontos bônus
+function showBonusToast(amount, kind) {
+  const kindLabel = ({
+    lesson: 'aula bônus',
+    review: 'revisão',
+    extra: 'extra',
+    streak: 'sequência',
+    milestone: 'conquista'
+  })[kind] || 'bônus';
+  const toast = document.createElement('div');
+  toast.className = 'bonus-toast';
+  toast.innerHTML = `
+    <div class="bonus-toast-icon">⨀</div>
+    <div class="bonus-toast-body">
+      <div class="bonus-toast-amount">+${amount}</div>
+      <div class="bonus-toast-label">Pontos Bônus · ${kindLabel}</div>
+    </div>
+  `;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 3500);
+}
+
 function rankFor(xp) {
   let r = RANKS[0];
   for (const rank of RANKS) if (xp >= rank.min) r = rank;
@@ -16418,15 +17070,6 @@ const ONBOARD_STEPS = [
     field: 'firstName'
   },
   {
-    type: 'text',
-    tag: 'Boas-vindas',
-    q: 'E o <em>sobrenome</em>?',
-    deck: 'Pra constar nos diplomas que você vai ganhar concluindo trilhas. Pode pular se preferir aparecer só com o primeiro nome.',
-    placeholder: 'Seu sobrenome (opcional)',
-    field: 'lastName',
-    optional: true
-  },
-  {
     type: 'theme',
     tag: 'Aparência',
     q: 'Modo <em>claro</em> ou <em>escuro</em>?',
@@ -16497,15 +17140,15 @@ const ONBOARD_STEPS = [
   {
     type: 'single',
     tag: 'Diagnóstico · 5 / 8',
-    q: 'Sua <em>maior dor</em> com Claude hoje?',
-    deck: 'O ponto onde o curso vai te ajudar mais.',
+    q: 'O que te <em>trava</em> mais hoje?',
+    deck: 'Sem rodeio: o ponto onde o curso vai te ajudar mais. Se nunca usou Claude, é a primeira opção.',
     options: [
-      { tag: 'A', text: 'Não sei o que ele consegue fazer. Falta de visão.', value: 'discovery' },
-      { tag: 'B', text: 'Sei o que quero, mas as respostas não saem como espero.', value: 'prompting' },
-      { tag: 'C', text: 'Sei prompts, mas falta organização persistente entre conversas.', value: 'organization' },
-      { tag: 'D', text: 'Quero que Claude execute trabalho autônomo — não só responda.', value: 'autonomy' },
-      { tag: 'E', text: 'Já uso Claude diariamente, mas falta confiabilidade e custo controlado.', value: 'production' },
-      { tag: 'F', text: 'Ainda não usei Claude / tô começando agora.', value: 'beginner' }
+      { tag: 'A', text: 'Nunca usei Claude (ou IA generativa). Tô começando agora.', value: 'beginner' },
+      { tag: 'B', text: 'Já testei, mas não sei direito o que dá pra fazer com ele.', value: 'discovery' },
+      { tag: 'C', text: 'Já uso, mas as respostas dele não saem do jeito que eu queria.', value: 'prompting' },
+      { tag: 'D', text: 'Tenho que repetir o mesmo contexto em toda conversa nova — falta organização.', value: 'organization' },
+      { tag: 'E', text: 'Quero que ele faça tarefas sozinho (escrever código, agir em sistemas), não só conversar.', value: 'autonomy' },
+      { tag: 'F', text: 'Já uso direto e quero algo confiável — pra produção, com custos sob controle.', value: 'production' }
     ],
     field: 'pain'
   },
@@ -16610,12 +17253,11 @@ function renderOnboardStep() {
         showSquirrelMsg(pickMsg('welcome'), 2800);
       } else if (idx === 1) {
         const fn = onboardState.answers.firstName;
-        const msg = fn ? 'Prazer, ' + fn + '! Agora o sobrenome (opcional)' : pickMsg('onboard_lastname');
-        showSquirrelMsg(msg, 3500);
-      } else if (idx === 2) {
         const t = onboardState.answers.theme;
-        showSquirrelMsg(t ? pickMsg('onboard_theme') : pickMsg('onboard_q_start'), 2800);
-      } else if (idx >= 3 && idx < ONBOARD_STEPS.length - 1) {
+        // After name -> theme step
+        const msg = fn ? 'Prazer, ' + fn + '! Escolha o modo claro ou escuro' : (t ? pickMsg('onboard_theme') : pickMsg('onboard_q_start'));
+        showSquirrelMsg(msg, 2800);
+      } else if (idx >= 2 && idx < ONBOARD_STEPS.length - 1) {
         showSquirrelMsg(pickMsg('onboard_q_mid'), 2400);
       } else if (idx === ONBOARD_STEPS.length - 1) {
         showSquirrelMsg(pickMsg('onboard_q_end'), 2800);
@@ -17331,6 +17973,10 @@ function finishOnboard() {
   saveState();
   const ob = document.getElementById('onboard');
   if (ob) ob.classList.remove('active');
+  // v100: scroll para o topo após finalizar onboarding (estava abrindo no meio da página)
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
   initDashboard();
 }
 
@@ -17457,6 +18103,8 @@ function renderTopbar() {
     fillEl.classList.toggle('turbo-glow', turboOn);
   }
   setText('tb-streak', state.streak);
+  // v100: Pontos Bônus
+  if (typeof renderBonusPointsBadge === 'function') renderBonusPointsBadge();
 
   const _greet = state.firstName ? `Olá, <em>${escapeHtml(state.firstName)}</em>` : `Bem-vindo, <em>${escapeHtml(state.profileName)}</em>`;
   setHtml('id-name', _greet);
@@ -17800,10 +18448,25 @@ function openTrackQuestModal(q, track) {
   const isDone = state.trackCompleted.includes(q.n);
   if (completeBtn) {
     if (isDone) {
-      completeBtn.textContent = '✓ Concluída';
-      completeBtn.disabled = true;
-      // Restore markComplete handler (won't fire while disabled)
-      completeBtn.onclick = markComplete;
+      // v100: bonus tracks também viram revisáveis
+      const reviewKey = `review:${q.n}`;
+      const alreadyReviewed = (state.bonusEvents || []).some(e => e.source === reviewKey);
+      if (alreadyReviewed) {
+        completeBtn.textContent = '✓ Concluída · revisada';
+        completeBtn.disabled = true;
+        completeBtn.onclick = markComplete;
+      } else {
+        const reviewPts = ({ 'fácil': 10, 'intermediária': 15, 'avançada': 25 })[q.level] || 12;
+        completeBtn.textContent = `⨀ Marcar revisada · +${reviewPts} Pontos Bônus`;
+        completeBtn.disabled = false;
+        completeBtn.onclick = function() {
+          if (typeof addBonusPoints === 'function') {
+            addBonusPoints(reviewPts, 'review', reviewKey);
+            completeBtn.textContent = '✓ Concluída · revisada';
+            completeBtn.disabled = true;
+          }
+        };
+      }
     } else {
       completeBtn.textContent = 'Marcar concluída';
       completeBtn.disabled = false;
@@ -17839,8 +18502,12 @@ function openTrackQuestModal(q, track) {
 
   bg.classList.add('active');
   modal.classList.add('active');
-  state.currentQuest = q.n;
-  state.currentTrackQuest = q.n;  // mark as track quest for any logic that needs it
+  // v100: NÃO seta state.currentQuest pra IDs string (poluiria estado pra Mastery numérica).
+  // Só usa state.currentTrackQuest pra rastrear contexto de aula bônus.
+  if (typeof q.n === 'number') {
+    state.currentQuest = q.n;
+  }
+  state.currentTrackQuest = q.n;
 
   // Reset scroll
   if (modal) modal.scrollTop = 0;
@@ -17848,7 +18515,7 @@ function openTrackQuestModal(q, track) {
 }
 
 function markTrackQuestComplete(trackKey, questId) {
-  // Try TRACKS first, then PRO_TRACKS, then LIFE_TRACKS
+  // Try TRACKS first, then PRO_TRACKS, then LIFE_TRACKS, then ONBOARDING_TRACK
   let t = TRACKS[trackKey];
   let isBonus = false;
   if (!t && typeof PRO_TRACKS !== 'undefined' && PRO_TRACKS[trackKey]) {
@@ -17859,20 +18526,54 @@ function markTrackQuestComplete(trackKey, questId) {
     t = LIFE_TRACKS[trackKey];
     isBonus = true;
   }
-  if (!t || !Array.isArray(t.quests)) return;
+  // v100: suporte a ONBOARDING_TRACK (Ato 0) — pode vir como trackKey='onboarding' ou null
+  if (!t && typeof ONBOARDING_TRACK !== 'undefined') {
+    if (trackKey === 'onboarding' || ONBOARDING_TRACK.quests.some(q => q.id === questId)) {
+      t = ONBOARDING_TRACK;
+      isBonus = true;
+    }
+  }
+  if (!t || !Array.isArray(t.quests)) {
+    console.warn('markTrackQuestComplete: track não encontrada', trackKey, questId);
+    return;
+  }
   const tq = t.quests.find(q => q.id === questId);
-  if (!tq || state.trackCompleted.includes(questId)) return;
+  if (!tq) {
+    console.warn('markTrackQuestComplete: quest não encontrada', questId);
+    return;
+  }
+  if (state.trackCompleted.includes(questId)) {
+    // Já feita — só fechar o modal e voltar pra trilha
+    if (typeof backToBonusTrack === 'function' && state.bonusQuestOrigin) {
+      backToBonusTrack();
+    }
+    return;
+  }
 
   state.trackCompleted.push(questId);
   if (typeof state.questTimestamps !== 'object' || state.questTimestamps === null) state.questTimestamps = {};
   state.questTimestamps[questId] = Date.now();
-  // Bonus tracks NÃO dão XP (são bônus)
+  // Trilhas bônus (PRO/LIFE/onboarding) NÃO dão XP — dão Pontos Bônus
+  // Trilhas gerais (TRACKS) dão XP normal (são parte do plano de carreira)
   if (!isBonus) {
     state.xp += (tq.xp || 0);
+  } else {
+    // v100: Pontos Bônus pra aulas de trilhas bônus
+    // Cálculo: 25 pontos pra fácil, 40 intermediária, 60 avançada
+    const lvlPoints = ({ 'fácil': 25, 'intermediária': 40, 'avançada': 60 })[tq.level] || 30;
+    if (typeof addBonusPoints === 'function') {
+      addBonusPoints(lvlPoints, 'lesson', `bonus:${questId}`);
+    }
   }
   saveState();
 
-  spawnXpPop(tq.xp);
+  // v100: pop visual correto por tipo (XP em âmbar pra Mastery, Pontos Bônus em verde)
+  if (isBonus) {
+    const lvlPts = ({ 'fácil': 25, 'intermediária': 40, 'avançada': 60 })[tq.level] || 30;
+    spawnBonusPop(lvlPts);
+  } else {
+    spawnXpPop(tq.xp || 0);
+  }
   spawnConfetti();
   trackCombo();
   
@@ -17909,7 +18610,20 @@ function markTrackQuestComplete(trackKey, questId) {
   safeR(() => { if (typeof updateQuickNavCounts === 'function') updateQuickNavCounts(); });
   safeR(() => { if (typeof renderSquirrelWidget === 'function') renderSquirrelWidget(); });
 
-  showToast('success', `+${tq.xp} XP`, tq.title + ' concluída.');
+  // v100: toast adequado por tipo de trilha
+  // - Aula bônus: showBonusToast já foi disparado dentro de addBonusPoints (toast dourado dedicado)
+  // - Aula Mastery: usa showToast genérico verde
+  if (!isBonus) {
+    showToast('success', `+${tq.xp || 0} XP`, tq.title + ' concluída.');
+  }
+
+  // v100: depois de marcar concluída em aula bônus, reabrir o modal da trilha
+  // pra user navegar pra próxima aula sem ter que voltar manualmente
+  if (isBonus && state.bonusQuestOrigin) {
+    setTimeout(() => {
+      if (typeof backToBonusTrack === 'function') backToBonusTrack();
+    }, 600);
+  }
 }
 
 
@@ -18061,17 +18775,8 @@ function renderQuests() {
     card.classList.add('q-' + st);
     if (isBeyondDestination(n)) card.classList.add('q-beyond');
 
-    // Inline "Você está aqui" marker — appears ABOVE the next quest card
-    if (n === nextN && currentSectionGrid) {
-      const marker = document.createElement('div');
-      marker.className = 'next-mission-marker';
-      marker.innerHTML = `
-        <div class="next-mission-pulse"></div>
-        <div class="next-mission-label">VOCÊ ESTÁ AQUI <span class="next-mission-arrow">↓</span></div>
-        <div class="next-mission-desc">Sua próxima missão. <em>Bora começar.</em></div>
-      `;
-      currentSectionGrid.appendChild(marker);
-    }
+    // v100: removed inline "Você está aqui" marker — agora aparece só no active-quest card grande
+    // (era duplicação visual; user quer destaque concentrado no card hero)
     // v41: tech-optional flag removed. After content refactor, all 52 missions
     // are accessible via Cowork-default version. Hard missions just have an
     // optional "ver versão dev" section inside.
@@ -18217,8 +18922,25 @@ function _openQuestDirect(n) {
   // Restore default onclick (track quests may have overridden it with markTrackQuestComplete)
   completeBtn.onclick = markComplete;
   if (completed) {
-    completeBtn.textContent = '✓ Concluída';
-    completeBtn.disabled = true;
+    // v100: aulas concluídas viram revisáveis pra Pontos Bônus
+    // Quantos Pontos Bônus por revisão: 15 fácil, 25 médio, 40 boss/avançada
+    const reviewKey = `review:${n}`;
+    const alreadyReviewed = (state.bonusEvents || []).some(e => e.source === reviewKey);
+    if (alreadyReviewed) {
+      completeBtn.textContent = '✓ Concluída · revisada';
+      completeBtn.disabled = true;
+    } else {
+      const reviewPts = q.boss ? 40 : (q.xp >= 130 ? 25 : 15);
+      completeBtn.textContent = `⨀ Marcar revisada · +${reviewPts} Pontos Bônus`;
+      completeBtn.disabled = false;
+      completeBtn.onclick = function() {
+        if (typeof addBonusPoints === 'function') {
+          addBonusPoints(reviewPts, 'review', reviewKey);
+          completeBtn.textContent = '✓ Concluída · revisada';
+          completeBtn.disabled = true;
+        }
+      };
+    }
   } else {
     completeBtn.textContent = 'Marcar concluída';
     completeBtn.disabled = false;
@@ -18300,13 +19022,22 @@ function _openQuestDirect(n) {
 function closeModal() {
   document.getElementById('modal-bg').classList.remove('active');
   document.getElementById('modal').classList.remove('active');
+  // v100: limpa estado completo pra evitar que outras funções leiam estado fantasma
   state.currentQuest = null;
+  state.currentTrackQuest = null;
   state.bonusQuestOrigin = null;
   const backBtn = document.getElementById('modal-back-btn');
   if (backBtn) backBtn.remove();
+  // Limpa título/conteúdo pra não ficar visível em UIs que leem #modal-title antes de outro modal abrir
+  const titleEl = document.getElementById('modal-title');
+  if (titleEl) titleEl.textContent = '—';
 }
 
 function navQuest(delta) {
+  // v100: se está numa aula bônus (não Mastery), navega na lista da trilha
+  if (state.bonusQuestOrigin) {
+    return navBonusQuest(delta);
+  }
   if (!state.currentQuest) return;
   const next = state.currentQuest + delta;
   if (next < 1 || next > 52) return;
@@ -18316,6 +19047,33 @@ function navQuest(delta) {
   }
   closeModal();
   setTimeout(() => openQuest(next), 200);
+}
+
+// v100: navegação dentro de uma trilha bônus
+function navBonusQuest(delta) {
+  const origin = state.bonusQuestOrigin;
+  if (!origin) return;
+  let track = null;
+  if (origin.group === 'onboarding' && typeof ONBOARDING_TRACK !== 'undefined') {
+    track = ONBOARDING_TRACK;
+  } else if (origin.group === 'pro' && typeof PRO_TRACKS !== 'undefined') {
+    track = PRO_TRACKS[origin.trackKey];
+  } else if (origin.group === 'life' && typeof LIFE_TRACKS !== 'undefined') {
+    track = LIFE_TRACKS[origin.trackKey];
+  }
+  if (!track || !Array.isArray(track.quests)) return;
+  const idx = track.quests.findIndex(q => q.id === origin.questId);
+  if (idx < 0) return;
+  const nextIdx = idx + delta;
+  if (nextIdx < 0 || nextIdx >= track.quests.length) {
+    showToast('info', 'Fim da trilha', delta > 0 ? 'Não há mais aulas nessa trilha.' : 'Esta é a primeira aula.');
+    return;
+  }
+  const nextQuest = track.quests[nextIdx];
+  // Preserva origin pro próximo openBonusQuest (closeModal limpa)
+  const grp = origin.group, tk = origin.trackKey;
+  closeModal();
+  setTimeout(() => openBonusQuest(grp, tk, nextQuest.id), 200);
 }
 
 /* ============================================================
@@ -18330,6 +19088,17 @@ function spawnXpPop(amount) {
   const pop = document.createElement('div');
   pop.className = 'xp-pop';
   pop.textContent = '+' + amount + ' XP';
+  pop.style.left = '50%';
+  pop.style.top  = '50%';
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 1700);
+}
+
+// v100: pop visual pra Pontos Bônus (verde, mesma animação)
+function spawnBonusPop(amount) {
+  const pop = document.createElement('div');
+  pop.className = 'xp-pop bonus-pop';
+  pop.textContent = '+' + amount + ' Pontos Bônus';
   pop.style.left = '50%';
   pop.style.top  = '50%';
   document.body.appendChild(pop);
@@ -18799,6 +19568,42 @@ function ensureStateShape() {
   }
   if (typeof state.xp !== 'number') state.xp = 0;
   if (typeof state.streak !== 'number') state.streak = 0;
+  // v100: Pontos Bônus
+  if (typeof state.bonusPoints !== 'number') state.bonusPoints = 0;
+  if (!Array.isArray(state.bonusEvents)) state.bonusEvents = [];
+  // v100: Backfill retroativo — usuário que completou trilhas bônus antes do sistema
+  // ganha os pontos retroativos (idempotente: fonte 'bonus:{questId}' não é duplicada)
+  if (Array.isArray(state.trackCompleted) && state.trackCompleted.length > 0) {
+    const lvlPoints = { 'fácil': 25, 'intermediária': 40, 'avançada': 60 };
+    state.trackCompleted.forEach(qid => {
+      const src = `bonus:${qid}`;
+      if (state.bonusEvents.some(e => e.source === src)) return;
+      // Localiza a quest em PRO_TRACKS / LIFE_TRACKS pra inferir dificuldade
+      let q = null, isBonusTrack = false;
+      const findInTracks = (tracks) => {
+        if (!tracks) return null;
+        for (const k of Object.keys(tracks)) {
+          const t = tracks[k];
+          if (!Array.isArray(t.quests)) continue;
+          const found = t.quests.find(x => x.id === qid);
+          if (found) return found;
+        }
+        return null;
+      };
+      if (typeof PRO_TRACKS !== 'undefined') q = findInTracks(PRO_TRACKS);
+      if (!q && typeof LIFE_TRACKS !== 'undefined') q = findInTracks(LIFE_TRACKS);
+      if (q) isBonusTrack = true;
+      if (!isBonusTrack) return; // só backfill pra trilhas bônus
+      const pts = lvlPoints[q.level] || 30;
+      state.bonusPoints += pts;
+      state.bonusEvents.push({
+        at: state.questTimestamps?.[qid] || Date.now(),
+        amount: pts,
+        kind: 'lesson',
+        source: src
+      });
+    });
+  }
   if (typeof state.startingPath !== 'number' || state.startingPath < 1 || state.startingPath > 52) state.startingPath = 1;
   if (typeof state.profileName !== 'string') state.profileName = 'Aluno';
   if (typeof state.firstName !== 'string') state.firstName = '';
@@ -18900,8 +19705,20 @@ function _openBonusTrack(key, t, group) {
     document.body.appendChild(modalBg);
   }
   
-  const questsHtml = t.quests.map((q, idx) => `
-    <div class="track-quest-item bonus-quest" style="--track-color: ${t.color};" onclick="openBonusQuest('${group}', '${key}', '${q.id}')">
+  const lvlPoints = { 'fácil': 25, 'intermediária': 40, 'avançada': 60 };
+  const questsHtml = t.quests.map((q, idx) => {
+    const pts = lvlPoints[q.level] || 30;
+    const isCompleted = (state.trackCompleted || []).includes(q.id);
+    const reviewKey = `review:${q.id}`;
+    const isReviewed = (state.bonusEvents || []).some(e => e.source === reviewKey);
+    let stateBadge = '';
+    if (isCompleted && isReviewed) {
+      stateBadge = '<span class="bonus-state-tag bonus-state-reviewed">✓ revisada</span>';
+    } else if (isCompleted) {
+      stateBadge = '<span class="bonus-state-tag bonus-state-done">✓ feita</span>';
+    }
+    return `
+    <div class="track-quest-item bonus-quest ${isCompleted ? 'is-done' : ''}" style="--track-color: ${t.color};" onclick="openBonusQuest('${group}', '${key}', '${q.id}')">
       <div class="track-quest-num">${String(idx+1).padStart(2,'0')}</div>
       <div class="track-quest-info">
         <div class="track-quest-title">${q.title}</div>
@@ -18909,10 +19726,12 @@ function _openBonusTrack(key, t, group) {
         <div class="track-quest-meta">
           <span>${q.time}</span>
           <span class="bonus-level-tag bonus-level-${q.level || 'fácil'}">${q.level || ''}</span>
+          <span class="bonus-points-tag">+${pts} Pontos Bônus</span>
+          ${stateBadge}
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
   
   modalBg.innerHTML = `
     <div class="modal active" onclick="event.stopPropagation()" style="overflow-y: auto; padding: 24px; position: relative;">
@@ -18926,7 +19745,7 @@ function _openBonusTrack(key, t, group) {
         </div>
       </div>
       <div class="bonus-track-disclaimer">
-        💡 Trilha <em>bônus</em> — não dá XP, não sobe rank, não dá chapéu. Foque na <em>Claude Mastery</em> primeiro se ainda estiver fazendo.
+        💡 Trilha <em>bônus</em> — não dá XP nem chapéu da Claude Mastery, mas dá <strong style="color:#7fb98a;">⨀ Pontos Bônus</strong>. Foque na <em>Claude Mastery</em> primeiro se ainda estiver fazendo.
       </div>
       <div class="track-quest-list">${questsHtml}</div>
     </div>
@@ -18936,7 +19755,14 @@ function _openBonusTrack(key, t, group) {
 
 function closeBonusTrackModal() {
   const bg = document.getElementById('bonus-track-modal-bg');
-  if (bg) bg.classList.remove('active');
+  if (bg) {
+    bg.classList.remove('active');
+    // v100: limpa innerHTML pra remover o .modal.active interno que continua interceptando
+    // pointer events mesmo com .modal-bg pai inativo (display:block + pe:auto no filho)
+    setTimeout(() => {
+      if (!bg.classList.contains('active')) bg.innerHTML = '';
+    }, 450); // espera transição opacity terminar (0.4s)
+  }
 }
 
 function openBonusQuest(group, trackKey, questId) {
@@ -18954,16 +19780,24 @@ function openBonusQuest(group, trackKey, questId) {
   if (!q) return;
   // Build a synthetic quest in the same format expected by openTrackQuestModal
   const synthetic = {
+    id: q.id,
+    n: q.id,                  // v100: openTrackQuestModal usa q.n para state.trackCompleted
+    trackKey: trackKey || (group === 'onboarding' ? 'onboarding' : ''),
     title: q.title,
     deck: q.deck,
     time: q.time,
     xp: 0,
     sections: q.sections,
     bonus: true,
+    isBonus: true,
+    bonusGroup: group,        // 'pro' | 'life' | 'onboarding'
     level: q.level
   };
   // Save origin context for "back to track" button
-  state.bonusQuestOrigin = { group: group, trackKey: trackKey };
+  state.bonusQuestOrigin = { group: group, trackKey: trackKey, questId: q.id };
+  // v100: fechar o modal da trilha antes de abrir a aula (evita 2 modais empilhados)
+  const closeFns = ['closeBonusTrackModal', 'closeOnboardingTrackModal'];
+  closeFns.forEach(fn => { if (typeof window[fn] === 'function') window[fn](); });
   if (typeof openTrackQuestModal === 'function') {
     openTrackQuestModal(synthetic, t);
   }
@@ -19033,7 +19867,13 @@ function openOnboardingTrack() {
 }
 function closeOnboardingTrackModal() {
   const bg = document.getElementById('onboarding-track-modal-bg');
-  if (bg) bg.classList.remove('active');
+  if (bg) {
+    bg.classList.remove('active');
+    // v100: limpa innerHTML pra remover o .modal.active interno que intercepta cliques
+    setTimeout(() => {
+      if (!bg.classList.contains('active')) bg.innerHTML = '';
+    }, 450);
+  }
 }
 function renderOnboardingTrackCard() {
   const card = document.querySelector('.onb-track-card');
@@ -20027,6 +20867,23 @@ document.addEventListener('keydown', e => {
     if (resetModal && resetModal.classList.contains('active')) { closeResetModal(); return; }
     const aheadModal = document.getElementById('ahead-modal');
     if (aheadModal && aheadModal.classList.contains('active')) { closeAheadModal(); return; }
+    // v100: Esc fecha aula primeiro, depois trilha bônus se ainda aberta
+    const modalAula = document.getElementById('modal');
+    if (modalAula && modalAula.classList.contains('active')) {
+      closeModal();
+      return;
+    }
+    // Aula já fechada — fecha modais de trilha bônus (que ficam por baixo)
+    const bonusTrack = document.getElementById('bonus-track-modal-bg');
+    if (bonusTrack && bonusTrack.classList.contains('active')) {
+      closeBonusTrackModal();
+      return;
+    }
+    const onbTrack = document.getElementById('onboarding-track-modal-bg');
+    if (onbTrack && onbTrack.classList.contains('active')) {
+      closeOnboardingTrackModal();
+      return;
+    }
     closeModal();
   }
   if (state.currentQuest) {
@@ -20338,7 +21195,7 @@ const CURIOSITIES = [
   { tag: 'Sobre o app', text: '8 trilhas gerais: Engenharia, Negócios, Produto, Pesquisa, Empreendedor, Design, Cowork, Deploy. Caminhos paralelos por área.' },
   { tag: 'Sobre o app', text: '18 trilhas profissionais bônus: Direito, RH, Saúde, Marketing, M&A, BizDev, Banking e mais. Por carreira específica.' },
   { tag: 'Sobre o app', text: '8 trilhas pessoais bônus: Finanças Pessoais, Rotina, Filhos, Treinos, Cozinha, Viagens, Estudo. Pra vida fora do trabalho.' },
-  { tag: 'Sobre o app', text: 'Trilhas bônus (profissionais e pessoais) não dão XP nem rank — são complementos. A Claude Mastery é a espinha dorsal.' },
+  { tag: 'Sobre o app', text: 'Trilhas bônus (profissionais e pessoais) dão Pontos Bônus mas não dão XP nem rank — XP é só da Claude Mastery (52 missões), espinha dorsal.' },
   { tag: 'Sobre o app', text: 'Diplomas são desbloqueados completando atos da Mastery e trilhas. Dá pra baixar PNG, imprimir A4, postar no LinkedIn.' },
   { tag: 'Sobre o app', text: 'Cada diploma mostra carga horária, número de aulas e competências adquiridas — pra audiência entender o que você sabe fazer.' },
   { tag: 'Sobre o app', text: 'Pode ajustar o nome no diploma a qualquer momento — abre o diploma e edita ali mesmo.' }
@@ -20415,7 +21272,7 @@ function renderPersonalitySettings() {
   panel.innerHTML = `
     <div class="squirrel-settings-title">⨀ Personalidade do esquilo</div>
     ${optsHtml}
-    <div class="squirrel-settings-title" style="margin-top: 14px;">⨀ Voz</div>
+    <div class="squirrel-settings-title" style="margin-top: 8px;">⨀ Voz</div>
     <div class="voice-toggle ${typeof isVoiceEnabled === 'function' && isVoiceEnabled() ? 'active' : ''}" onclick="toggleVoice()">
       <span class="voice-emoji">${typeof isVoiceEnabled === 'function' && isVoiceEnabled() ? '🔊' : '🔇'}</span>
       <div class="squirrel-personality-info">
@@ -20423,7 +21280,7 @@ function renderPersonalitySettings() {
         <div class="squirrel-personality-desc">Esquilo fala em PT-BR (Web Speech API)</div>
       </div>
     </div>
-    <div class="squirrel-settings-title" style="margin-top: 14px;">⨀ Resumo</div>
+    <div class="squirrel-settings-title" style="margin-top: 8px;">⨀ Resumo</div>
     <div class="squirrel-personality-opt" onclick="openDailyCard(); toggleSquirrelSettings();">
       <span class="squirrel-personality-emoji">📅</span>
       <div class="squirrel-personality-info">
@@ -20431,7 +21288,7 @@ function renderPersonalitySettings() {
         <div class="squirrel-personality-desc">Resumo de hoje · exportável como PNG</div>
       </div>
     </div>
-    <div class="squirrel-settings-title" style="margin-top: 14px;">⨀ Tour</div>
+    <div class="squirrel-settings-title" style="margin-top: 8px;">⨀ Tour</div>
     <div class="squirrel-personality-opt" onclick="replayTour()">
       <span class="squirrel-personality-emoji">🗺️</span>
       <div class="squirrel-personality-info">
@@ -20876,6 +21733,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // QUICK NAV — smooth scroll to section
 // ============================================================
 function jumpTo(sectionId) {
+  // v100: fecha modais bônus antes de rolar — se tiver trilha aberta e user
+  // clicou em quick-nav, modal não pode ficar interceptando cliques depois
+  if (typeof closeBonusTrackModal === 'function') {
+    const bg = document.getElementById('bonus-track-modal-bg');
+    if (bg && bg.classList.contains('active')) closeBonusTrackModal();
+  }
+  if (typeof closeOnboardingTrackModal === 'function') {
+    const bg2 = document.getElementById('onboarding-track-modal-bg');
+    if (bg2 && bg2.classList.contains('active')) closeOnboardingTrackModal();
+  }
   const el = document.getElementById(sectionId);
   if (!el) return;
   // Account for sticky topbar height
@@ -20888,6 +21755,23 @@ function jumpTo(sectionId) {
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// v100: toggle .visible no botão scroll-to-top conforme rolagem
+(function _initScrollToTopToggle() {
+  function _onScroll() {
+    const btn = document.getElementById('scroll-to-top');
+    if (!btn) return;
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    if (y > 400) btn.classList.add('visible');
+    else btn.classList.remove('visible');
+  }
+  window.addEventListener('scroll', _onScroll, { passive: true });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _onScroll);
+  } else {
+    _onScroll();
+  }
+})();
 
 // Detecta quando quick-nav está em estado sticky (encostado no top)
 // pra aplicar visual condensado.
@@ -21170,6 +22054,10 @@ function openJourney() {
         <div class="journey-stat-num"><span class="journey-counter" data-target="${xp}">0</span></div>
         <div class="journey-stat-lbl">XP total</div>
       </div>
+      <div class="journey-stat journey-stat-bonus">
+        <div class="journey-stat-num"><span class="journey-counter" data-target="${state.bonusPoints || 0}">0</span></div>
+        <div class="journey-stat-lbl">Pontos Bônus</div>
+      </div>
       <div class="journey-stat">
         <div class="journey-stat-num"><span class="journey-counter" data-target="${days}">0</span></div>
         <div class="journey-stat-lbl">${plural(days, 'dia', 'dias')}</div>
@@ -21191,7 +22079,7 @@ function openJourney() {
     </div>
     <div class="journey-actions">
       <button class="cinema-trigger" onclick="openCinema()">🎬 Modo Cinema</button>
-      <button class="journey-export-btn" onclick="exportJourneyPNG()">⬇ Baixar como imagem (PNG)</button>
+      <button class="journey-export-btn" onclick="openJourneyShareMenu()">📤 Compartilhar</button>
     </div>
   `;
   
@@ -21361,11 +22249,211 @@ function closeJourney() {
 // ============================================================
 // Export Journey as PNG (Canvas API)
 // ============================================================
-function exportJourneyPNG() {
+// v100: gera o canvas da jornada (sem fazer download). Reusado por todas as opções de share.
+function buildJourneyCanvas() {
+  return exportJourneyPNG({ returnCanvas: true });
+}
+
+// v100: abre menu com 3 opções de compartilhamento
+function openJourneyShareMenu() {
   const completed = state.completed || [];
   if (completed.length === 0) {
-    showToast && showToast('warn', 'Nada pra exportar', 'Complete pelo menos 1 missão.');
+    if (typeof showToast === 'function') showToast('warn', 'Nada pra compartilhar', 'Complete pelo menos 1 missão.');
     return;
+  }
+  
+  // Cria modal de share
+  let bg = document.getElementById('journey-share-bg');
+  if (!bg) {
+    bg = document.createElement('div');
+    bg.id = 'journey-share-bg';
+    bg.className = 'journey-share-bg';
+    bg.addEventListener('click', (e) => { if (e.target === bg) closeJourneyShareMenu(); });
+    document.body.appendChild(bg);
+  }
+  
+  const hasNativeShare = typeof navigator.share === 'function' && typeof navigator.canShare === 'function';
+  
+  bg.innerHTML = `
+    <div class="journey-share-modal" onclick="event.stopPropagation()">
+      <button class="journey-share-close" onclick="closeJourneyShareMenu()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6 L18 18 M18 6 L6 18"/></svg>
+      </button>
+      <div class="journey-share-tag">⨀ COMPARTILHAR JORNADA</div>
+      <div class="journey-share-title">Como você quer compartilhar?</div>
+      <div class="journey-share-deck">Imagem em formato vertical (9:16) — perfeito pra stories</div>
+      
+      <div class="journey-share-options">
+        <button class="journey-share-opt" onclick="shareJourneyDownload()">
+          <div class="journey-share-opt-icon">⬇</div>
+          <div class="journey-share-opt-info">
+            <div class="journey-share-opt-name">Baixar PNG</div>
+            <div class="journey-share-opt-desc">Salva no seu computador / celular</div>
+          </div>
+        </button>
+        
+        <button class="journey-share-opt" onclick="shareJourneyLinkedIn()">
+          <div class="journey-share-opt-icon" style="color: #0A66C2;">in</div>
+          <div class="journey-share-opt-info">
+            <div class="journey-share-opt-name">LinkedIn</div>
+            <div class="journey-share-opt-desc">Baixa imagem + abre LinkedIn pra criar post</div>
+          </div>
+        </button>
+        
+        <button class="journey-share-opt" onclick="shareJourneyInstagram()">
+          <div class="journey-share-opt-icon" style="background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); -webkit-background-clip: text; background-clip: text; color: transparent;">▣</div>
+          <div class="journey-share-opt-info">
+            <div class="journey-share-opt-name">Instagram Stories</div>
+            <div class="journey-share-opt-desc">${hasNativeShare ? 'Abre menu nativo pra escolher Instagram' : 'Baixa imagem · use o app Instagram pra postar'}</div>
+          </div>
+        </button>
+        
+        ${hasNativeShare ? `
+        <button class="journey-share-opt" onclick="shareJourneyNative()">
+          <div class="journey-share-opt-icon">📱</div>
+          <div class="journey-share-opt-info">
+            <div class="journey-share-opt-name">Mais opções</div>
+            <div class="journey-share-opt-desc">WhatsApp, Telegram, e-mail, qualquer app instalado</div>
+          </div>
+        </button>` : ''}
+      </div>
+    </div>
+  `;
+  bg.classList.add('active');
+}
+
+function closeJourneyShareMenu() {
+  const bg = document.getElementById('journey-share-bg');
+  if (bg) {
+    bg.classList.remove('active');
+    setTimeout(() => { if (!bg.classList.contains('active')) bg.innerHTML = ''; }, 350);
+  }
+}
+
+// Opção 1: download PNG (mantém comportamento original)
+function shareJourneyDownload() {
+  const canvas = buildJourneyCanvas();
+  if (!canvas) return;
+  const firstName = state.firstName || 'Aluno';
+  const link = document.createElement('a');
+  link.download = `claude-academy-jornada-${firstName.toLowerCase()}-${new Date().toISOString().slice(0,10)}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  if (typeof showToast === 'function') showToast('success', '🖼️ Imagem baixada', 'Tá no seu downloads.');
+  closeJourneyShareMenu();
+}
+
+// Opção 2: LinkedIn — baixa imagem + abre LinkedIn em nova aba pra criar post manualmente
+//          (LinkedIn não permite upload programático por URL — workflow padrão é baixar e arrastar)
+function shareJourneyLinkedIn() {
+  const canvas = buildJourneyCanvas();
+  if (!canvas) return;
+  const firstName = state.firstName || 'Aluno';
+  const xp = state.xp || 0;
+  const completed = (state.completed || []).length;
+  const rank = (typeof rankFor === 'function') ? rankFor(xp).name : '';
+  
+  // 1. Download da imagem
+  const link = document.createElement('a');
+  link.download = `claude-academy-jornada-${firstName.toLowerCase()}-${new Date().toISOString().slice(0,10)}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  
+  // 2. Texto sugerido pra colar no post
+  const text = `Acabei de completar ${completed} missões na minha jornada de aprender Claude. Rank: ${rank}, ${xp.toLocaleString('pt-BR')} XP acumulados. 🚀\n\n#Claude #IA #Anthropic #Aprendizado`;
+  
+  // 3. Copia texto pro clipboard
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(() => {});
+  }
+  
+  // 4. Abre LinkedIn — Feed home (user arrasta a imagem baixada e cola o texto)
+  setTimeout(() => {
+    window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank');
+    if (typeof showToast === 'function') {
+      showToast('success', '✓ Pronto pra LinkedIn', 'Imagem baixada · texto copiado · arraste a imagem no post que abriu.');
+    }
+  }, 300);
+  
+  closeJourneyShareMenu();
+}
+
+// Opção 3: Instagram Stories — usa Web Share API se disponível (mobile),
+//          senão baixa imagem + instrui usar o app Instagram
+async function shareJourneyInstagram() {
+  const canvas = buildJourneyCanvas();
+  if (!canvas) return;
+  const firstName = state.firstName || 'Aluno';
+  
+  // Tenta Web Share API (funciona em mobile)
+  if (typeof navigator.share === 'function' && typeof navigator.canShare === 'function') {
+    try {
+      const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+      const file = new File([blob], `claude-academy-jornada-${firstName.toLowerCase()}.png`, { type: 'image/png' });
+      
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Minha jornada Claude Academy',
+          text: 'Minha trajetória aprendendo Claude.'
+        });
+        closeJourneyShareMenu();
+        return;
+      }
+    } catch (e) {
+      console.warn('Native share falhou, fallback pra download', e);
+    }
+  }
+  
+  // Fallback: download da imagem + instrução
+  const link = document.createElement('a');
+  link.download = `claude-academy-jornada-${firstName.toLowerCase()}-stories.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  
+  if (typeof showToast === 'function') {
+    showToast('success', '✓ Imagem baixada (9:16)', 'Abra o Instagram → Stories → galeria → escolha esta imagem.');
+  }
+  closeJourneyShareMenu();
+}
+
+// Opção 4: Web Share API nativo (qualquer app)
+async function shareJourneyNative() {
+  const canvas = buildJourneyCanvas();
+  if (!canvas) return;
+  const firstName = state.firstName || 'Aluno';
+  
+  try {
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    const file = new File([blob], `claude-academy-jornada-${firstName.toLowerCase()}.png`, { type: 'image/png' });
+    
+    if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'Minha jornada Claude Academy',
+        text: 'Minha trajetória aprendendo Claude.'
+      });
+    } else {
+      // Fallback: só baixa
+      const link = document.createElement('a');
+      link.download = `claude-academy-jornada-${firstName.toLowerCase()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    closeJourneyShareMenu();
+  } catch (e) {
+    console.warn('Native share falhou', e);
+    if (typeof showToast === 'function') showToast('warn', 'Compartilhar não disponível', 'Use a opção "Baixar PNG".');
+  }
+}
+
+
+function exportJourneyPNG(opts) {
+  opts = opts || {};
+  const completed = state.completed || [];
+  if (completed.length === 0) {
+    if (!opts.returnCanvas) showToast && showToast('warn', 'Nada pra exportar', 'Complete pelo menos 1 missão.');
+    return null;
   }
   
   const xp = state.xp || 0;
@@ -21545,6 +22633,9 @@ function exportJourneyPNG() {
   ctx.textAlign = 'center';
   ctx.fillText('CLAUDE.ACADEMY', W/2, H - 80);
   
+  // v100: se foi pedido só o canvas (pra share menu), retorna sem baixar
+  if (opts.returnCanvas) return canvas;
+  
   // Download
   const link = document.createElement('a');
   link.download = `claude-academy-jornada-${firstName.toLowerCase()}-${new Date().toISOString().slice(0,10)}.png`;
@@ -21554,6 +22645,7 @@ function exportJourneyPNG() {
   if (typeof showToast === 'function') {
     showToast('success', '🖼️ Imagem baixada', 'Compartilhe sua jornada!');
   }
+  return canvas;
 }
 
 
@@ -22785,7 +23877,7 @@ const TOUR_STOPS = [
     target: '.topbar',
     tag: 'Parada 01 / 08',
     title: 'Os menus superiores',
-    text: 'Aqui em cima estão suas ferramentas: Mapa, Árvore, Stats, Diplomas, Minha Jornada e Exportar/Reiniciar. Junto com seu Rank, XP e Sequência em tempo real. Acessível de qualquer lugar do app — fica fixa no topo.'
+    text: 'Aqui em cima ficam suas ferramentas (Mapa, Árvore, Stats, Diplomas, Minha Jornada) e seus indicadores: Rank, XP, Sequência e Pontos Bônus. Fica fixa no topo — acessível de qualquer lugar.'
   },
 
   // ─── 2: QUICK-NAV (atalhos abaixo da topbar) ───
@@ -22801,7 +23893,7 @@ const TOUR_STOPS = [
     target: '.dashboard-hero',
     tag: 'Parada 03 / 08',
     title: 'Seu perfil + Skill Radar',
-    text: 'À esquerda: sua identidade (nome, rank, próximas conquistas). À direita: o Skill Radar mostra suas 14 dimensões de habilidade num gráfico que se preenche conforme você completa missões.'
+    text: 'Sua identidade (nome, rank, próximas conquistas) e o Skill Radar — gráfico das suas 14 dimensões de habilidade que se preenche conforme você completa missões. No desktop ficam lado a lado; no celular, um abaixo do outro.'
   },
 
   // ─── 4: MISSÃO ATIVA ───
@@ -22833,7 +23925,7 @@ const TOUR_STOPS = [
     target: '#tracks-section',
     tag: 'Parada 07 / 08',
     title: 'As Trilhas',
-    text: 'Mais abaixo: 9 Trilhas Gerais (por área de atuação), 21 Trilhas Profissionais (por profissão) e 8 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus são opcionais e não dão XP — são treino contextual.'
+    text: 'Mais abaixo: 9 Trilhas Gerais (por área de atuação), 21 Trilhas Profissionais (por profissão) e 8 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus dão Pontos Bônus (uma pontuação separada do XP), e são opcionais — treino contextual.'
   },
 
   // ─── 8: ESQUILO ───
@@ -22841,7 +23933,7 @@ const TOUR_STOPS = [
     target: '#squirrel-widget',
     tag: 'Parada 08 / 08',
     title: 'Esse sou eu 🐿️',
-    text: 'Eu apareço com mensagens conforme você usa o app. Toque normal e eu falo. Pressão longa revela curiosidades. Toque longo abre meu menu — pode trocar minha personalidade (Coach, Sarcástico, Filósofo ou Caótico).',
+    text: 'Eu apareço com mensagens conforme você usa o app. No desktop, clique direito abre meu menu. No celular/tablet, use o botão "menu" ao meu lado. Você pode trocar minha personalidade lá (Coach, Sarcástico, Filósofo ou Caótico).',
     showSquirrelWidget: true
   },
 
@@ -22916,12 +24008,16 @@ function startTour() {
         <div class="tour-balloon-title" id="tour-balloon-title"></div>
         <div class="tour-balloon-text" id="tour-balloon-text"></div>
         <div class="tour-balloon-dots" id="tour-balloon-dots"></div>
-        <div class="tour-balloon-actions">
-          <button class="tour-balloon-skip" onclick="endTour(true)">Pular tour</button>
-          <div class="tour-balloon-nav">
-            <button class="tour-balloon-btn ghost" id="tour-prev-btn" onclick="tourPrev()">← Voltar</button>
-            <button class="tour-balloon-btn" id="tour-next-btn" onclick="tourNext()">Próximo →</button>
-          </div>
+      </div>
+      <!-- v100: toolbar fixa no rodapé pra os botões NÃO mudarem de lugar a cada parada -->
+      <div class="tour-toolbar" id="tour-toolbar">
+        <button class="tour-balloon-skip" onclick="endTour(true)" type="button">Pular tour</button>
+        <div class="tour-toolbar-hint">
+          <kbd>←</kbd> voltar · <kbd>→</kbd> ou <kbd>Enter</kbd> próximo · <kbd>Esc</kbd> sair
+        </div>
+        <div class="tour-balloon-nav">
+          <button class="tour-balloon-btn ghost" id="tour-prev-btn" onclick="tourPrev()" type="button">← Voltar</button>
+          <button class="tour-balloon-btn" id="tour-next-btn" onclick="tourNext()" type="button">Próximo →</button>
         </div>
       </div>
     `;
@@ -22940,7 +24036,33 @@ function startTour() {
   overlay.classList.add('active');
   // Re-handle window resize to re-position
   window.addEventListener('resize', tourReposition);
+  // v100: atalhos de teclado pra navegar tour sem mover o mouse
+  document.addEventListener('keydown', _tourKeyHandler);
   renderTourStop();
+}
+
+// v100: handler de teclado do tour (registrado em startTour, removido em endTour)
+function _tourKeyHandler(e) {
+  if (!_tourState.active) return;
+  // Não interfere se user está digitando em input/textarea
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
+  switch (e.key) {
+    case 'ArrowRight':
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      tourNext();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      tourPrev();
+      break;
+    case 'Escape':
+      e.preventDefault();
+      endTour(true);
+      break;
+  }
 }
 
 function renderTourStop() {
@@ -22993,20 +24115,22 @@ function renderTourStop() {
   });
 }
 
-function positionTourStop(stop) {
+function positionTourStop(stop, _retryCount) {
   const halo = document.getElementById('tour-halo');
   const balloon = document.getElementById('tour-balloon');
   const squirrel = document.getElementById('tour-squirrel');
   const spotRect = document.getElementById('tour-spotlight-rect');
+  _retryCount = _retryCount || 0;
+  // v100: reserva espaço pra toolbar fixa no rodapé (76px)
+  const TOOLBAR_H = 76;
   
   if (stop.final || !stop.target) {
-    // Final: no halo, balloon centered
     halo.style.display = 'none';
     spotRect.setAttribute('width', '0');
     spotRect.setAttribute('height', '0');
     
     const W = window.innerWidth;
-    const H = window.innerHeight;
+    const H = window.innerHeight - TOOLBAR_H; // área usável acima da toolbar
     const bw = balloon.offsetWidth || 380;
     const bh = balloon.offsetHeight || 240;
     balloon.style.left = (W/2 - bw/2) + 'px';
@@ -23020,39 +24144,53 @@ function positionTourStop(stop) {
   const targetEl = document.querySelector(stop.target);
   if (!targetEl) {
     console.warn('Tour target not found:', stop.target);
-    // Skip to next
     setTimeout(() => tourNext(), 300);
     return;
   }
   
-  // Scroll into view first if needed
-  const rect = targetEl.getBoundingClientRect();
-  const tooLarge = rect.height > window.innerHeight * 0.7;
-  const inView = tooLarge
-    ? (rect.top < window.innerHeight * 0.5 && rect.bottom > 0)  // for large elements, just check top of element is visible
-    : (rect.top >= 0 && rect.bottom <= window.innerHeight);
-  if (!inView) {
-    targetEl.scrollIntoView({ behavior: 'smooth', block: tooLarge ? 'start' : 'center' });
-    setTimeout(() => positionTourStop(stop), 600);
+  const fullR = targetEl.getBoundingClientRect();
+  const W = window.innerWidth;
+  const Hraw = window.innerHeight;
+  const H = Hraw - TOOLBAR_H; // área usável (acima da toolbar fixa)
+  const maxHaloH = Math.min(320, Math.round(H * 0.42));
+  const haloLogicalH = Math.min(fullR.height, maxHaloH);
+  
+  // v100: sempre forçar scroll pra alinhar o topo do alvo a 100px do topo do viewport.
+  // Isso elimina race conditions onde coordenadas antigas vazam entre retries.
+  const desiredTop = 100;
+  const currentTop = fullR.top;
+  // Tolerância: 20px (não vale fazer scroll por 5px)
+  const needsScroll = Math.abs(currentTop - desiredTop) > 20;
+  
+  // Limita retries pra evitar loop infinito
+  if (needsScroll && _retryCount < 3) {
+    const absTop = fullR.top + window.scrollY;
+    window.scrollTo(0, Math.max(0, absTop - desiredTop));
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => positionTourStop(stop, _retryCount + 1), 250);
+      });
+    });
     return;
   }
   
-  // Padding around target
-  const pad = 8;
+  // Recalcula rect após scroll (ou sem scroll)
   const r = targetEl.getBoundingClientRect();
+  const pad = 8;
   let haloX = r.left - pad;
   let haloY = r.top - pad;
   let haloW = r.width + pad * 2;
-  let haloH = r.height + pad * 2;
+  let haloH = Math.min(r.height + pad * 2, maxHaloH);
   
-  // If element is much taller than viewport, clamp halo to a reasonable size around the top
-  if (haloH > window.innerHeight * 0.5) {
-    haloH = Math.min(haloH, window.innerHeight * 0.45);
-  }
   if (haloY < 0) {
     haloH += haloY;
     haloY = 8;
   }
+  // v100: respeita toolbar fixa no rodapé
+  if (haloY + haloH > H - 16) {
+    haloH = H - 16 - haloY;
+  }
+  if (haloH < 60) haloH = Math.min(60, H - haloY - 16);
   
   halo.style.display = 'block';
   halo.style.left = haloX + 'px';
@@ -23060,52 +24198,50 @@ function positionTourStop(stop) {
   halo.style.width = haloW + 'px';
   halo.style.height = haloH + 'px';
   
-  // Spotlight cutout (SVG mask rect)
   spotRect.setAttribute('x', haloX);
   spotRect.setAttribute('y', haloY);
   spotRect.setAttribute('width', haloW);
   spotRect.setAttribute('height', haloH);
   
-  // Position balloon — preferimos abaixo, depois lado, depois acima.
-  // Nunca sobrepor o elemento destacado.
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  const bw = Math.min(320, W - 32);
-  const bh = balloon.offsetHeight || 200;
+  const bw = Math.min(340, W - 32);
+  const bh = balloon.offsetHeight || 240;
   balloon.style.maxWidth = bw + 'px';
   
   let bx, by;
+  // v100: H já considera toolbar (não precisa subtrair de novo)
   const spaceBelow = H - (haloY + haloH) - 16;
   const spaceAbove = haloY - 16;
   const spaceRight = W - (haloX + haloW) - 16;
   const spaceLeft = haloX - 16;
   
-  if (spaceBelow >= bh + 40) {
-    // Below
+  if (spaceBelow >= bh + 24) {
     by = haloY + haloH + 16;
     bx = Math.min(W - bw - 12, Math.max(12, haloX + haloW/2 - bw/2));
-  } else if (spaceRight >= bw + 40) {
-    // Right side — prefer over "above" because user can still see the highlighted item
+  } else if (spaceRight >= bw + 24) {
     bx = haloX + haloW + 16;
     by = Math.min(H - bh - 12, Math.max(12, haloY + haloH/2 - bh/2));
-  } else if (spaceLeft >= bw + 40) {
-    // Left side
+  } else if (spaceLeft >= bw + 24) {
     bx = Math.max(12, haloX - bw - 16);
     by = Math.min(H - bh - 12, Math.max(12, haloY + haloH/2 - bh/2));
-  } else if (spaceAbove >= bh + 40) {
-    // Above (last resort: covers context above target but not target itself)
+  } else if (spaceAbove >= bh + 24) {
     by = haloY - bh - 16;
     bx = Math.min(W - bw - 12, Math.max(12, haloX + haloW/2 - bw/2));
   } else {
-    // Tight viewport — anchor at bottom-right corner of viewport
-    bx = W - bw - 12;
-    by = H - bh - 12;
+    const minSpace = bh + 32;
+    const maxAllowedHaloH = Math.max(60, H - haloY - minSpace);
+    haloH = Math.min(haloH, maxAllowedHaloH);
+    halo.style.height = haloH + 'px';
+    spotRect.setAttribute('height', haloH);
+    by = haloY + haloH + 16;
+    bx = Math.min(W - bw - 12, Math.max(12, haloX + haloW/2 - bw/2));
+    if (by + bh > H - 12) {
+      by = H - bh - 12;
+    }
   }
   
   balloon.style.left = bx + 'px';
   balloon.style.top  = by + 'px';
   
-  // Narrator squirrel goes next to the balloon (top-left corner of it, slightly outside)
   const sx = Math.max(8, bx - 60);
   const sy = Math.max(8, by - 30);
   squirrel.style.left = sx + 'px';
@@ -23153,6 +24289,8 @@ function endTour(skipped) {
     sqWidget.style.pointerEvents = '';
   }
   window.removeEventListener('resize', tourReposition);
+  // v100: remove keyboard handler
+  document.removeEventListener('keydown', _tourKeyHandler);
   // Mark as shown
   localStorage.setItem(TOUR_KEY, '1');
   // Volta pro topo da página — tour passou pelas trilhas no fim,
@@ -23857,6 +24995,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class="ahead-modal-bg" id="ahead-modal-bg" onclick="closeAheadModal()"></div>
 <div class="ahead-modal" id="ahead-modal" role="dialog" aria-modal="true">
+  <button class="ahead-modal-close" onclick="closeAheadModal()" aria-label="Fechar" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6 L18 18 M18 6 L6 18"/></svg>
+  </button>
   <div class="ahead-modal-head">
     <div class="ahead-modal-tag">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16.5" x2="12.01" y2="16.5"/></svg>
@@ -23902,6 +25043,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- Floating squirrel companion (visible on all screens) -->
 <div class="squirrel-widget" id="squirrel-widget" role="presentation">
+  <!-- v100: botão "menu" ao lado pra mobile/tablet (no desktop está oculto, usa botão direito) -->
+  <button class="squirrel-menu-btn" onclick="event.stopPropagation(); toggleSquirrelSettings();" aria-label="Menu do esquilo" title="Menu" type="button">
+    <span class="squirrel-menu-btn-icon">⋯</span>
+    <span class="squirrel-menu-btn-label">menu</span>
+  </button>
   <div class="squirrel-widget-svg" id="squirrel-widget-svg"></div>
   <div class="squirrel-widget-bubble" id="squirrel-widget-bubble">
     <button class="squirrel-bubble-close" onclick="hideSquirrelMsg()" aria-label="Fechar mensagem" type="button">
