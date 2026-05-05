@@ -3787,6 +3787,7 @@ html[data-theme="light"] .onb-track-card {
 
 .tracks {
   padding: 32px 32px 16px;
+  grid-column: 1 / -1; /* v100: full-width pra mostrar tracks em grid 4 colunas */
 }
 .tracks-intro {
   font-family: var(--serif);
@@ -6531,7 +6532,7 @@ html[data-theme="light"] .quick-nav-count {
    SQUIRRELS GALLERY — collection of all 9 rank avatars
    ============================================================ */
 .squirrels-gallery {
-  margin-top: 48px;
+  margin-top: 24px;
 }
 .squirrels-intro {
   font-family: var(--serif);
@@ -10021,8 +10022,8 @@ body:has(.journey-modal-bg.active) .squirrel-widget {
 
 .pro-tracks-section {
   grid-column: 1 / -1;
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--line);
 }
 .pro-tracks-head {
@@ -10073,6 +10074,9 @@ body:has(.journey-modal-bg.active) .squirrel-widget {
 }
 @media (min-width: 960px) {
   .pro-tracks-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+}
+@media (min-width: 1600px) {
+  .pro-tracks-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
 }
 .pro-track-card {
   position: relative;
@@ -10407,21 +10411,6 @@ html[data-theme="light"] .scroll-to-top {
 <main>
   <!-- Quick navigation bar -->
   <nav class="quick-nav" aria-label="Atalhos">
-    <button class="quick-nav-item" data-qn="achievements" onclick="jumpTo('achievements')" type="button">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M8 21V13H16V21M19 14V21H5V14M3 9V14H21V9L17 4H7L3 9Z"/>
-      </svg>
-      <span>Conquistas</span>
-      <em class="quick-nav-count" id="qn-ach">0</em>
-    </button>
-    <button class="quick-nav-item" data-qn="squirrels" onclick="jumpTo('squirrels-gallery')" type="button">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="9" r="3"/>
-        <path d="M12 12v3M9 17h6M7 22h10v-2a3 3 0 0 0-3-3H10a3 3 0 0 0-3 3v2zM12 2v3"/>
-      </svg>
-      <span>Esquilos</span>
-      <em class="quick-nav-count" id="qn-squirrels">0</em>
-    </button>
     <button class="quick-nav-item" data-qn="tracks" onclick="jumpTo('tracks-section')" type="button" title="Trilhas Gerais — 9 trilhas por área de atuação (Engenharia, Negócios, Produto, etc.)">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>
@@ -10442,6 +10431,21 @@ html[data-theme="light"] .scroll-to-top {
       </svg>
       <span>Trilhas Pessoais</span>
       <em class="quick-nav-count" id="qn-life-tracks">9</em>
+    </button>
+    <button class="quick-nav-item" data-qn="achievements" onclick="jumpTo('achievements')" type="button">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 21V13H16V21M19 14V21H5V14M3 9V14H21V9L17 4H7L3 9Z"/>
+      </svg>
+      <span>Conquistas</span>
+      <em class="quick-nav-count" id="qn-ach">0</em>
+    </button>
+    <button class="quick-nav-item" data-qn="squirrels" onclick="jumpTo('squirrels-gallery')" type="button">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="9" r="3"/>
+        <path d="M12 12v3M9 17h6M7 22h10v-2a3 3 0 0 0-3-3H10a3 3 0 0 0-3 3v2zM12 2v3"/>
+      </svg>
+      <span>Esquilos</span>
+      <em class="quick-nav-count" id="qn-squirrels">0</em>
     </button>
   </nav>
   <div class="dashboard">
@@ -10554,7 +10558,24 @@ html[data-theme="light"] .scroll-to-top {
 
     <div class="quests-grid" id="quests-grid"></div>
 
-    <!-- v100: Trilhas PRO movidas pra logo após o caminho -->
+    <!-- v100: NOVA ORDEM (após 52 missões):
+         1. Trilhas Gerais (Especializadas) — por área
+         2. Trilhas Profissionais (PRO) — por profissão
+         3. Trilhas Pessoais (LIFE) — vida fora do trabalho
+         4. Conquistas (medalhas)
+         5. Galeria de Esquilos (chapéus / coleção)
+    -->
+
+    <section class="tracks" id="tracks-section">
+      <header class="section-h">
+        <div class="section-tag">TRILHAS GERAIS</div>
+        <h3 class="section-title"><em>Conteúdo extra</em> pela sua área</h3>
+        <div class="section-meta">opcionais</div>
+      </header>
+      <div class="tracks-intro" id="tracks-intro">Trilhas com 6 aulas cada, focadas em casos da sua área. <em>Não substituem</em> a trilha principal — são complementos.</div>
+      <div class="tracks-grid" id="tracks-grid"></div>
+    </section>
+
     <section class="pro-tracks-section" id="pro-tracks-section">
       <div class="pro-tracks-head">
         <div class="pro-tracks-tag">⨀ Trilhas profissionais · BÔNUS</div>
@@ -10565,37 +10586,6 @@ html[data-theme="light"] .scroll-to-top {
       <div class="pro-tracks-grid" id="pro-tracks-grid"></div>
     </section>
 
-    <!-- Build log -->
-<section class="ach" id="achievements">
-      <header class="section-h">
-        <div class="section-tag">CONQUISTAS</div>
-        <h3 class="section-title"><em>Suas conquistas</em></h3>
-        <div class="section-meta" id="ach-count">—</div>
-      </header>
-      <div class="ach-grid" id="ach-grid"></div>
-    </section>
-
-    <!-- Esquilos gallery: all 9 rank avatars, locked/unlocked -->
-    <section class="squirrels-gallery" id="squirrels-gallery">
-      <header class="section-h">
-        <div class="section-tag">ESQUILOS</div>
-        <h2 class="section-title">Galeria de <em>esquilos</em></h2>
-        <div class="section-meta" id="sq-count">0 / 9 destravados</div>
-      </header>
-      <p class="squirrels-intro" id="sq-intro">Cada rank desbloqueia um esquilo único. Suba de XP pra completar a coleção.</p>
-      <div class="squirrels-grid" id="squirrels-grid"></div>
-    </section>
-
-    <section class="tracks" id="tracks-section">
-      <header class="section-h">
-        <div class="section-tag">TRILHAS ESPECIALIZADAS</div>
-        <h3 class="section-title"><em>Conteúdo extra</em> pela sua área</h3>
-        <div class="section-meta">opcionais</div>
-      </header>
-      <div class="tracks-intro" id="tracks-intro">Trilhas com 6 aulas cada, focadas em casos da sua área. <em>Não substituem</em> a trilha principal — são complementos.</div>
-      <div class="tracks-grid" id="tracks-grid"></div>
-    </section>
-
     <section class="pro-tracks-section life-tracks-section" id="life-tracks-section">
       <div class="pro-tracks-head">
         <div class="pro-tracks-tag">⨀ Trilhas pessoais · BÔNUS</div>
@@ -10604,6 +10594,27 @@ html[data-theme="light"] .scroll-to-top {
       <div class="pro-tracks-title">Pra <em>vida pessoal</em></div>
       <div class="pro-tracks-deck">Pra organizar o dia-a-dia fora do trabalho. <em>São bônus</em> — não dão XP nem chapéu da trilha principal, mas dão <strong style="color:#7fb98a;">⨀ Pontos Bônus</strong>. Termine a <em>Claude Mastery</em> antes de focar aqui.</div>
       <div class="pro-tracks-grid" id="life-tracks-grid"></div>
+    </section>
+
+    <!-- Conquistas (medalhas) -->
+    <section class="ach" id="achievements">
+      <header class="section-h">
+        <div class="section-tag">CONQUISTAS</div>
+        <h3 class="section-title"><em>Suas conquistas</em></h3>
+        <div class="section-meta" id="ach-count">—</div>
+      </header>
+      <div class="ach-grid" id="ach-grid"></div>
+    </section>
+
+    <!-- Galeria de Esquilos (1 por rank) -->
+    <section class="squirrels-gallery" id="squirrels-gallery">
+      <header class="section-h">
+        <div class="section-tag">ESQUILOS</div>
+        <h2 class="section-title">Galeria de <em>esquilos</em></h2>
+        <div class="section-meta" id="sq-count">0 / 9 destravados</div>
+      </header>
+      <p class="squirrels-intro" id="sq-intro">Cada rank desbloqueia um esquilo único. Suba de XP pra completar a coleção.</p>
+      <div class="squirrels-grid" id="squirrels-grid"></div>
     </section>
 
       </div>
@@ -23930,7 +23941,7 @@ const TOUR_STOPS = [
     target: '.quick-nav',
     tag: 'Parada 02 / 08',
     title: 'Atalhos rápidos',
-    text: 'Logo abaixo da topbar tem 5 atalhos pra rolar direto pras seções principais: Conquistas, Esquilos, Trilhas Gerais, Trilhas Pro e Trilhas Pessoais.'
+    text: 'Logo abaixo da topbar tem 5 atalhos pra rolar direto pras seções: Trilhas Gerais, Trilhas Pro, Trilhas Pessoais, Conquistas e Esquilos.'
   },
 
   // ─── 3: PERFIL + SKILL RADAR (dashboard-hero) ───
@@ -23957,20 +23968,20 @@ const TOUR_STOPS = [
     text: 'O tabuleiro completo. 8 atos, cada um termina num Boss (M07, M14, M21, M30, M36, M42, M48, M52). O badge "SEU DESTINO" marca onde sua trilha calibrada termina; atos além ficam esmaecidos como bônus.'
   },
 
-  // ─── 6: CONQUISTAS + ESQUILOS (grupo) ───
-  {
-    target: '#achievements',
-    tag: 'Parada 06 / 08',
-    title: 'Conquistas e Galeria',
-    text: 'Aqui ficam as Conquistas (medalhas pra desbloquear) e logo abaixo a Galeria de Esquilos — cada um dos 9 ranks tem um esquilo único, do Aspirante ao Sistema. Coleção visual paralela ao seu rank.'
-  },
-
-  // ─── 7: TRILHAS (grupo) ───
+  // ─── 6: TRILHAS (grupo) — vêm logo após o caminho ───
   {
     target: '#tracks-section',
-    tag: 'Parada 07 / 08',
+    tag: 'Parada 06 / 08',
     title: 'As Trilhas',
-    text: 'Mais abaixo: 9 Trilhas Gerais (por área de atuação), 21 Trilhas Profissionais (por profissão) e 8 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus dão Pontos Bônus (uma pontuação separada do XP), e são opcionais — treino contextual.'
+    text: 'Logo após o caminho: 9 Trilhas Gerais (por área de atuação), 18 Trilhas Profissionais (por profissão) e 9 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus dão Pontos Bônus (uma pontuação separada do XP), e são opcionais — treino contextual.'
+  },
+
+  // ─── 7: CONQUISTAS + ESQUILOS (grupo) ───
+  {
+    target: '#achievements',
+    tag: 'Parada 07 / 08',
+    title: 'Conquistas e Galeria',
+    text: 'Mais abaixo ficam as Conquistas (medalhas pra desbloquear) e a Galeria de Esquilos — cada um dos 9 ranks tem um esquilo único, do Aspirante ao Sistema. Coleção visual paralela ao seu rank.'
   },
 
   // ─── 8: ESQUILO ───
