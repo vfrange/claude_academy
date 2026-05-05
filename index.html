@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Claude Academy</title>
 <style>
 /* ============================================================
@@ -4490,6 +4490,45 @@ body:has(.modal-bg.active) .squirrel-widget {
   gap: 8px;
   justify-content: space-between;
 }
+
+/* v100: botões DENTRO do balão — visíveis em mobile como fallback
+   caso a toolbar fixa fique cortada pela barra do Safari/iOS */
+.tour-balloon-inline-actions {
+  display: none; /* desktop: usa toolbar */
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212, 164, 55, 0.20);
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.tour-balloon-skip-inline {
+  background: transparent;
+  border: none;
+  color: var(--ivory-3);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+}
+.tour-balloon-skip-inline:hover { color: var(--amber); }
+.tour-balloon-nav-inline {
+  display: flex;
+  gap: 6px;
+}
+.tour-balloon-btn-inline {
+  padding: 8px 12px;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+}
+@media (max-width: 720px) {
+  /* Em mobile mostra botões dentro do balão e ESCONDE toolbar fixa
+     (toolbar pode ser cortada pela barra inferior do Safari) */
+  .tour-balloon-inline-actions { display: flex; }
+  .tour-toolbar { display: none !important; }
+}
 .tour-balloon-skip {
   background: transparent;
   border: none;
@@ -4532,12 +4571,15 @@ body:has(.modal-bg.active) .squirrel-widget {
 /* v100: Toolbar FIXA no rodapé do tour — botões NÃO mudam de lugar a cada parada */
 .tour-toolbar {
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
+  /* v100: usa safe-area-inset-bottom pra ficar acima da home indicator no iPhone
+     e da barra de gestos do Safari. Sem isso, botão Próximo fica atrás da barra. */
+  bottom: env(safe-area-inset-bottom, 0);
   z-index: 250;
   background: linear-gradient(180deg, rgba(20, 17, 13, 0.85), rgba(20, 17, 13, 0.97));
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--line-strong);
   padding: 14px 24px;
   display: flex;
@@ -4546,6 +4588,9 @@ body:has(.modal-bg.active) .squirrel-widget {
   gap: 16px;
   box-shadow: 0 -8px 24px rgba(0,0,0,0.4);
   pointer-events: auto;
+  /* v100: garante que a toolbar nunca seja escondida ou afetada por outros estilos */
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 .tour-toolbar-hint {
   font-family: var(--mono);
@@ -24064,6 +24109,15 @@ function startTour() {
         <div class="tour-balloon-title" id="tour-balloon-title"></div>
         <div class="tour-balloon-text" id="tour-balloon-text"></div>
         <div class="tour-balloon-dots" id="tour-balloon-dots"></div>
+        <!-- v100: botões DENTRO do balão pra mobile/iOS — toolbar fixa pode ser cortada
+             pela barra inferior do Safari/home indicator. Aqui sempre visível com o conteúdo. -->
+        <div class="tour-balloon-inline-actions">
+          <button class="tour-balloon-skip-inline" onclick="endTour(true)" type="button">Pular</button>
+          <div class="tour-balloon-nav-inline">
+            <button class="tour-balloon-btn ghost tour-balloon-btn-inline" id="tour-prev-btn-inline" onclick="tourPrev()" type="button">← Voltar</button>
+            <button class="tour-balloon-btn tour-balloon-btn-inline" id="tour-next-btn-inline" onclick="tourNext()" type="button">Próximo →</button>
+          </div>
+        </div>
       </div>
       <!-- v100: toolbar fixa no rodapé pra os botões NÃO mudarem de lugar a cada parada -->
       <div class="tour-toolbar" id="tour-toolbar">
@@ -24092,6 +24146,12 @@ function startTour() {
   overlay.classList.add('active');
   // Re-handle window resize to re-position
   window.addEventListener('resize', tourReposition);
+  // v100: iOS Safari — quando a barra de URL aparece/some, o viewport muda
+  // sem disparar 'resize'. visualViewport.resize captura isso.
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', tourReposition);
+    window.visualViewport.addEventListener('scroll', tourReposition);
+  }
   // v100: atalhos de teclado pra navegar tour sem mover o mouse
   document.addEventListener('keydown', _tourKeyHandler);
   renderTourStop();
@@ -24139,11 +24199,17 @@ function renderTourStop() {
     return `<div class="tour-balloon-dot ${cls}"></div>`;
   }).join('');
   
-  // Update buttons
+  // Update buttons (toolbar fixa + inline no balão pra mobile)
   const prev = document.getElementById('tour-prev-btn');
   const next = document.getElementById('tour-next-btn');
-  prev.style.visibility = _tourState.idx === 0 ? 'hidden' : 'visible';
-  next.textContent = _tourState.idx === TOUR_STOPS.length - 1 ? 'Começar! 🚀' : 'Próximo →';
+  const prevInline = document.getElementById('tour-prev-btn-inline');
+  const nextInline = document.getElementById('tour-next-btn-inline');
+  const isFirst = _tourState.idx === 0;
+  const nextLabel = _tourState.idx === TOUR_STOPS.length - 1 ? 'Começar! 🚀' : 'Próximo →';
+  if (prev) prev.style.visibility = isFirst ? 'hidden' : 'visible';
+  if (next) next.textContent = nextLabel;
+  if (prevInline) prevInline.style.visibility = isFirst ? 'hidden' : 'visible';
+  if (nextInline) nextInline.textContent = nextLabel;
   
   // Final styling
   if (stop.final) {
@@ -24177,8 +24243,9 @@ function positionTourStop(stop, _retryCount) {
   const squirrel = document.getElementById('tour-squirrel');
   const spotRect = document.getElementById('tour-spotlight-rect');
   _retryCount = _retryCount || 0;
-  // v100: reserva espaço pra toolbar fixa no rodapé (76px)
-  const TOOLBAR_H = 76;
+  // v100: reserva espaço pra toolbar fixa no rodapé.
+  // Em mobile (≤720px) toolbar está escondida — botões ficam DENTRO do balão.
+  const TOOLBAR_H = window.innerWidth <= 720 ? 0 : 76;
   
   if (stop.final || !stop.target) {
     halo.style.display = 'none';
@@ -24186,7 +24253,8 @@ function positionTourStop(stop, _retryCount) {
     spotRect.setAttribute('height', '0');
     
     const W = window.innerWidth;
-    const H = window.innerHeight - TOOLBAR_H; // área usável acima da toolbar
+    const Hraw = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    const H = Hraw - TOOLBAR_H; // área usável acima da toolbar
     const bw = balloon.offsetWidth || 380;
     const bh = balloon.offsetHeight || 240;
     balloon.style.left = (W/2 - bw/2) + 'px';
@@ -24206,8 +24274,10 @@ function positionTourStop(stop, _retryCount) {
   
   const fullR = targetEl.getBoundingClientRect();
   const W = window.innerWidth;
-  const Hraw = window.innerHeight;
-  const H = Hraw - TOOLBAR_H; // área usável (acima da toolbar fixa)
+  // v100: iOS Safari muda window.innerHeight quando barra de URL aparece/some.
+  // visualViewport.height é a área REALMENTE visível. Usa quando disponível.
+  const Hraw = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const H = Hraw - TOOLBAR_H; // área usável (acima da toolbar fixa, ou tela toda em mobile)
   const maxHaloH = Math.min(320, Math.round(H * 0.42));
   const haloLogicalH = Math.min(fullR.height, maxHaloH);
   
@@ -24345,6 +24415,11 @@ function endTour(skipped) {
     sqWidget.style.pointerEvents = '';
   }
   window.removeEventListener('resize', tourReposition);
+  // v100: remove visualViewport listeners (iOS)
+  if (window.visualViewport) {
+    window.visualViewport.removeEventListener('resize', tourReposition);
+    window.visualViewport.removeEventListener('scroll', tourReposition);
+  }
   // v100: remove keyboard handler
   document.removeEventListener('keydown', _tourKeyHandler);
   // Mark as shown
