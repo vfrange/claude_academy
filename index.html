@@ -2556,14 +2556,27 @@ html[data-theme="light"] .reset-modal-foot {
 .quest.boss::after { width: 4px; opacity: 0.95; }
 
 /* State variants */
-.quest.q-review { opacity: 0.6; background: var(--abyss); }
+/* v100: cards "fora da trilha" ficam um pouco menos visíveis (não dramático) */
+.quest.q-review { opacity: 0.78; background: var(--abyss); }
 .quest.q-review:hover { opacity: 1; border-color: var(--ivory-3); }
 .quest.q-review .quest-num,
 .quest.q-review .quest-type-tag { color: var(--ivory-3); }
 .quest.q-review .quest-type-dot { background: var(--ivory-3); box-shadow: none; }
 
+/* v100: cards DA TRILHA RECOMENDADA (q-path = 1-4 à frente da próxima)
+   ganham destaque sutil mas claro: fundo levemente âmbar + borda fina âmbar */
+.quest.q-path {
+  background: linear-gradient(135deg, rgba(212,164,55,0.05), var(--deep) 70%);
+  border-color: rgba(212,164,55,0.30);
+}
+.quest.q-path:hover {
+  border-color: rgba(212,164,55,0.55);
+  background: linear-gradient(135deg, rgba(212,164,55,0.08), var(--deep) 70%);
+}
+
 .quest.q-current {
   border-color: var(--card-accent);
+  background: linear-gradient(135deg, rgba(212,164,55,0.08), var(--deep) 65%);
   box-shadow: 0 0 0 1px var(--card-accent-soft), 0 12px 32px rgba(0,0,0,0.18);
 }
 .quest.q-current:hover { transform: translateY(-3px); }
@@ -2581,8 +2594,9 @@ html[data-theme="light"] .reset-modal-foot {
   z-index: 2;
 }
 
+/* v100: cards "muito à frente" ficam um pouco mais discretos (não dramático) */
 .quest.q-ahead {
-  opacity: 0.55;
+  opacity: 0.7;
   background: var(--abyss);
   border-style: dashed;
   border-color: var(--line-strong);
@@ -3037,6 +3051,18 @@ html[data-theme="light"] .quest:hover {
 @keyframes currentPulse {
   0%, 100% { box-shadow: 0 0 0 1.5px var(--card-accent), 0 16px 40px rgba(0,0,0,0.22), 0 0 50px var(--card-accent-soft); }
   50%      { box-shadow: 0 0 0 1.5px var(--card-accent), 0 16px 40px rgba(0,0,0,0.22), 0 0 75px var(--card-accent-soft); }
+}
+/* v100: cards "no caminho recomendado" (q-path) — destaque sutil mas claro */
+.quest.q-path {
+  background:
+    linear-gradient(135deg, var(--card-accent-soft) 0%, transparent 70%),
+    var(--deep);
+  border-color: var(--card-accent-soft);
+  box-shadow: 0 0 0 1px var(--card-accent-soft);
+}
+.quest.q-path:hover {
+  border-color: var(--card-accent);
+  box-shadow: 0 0 0 1px var(--card-accent), 0 12px 28px rgba(0,0,0,0.18);
 }
 .quest.boss {
   background:
@@ -5103,7 +5129,7 @@ html[data-theme="light"] .squirrel-widget-bubble {
 }
 .quest-badge-current { top: -8px !important; }
 
-/* 2. PULAR / REVISÃO opacity */
+/* 2. AGUARDE / OPCIONAL opacity */
 .quest.q-ahead { opacity: 0.85 !important; }
 .quest.q-ahead .quest-title { opacity: 0.85; }
 .quest.q-ahead .quest-deck  { opacity: 0.7; }
@@ -5961,7 +5987,7 @@ html[data-theme="light"] {
   color: var(--amber) !important;
 }
 
-/* PULAR + REVISÃO — keep readable, not invisible */
+/* AGUARDE + OPCIONAL — keep readable, not invisible */
 .quest.q-ahead,
 .quest.q-review {
   opacity: 1 !important;
@@ -11271,6 +11297,376 @@ html[data-theme="light"] .scroll-to-top {
 }
 .ws-detail-list strong { color: var(--ivory-1); font-weight: 600; font-style: normal; font-family: var(--sans); }
 
+/* ============================================================
+   v100: BOSSES (Tier 2) — mini-jogos interativos
+   ============================================================ */
+.boss-game {
+  background: linear-gradient(135deg, rgba(212,164,55,0.06), var(--deep) 70%);
+  border: 1.5px solid rgba(212,164,55,0.30);
+  border-radius: 12px;
+  padding: 22px;
+  margin-top: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.boss-game::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+}
+.boss-game-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--amber);
+  margin-bottom: 12px;
+}
+.boss-game-tag::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--amber); box-shadow: 0 0 8px rgba(212,164,55,0.7);
+  animation: boss-pulse 2s ease-in-out infinite;
+}
+@keyframes boss-pulse { 0%,100% { opacity:1 } 50% { opacity:0.5 } }
+.boss-intro {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  line-height: 1.55; color: var(--ivory-2); margin-bottom: 16px; max-width: 640px;
+}
+.boss-intro strong { color: var(--amber); font-style: normal; font-weight: 600; }
+.boss-progress {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  font-family: var(--mono); font-size: 11px; color: var(--ivory-3);
+}
+.boss-progress-bar {
+  flex: 1; height: 4px; background: rgba(255,255,255,0.06);
+  border-radius: 2px; overflow: hidden;
+}
+.boss-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--amber), #f4c860);
+  border-radius: 2px; transition: width 0.5s var(--ease-out);
+  box-shadow: 0 0 8px rgba(212,164,55,0.5);
+}
+.boss-score {
+  font-family: var(--display); font-style: italic; font-size: 18px;
+  color: var(--amber);
+}
+
+/* === TRIAGEM (Q07, Q21) === */
+.triage-list { display: flex; flex-direction: column; gap: 10px; }
+.triage-card {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+  border-radius: 10px; padding: 14px; transition: all 0.18s var(--ease-out);
+}
+.triage-card.answered { border-color: rgba(127,185,138,0.40); background: rgba(127,185,138,0.04); }
+.triage-card.wrong   { border-color: rgba(214,71,49,0.40); background: rgba(214,71,49,0.04); }
+.triage-from {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ivory-3); margin-bottom: 4px;
+}
+.triage-text {
+  font-family: var(--serif); font-size: 14px; line-height: 1.5; color: var(--ivory-1);
+  margin-bottom: 12px; font-style: italic;
+}
+.triage-options {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.triage-opt {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line-strong);
+  border-radius: 100px; padding: 6px 12px; font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.10em; color: var(--ivory-2);
+  cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+}
+.triage-opt:hover:not(:disabled):not(.correct):not(.incorrect) {
+  border-color: var(--amber); color: var(--amber);
+}
+.triage-opt.correct { background: rgba(127,185,138,0.14); border-color: #7fb98a; color: #7fb98a; }
+.triage-opt.incorrect { background: rgba(214,71,49,0.14); border-color: var(--crimson); color: var(--crimson); }
+.triage-opt:disabled { cursor: not-allowed; opacity: 0.6; }
+.triage-feedback {
+  margin-top: 10px; padding: 8px 10px;
+  background: rgba(255,255,255,0.03); border-radius: 6px;
+  font-family: var(--serif); font-size: 12px; line-height: 1.5;
+  color: var(--ivory-2); font-style: italic;
+}
+.triage-feedback strong { color: var(--ivory-1); font-style: normal; }
+.boss-result {
+  margin-top: 18px; padding: 16px; background: linear-gradient(135deg, rgba(212,164,55,0.08), transparent);
+  border: 1px solid var(--amber); border-radius: 10px;
+}
+.boss-result-title {
+  font-family: var(--display); font-style: italic; font-size: 22px;
+  color: var(--amber); margin-bottom: 6px;
+}
+.boss-result-msg {
+  font-family: var(--serif); font-size: 14px; line-height: 1.5;
+  color: var(--ivory-1); font-style: italic;
+}
+.boss-reset {
+  margin-top: 12px; background: transparent; border: 1px solid var(--line-strong);
+  border-radius: 6px; padding: 6px 12px; font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ivory-2);
+  cursor: pointer; transition: all 0.15s;
+}
+.boss-reset:hover { border-color: var(--amber); color: var(--amber); }
+
+/* === PIPELINE (Q14, Q48) === */
+.pipeline-pool {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;
+  border: 1px dashed var(--line-strong);
+}
+.pipeline-pool-tag {
+  width: 100%; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ivory-3); margin-bottom: 4px;
+}
+.pipeline-block {
+  background: rgba(255,255,255,0.06); border: 1.5px solid var(--line-strong);
+  border-radius: 8px; padding: 10px 14px; cursor: pointer;
+  transition: all 0.18s var(--ease-out); user-select: none;
+}
+.pipeline-block:hover:not(.placed) { border-color: var(--amber); transform: translateY(-1px); }
+.pipeline-block.placed { opacity: 0.4; cursor: not-allowed; }
+.pipeline-block-icon { font-size: 16px; margin-right: 6px; }
+.pipeline-block-name {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em;
+  color: var(--ivory-1);
+}
+.pipeline-slots {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  padding: 16px; background: rgba(0,0,0,0.20); border-radius: 8px;
+  border: 1px solid var(--line); min-height: 80px;
+}
+.pipeline-slot {
+  flex: 1; min-width: 120px;
+  border: 2px dashed var(--line-strong);
+  border-radius: 8px; padding: 14px 12px;
+  text-align: center;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ivory-3); cursor: pointer; transition: all 0.18s;
+  position: relative;
+}
+.pipeline-slot:hover { border-color: var(--amber); color: var(--amber); }
+.pipeline-slot.filled {
+  background: rgba(212,164,55,0.06); border-color: var(--amber); color: var(--amber);
+  border-style: solid;
+}
+.pipeline-slot.correct { background: rgba(127,185,138,0.10); border-color: #7fb98a; color: #7fb98a; }
+.pipeline-slot.wrong { background: rgba(214,71,49,0.10); border-color: var(--crimson); color: var(--crimson); }
+.pipeline-slot-num {
+  position: absolute; top: 4px; left: 8px; font-size: 9px; opacity: 0.6;
+}
+.pipeline-arrow { font-size: 18px; color: var(--ivory-3); }
+@media (max-width: 720px) { .pipeline-arrow { display: none; } }
+.pipeline-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.pipeline-btn {
+  background: var(--amber); color: var(--abyss);
+  border: none; border-radius: 6px;
+  padding: 8px 16px; font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+  transition: transform 0.15s;
+}
+.pipeline-btn:hover { transform: translateY(-1px); }
+.pipeline-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.pipeline-btn.ghost { background: transparent; color: var(--ivory-2); border: 1px solid var(--line-strong); }
+.pipeline-btn.ghost:hover { border-color: var(--amber); color: var(--amber); }
+
+/* === REACT LOOP (Q30) === */
+.react-loop {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+  margin-bottom: 14px;
+}
+@media (max-width: 720px) { .react-loop { grid-template-columns: 1fr; } }
+.react-step {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line-strong);
+  border-radius: 10px; padding: 14px; transition: all 0.25s;
+}
+.react-step.active {
+  border-color: var(--amber); background: rgba(212,164,55,0.06);
+  box-shadow: 0 0 0 1px rgba(212,164,55,0.30);
+}
+.react-step.done { border-color: #7fb98a; background: rgba(127,185,138,0.04); }
+.react-step-icon { font-size: 22px; margin-bottom: 6px; }
+.react-step-name {
+  font-family: var(--display); font-style: italic; font-size: 16px;
+  color: var(--ivory-1); margin-bottom: 4px;
+}
+.react-step.active .react-step-name { color: var(--amber); }
+.react-step.done .react-step-name { color: #7fb98a; }
+.react-step-content {
+  font-family: var(--mono); font-size: 11px; line-height: 1.5;
+  color: var(--ivory-2); min-height: 40px;
+}
+.react-decision {
+  background: rgba(0,0,0,0.30); border: 1px solid var(--line);
+  border-radius: 8px; padding: 14px; margin-top: 12px;
+}
+.react-decision-q {
+  font-family: var(--serif); font-size: 14px; font-style: italic;
+  color: var(--ivory-1); margin-bottom: 10px;
+}
+.react-decision-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.react-decision-opt {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line-strong);
+  border-radius: 6px; padding: 8px 12px; font-family: var(--mono); font-size: 11px;
+  color: var(--ivory-1); cursor: pointer; transition: all 0.15s; text-align: left;
+  flex: 1; min-width: 200px;
+}
+.react-decision-opt:hover:not(:disabled) { border-color: var(--amber); }
+.react-decision-opt.selected { background: rgba(212,164,55,0.10); border-color: var(--amber); color: var(--amber); }
+.react-decision-opt.correct { background: rgba(127,185,138,0.10); border-color: #7fb98a; color: #7fb98a; }
+.react-decision-opt.incorrect { background: rgba(214,71,49,0.10); border-color: var(--crimson); color: var(--crimson); }
+
+/* === HARDENING (Q42) === */
+.harden-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;
+}
+@media (max-width: 720px) { .harden-grid { grid-template-columns: 1fr; } }
+.harden-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+  border-radius: 8px; cursor: pointer; transition: all 0.18s;
+}
+.harden-row:hover { background: rgba(255,255,255,0.06); }
+.harden-row.on { border-color: rgba(127,185,138,0.40); background: rgba(127,185,138,0.04); }
+.harden-toggle {
+  width: 36px; height: 20px; background: rgba(255,255,255,0.10);
+  border-radius: 100px; position: relative; flex-shrink: 0; transition: all 0.2s;
+}
+.harden-row.on .harden-toggle { background: #7fb98a; }
+.harden-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; background: #fff; border-radius: 50%;
+  transition: transform 0.2s var(--ease-spring);
+}
+.harden-row.on .harden-toggle::after { transform: translateX(16px); }
+.harden-name {
+  flex: 1; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+  color: var(--ivory-1);
+}
+.harden-impact {
+  font-family: var(--mono); font-size: 9px; color: var(--ivory-3);
+}
+.harden-summary {
+  background: rgba(0,0,0,0.20); border: 1px dashed var(--line-strong);
+  border-radius: 8px; padding: 14px;
+}
+.harden-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 10px;
+}
+.harden-stat {
+  text-align: center; padding: 8px;
+  background: rgba(255,255,255,0.03); border-radius: 6px;
+}
+.harden-stat-val {
+  font-family: var(--display); font-style: italic; font-size: 22px;
+  color: var(--amber); line-height: 1;
+}
+.harden-stat-val.green { color: #7fb98a; }
+.harden-stat-val.red   { color: var(--crimson); }
+.harden-stat-lbl {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ivory-3); margin-top: 4px;
+}
+.harden-verdict {
+  font-family: var(--serif); font-size: 13px; line-height: 1.5;
+  color: var(--ivory-2); font-style: italic;
+}
+.harden-verdict strong { color: var(--ivory-1); font-style: normal; font-family: var(--sans); }
+
+/* === DOC PROCESSOR (Q36) === */
+.doc-stages {
+  display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 14px;
+}
+.doc-stage {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: 8px; padding: 12px 14px; transition: all 0.3s;
+  display: flex; align-items: center; gap: 12px;
+}
+.doc-stage.running { border-left-color: var(--amber); background: rgba(212,164,55,0.04); }
+.doc-stage.done { border-left-color: #7fb98a; background: rgba(127,185,138,0.04); }
+.doc-stage-num {
+  font-family: var(--mono); font-size: 14px; color: var(--ivory-3);
+  width: 24px; flex-shrink: 0;
+}
+.doc-stage.running .doc-stage-num { color: var(--amber); }
+.doc-stage.done .doc-stage-num { color: #7fb98a; }
+.doc-stage-name {
+  flex: 1; font-family: var(--mono); font-size: 12px; color: var(--ivory-1);
+}
+.doc-stage-status {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ivory-3);
+}
+.doc-stage.running .doc-stage-status { color: var(--amber); }
+.doc-stage.done .doc-stage-status { color: #7fb98a; }
+.doc-result {
+  background: rgba(0,0,0,0.20); border: 1px solid var(--line);
+  border-radius: 8px; padding: 14px; margin-top: 12px;
+  font-family: var(--mono); font-size: 11px; line-height: 1.6;
+  color: var(--ivory-1); white-space: pre-wrap;
+}
+.doc-result .hl { color: var(--amber); }
+.doc-result .hl-g { color: #7fb98a; }
+.doc-controls { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+
+/* === LAUNCH (Q52) === */
+.launch-cats { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.launch-cat {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 14px;
+}
+.launch-cat-h {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.launch-cat-name {
+  font-family: var(--display); font-style: italic; font-size: 16px;
+  color: var(--ivory-1);
+}
+.launch-cat-count {
+  font-family: var(--mono); font-size: 10px; color: var(--ivory-3);
+  letter-spacing: 0.10em;
+}
+.launch-cat.complete .launch-cat-count { color: #7fb98a; }
+.launch-items { display: flex; flex-direction: column; gap: 6px; }
+.launch-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: rgba(255,255,255,0.02); border-radius: 6px;
+  cursor: pointer; transition: all 0.15s;
+}
+.launch-item:hover { background: rgba(255,255,255,0.05); }
+.launch-item.checked { background: rgba(127,185,138,0.06); }
+.launch-checkbox {
+  width: 16px; height: 16px; border: 1.5px solid var(--ivory-3);
+  border-radius: 4px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.launch-item.checked .launch-checkbox {
+  background: #7fb98a; border-color: #7fb98a;
+}
+.launch-item.checked .launch-checkbox::after {
+  content: '✓'; color: var(--abyss); font-size: 11px; font-weight: 700;
+}
+.launch-item-text {
+  font-family: var(--serif); font-size: 13px; color: var(--ivory-1);
+  font-style: italic;
+}
+.launch-item.checked .launch-item-text { color: var(--ivory-2); }
+.launch-summary {
+  background: linear-gradient(135deg, rgba(212,164,55,0.06), transparent);
+  border: 1px solid var(--amber); border-radius: 10px; padding: 16px;
+}
+.launch-summary-h {
+  font-family: var(--display); font-style: italic; font-size: 18px;
+  color: var(--amber); margin-bottom: 8px;
+}
+.launch-summary-msg {
+  font-family: var(--serif); font-size: 13px; line-height: 1.5;
+  color: var(--ivory-1); font-style: italic;
+}
+
 </style>
 </head>
 <body>
@@ -12383,6 +12779,19 @@ QUESTS[7] = {
         <li>Comentários em pesquisas internas (NPS, satisfação, feedback)</li>
       </ul>
     ` },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q07-block">
+        <div class="boss-game-tag">⨀ Treino · Triagem ao vivo</div>
+        <p class="boss-intro">Antes de construir o sistema, <strong>treine o critério</strong>. 5 feedbacks vão chegar — classifica cada um. Sem critério claro na sua cabeça, automação não rola.</p>
+        <div class="boss-progress">
+          <span>Progresso</span>
+          <div class="boss-progress-bar"><div class="boss-progress-fill" id="boss-q07-progress" style="width:0%"></div></div>
+          <span class="boss-score" id="boss-q07-score">0/5</span>
+        </div>
+        <div class="triage-list" id="boss-q07-list"></div>
+        <div class="boss-result" id="boss-q07-result" style="display:none"></div>
+      </div>
+    ` },
     { type: 'build', label: 'COMPLETAR BOSS', body: `
       <div class="mission">
         <div class="mission-head">
@@ -13005,6 +13414,27 @@ QUESTS[14] = {
 
       <div class="callout tip"><strong>Critério de vitória:</strong> daqui a 7 dias, você usou esse engine de verdade — não como exercício. É o que separa Boss de exercício.</div>
     ` },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q14-block">
+        <div class="boss-game-tag">⨀ Treino · Monte o pipeline</div>
+        <p class="boss-intro">Antes de construir o real, <strong>monte a arquitetura na cabeça</strong>. Clique numa peça pra selecionar e depois num slot pra encaixar. A ordem importa — cada peça depende da anterior.</p>
+        <div class="pipeline-pool" id="boss-q14-pool"></div>
+        <div class="pipeline-slots" id="boss-q14-slots">
+          <div class="pipeline-slot" data-slot="0"></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-slot" data-slot="1"></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-slot" data-slot="2"></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-slot" data-slot="3"></div>
+        </div>
+        <div class="pipeline-actions">
+          <button class="pipeline-btn" id="boss-q14-check" onclick="bossQ14Check()" disabled>Verificar</button>
+          <button class="pipeline-btn ghost" onclick="bossQ14Reset()">↺ Limpar</button>
+        </div>
+        <div class="boss-result" id="boss-q14-result" style="display:none"></div>
+      </div>
+    ` },
     { type: 'build', label: 'COMPLETAR BOSS', body: `
       <div class="mission">
         <div class="mission-head">
@@ -13242,7 +13672,20 @@ QUESTS[21] = {
     { type: 'build', label: 'PASSOS DA CONSTRUÇÃO', body: '<p><strong>Passos da construção:</strong></p><ol><li>Plugin de email — <em>Microsoft 365</em> ou <em>Gmail</em> instalado no Cowork</li><li>Skill custom — você cria skill <code>triagem-email</code> com seus critérios (quem é VIP, o que é urgente pra você, tom de resposta)</li><li>Slash command — <code>/triar-emails</code> que executa o fluxo inteiro</li><li>Scheduled task — roda automático todo dia 7h</li><li>Output destino — relatório em pasta + drafts no Outlook/Gmail</li></ol>' },
     { type: 'build', label: 'SKILL DE EXEMPLO', body: '<p><strong>Sua skill triagem-email pode ser tipo:</strong></p><pre class="code"># Skill: triagem-email\n\n## Quando usar\nClassifica emails recebidos e prepara respostas/ações.\n\n## Critérios de urgência\n- VIPs: lista de emails (CEO, principais clientes, sócios)\n- Palavras-chave urgentes: "urgente", "prazo", "deadline", "prejuízo"\n- De fornecedores críticos: lista [...]\n\n## Tom de resposta\n- Direto, sem floreio\n- Sempre confirma recebimento\n- Para perguntas técnicas, redireciona pra responsável\n- Assina com [Sua Função], [Empresa]\n\n## Output\nPara cada email:\n- Categoria (urgente/importante/baixa/spam)\n- 1 frase de resumo\n- Ação sugerida\n- Para urgentes: draft de resposta</pre>' },
     { type: 'study', label: 'COMO STEERAR', body: '<p><strong>Como steerar o sistema</strong></p><p>Boss não é "deixar rodar e esquecer". Você tem 2 momentos de controle:</p><ol><li><strong>Setup inicial</strong> — primeira semana, revise TODOS os outputs. Calibre a skill (regras de urgência, tom, exceções) com base no que ele errou.</li><li><strong>Operação contínua</strong> — depois de calibrado, revise só os drafts antes de enviar e o resumo da pilha "baixa" pra garantir que nada importante foi mal classificado.</li></ol><p>Em 2-3 semanas, você ganha 1-2 horas/dia que ia pra triagem.</p>' },
-    { type: 'study', label: 'VERSÃO DEV (OPCIONAL)', body: '<p><em>Versão API/dev pra quem quer construir como aplicação própria.</em></p><pre class="code" data-lang="python">def triar_email(email):\n    response = client.messages.create(\n        model="claude-sonnet-4-6",\n        tools=[{\n            "name": "classificar_email",\n            "input_schema": {\n                "type": "object",\n                "properties": {\n                    "categoria": {"type": "string", "enum": ["urgente","importante","baixa","spam"]},\n                    "resumo": {"type": "string"},\n                    "acao": {"type": "string"},\n                    "draft_resposta": {"type": "string"}\n                }\n            }\n        }],\n        tool_choice={"type": "tool", "name": "classificar_email"},\n        messages=[{\n            "role": "user",\n            "content": f"Classifique:\\n\\nDe: {email.from}\\nAssunto: {email.subject}\\n\\n{email.body}"\n        }]\n    )\n    return response.content[0].input</pre><p>Em produção: integre com Microsoft Graph (Outlook) ou Gmail API. Use batch pra processar múltiplos emails. Detalhes na <strong>Trilha Engenharia</strong>.</p>' }
+    { type: 'study', label: 'VERSÃO DEV (OPCIONAL)', body: '<p><em>Versão API/dev pra quem quer construir como aplicação própria.</em></p><pre class="code" data-lang="python">def triar_email(email):\n    response = client.messages.create(\n        model="claude-sonnet-4-6",\n        tools=[{\n            "name": "classificar_email",\n            "input_schema": {\n                "type": "object",\n                "properties": {\n                    "categoria": {"type": "string", "enum": ["urgente","importante","baixa","spam"]},\n                    "resumo": {"type": "string"},\n                    "acao": {"type": "string"},\n                    "draft_resposta": {"type": "string"}\n                }\n            }\n        }],\n        tool_choice={"type": "tool", "name": "classificar_email"},\n        messages=[{\n            "role": "user",\n            "content": f"Classifique:\\n\\nDe: {email.from}\\nAssunto: {email.subject}\\n\\n{email.body}"\n        }]\n    )\n    return response.content[0].input</pre><p>Em produção: integre com Microsoft Graph (Outlook) ou Gmail API. Use batch pra processar múltiplos emails. Detalhes na <strong>Trilha Engenharia</strong>.</p>' },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q21-block">
+        <div class="boss-game-tag">⨀ Treino · Inbox triage</div>
+        <p class="boss-intro">Antes de codar a Skill, <strong>treine o critério</strong>. 5 emails reais — classifique cada um pela urgência. Esse é exatamente o tipo de regra que vai dentro da skill <em>triagem-email</em>.</p>
+        <div class="boss-progress">
+          <span>Progresso</span>
+          <div class="boss-progress-bar"><div class="boss-progress-fill" id="boss-q21-progress" style="width:0%"></div></div>
+          <span class="boss-score" id="boss-q21-score">0/5</span>
+        </div>
+        <div class="triage-list" id="boss-q21-list"></div>
+        <div class="boss-result" id="boss-q21-result" style="display:none"></div>
+      </div>
+    ` }
   ]
 };
 
@@ -13504,7 +13947,16 @@ QUESTS[30] = {
     { type: 'build', label: 'CAMINHO COWORK', body: '<p><strong>Caminho recomendado pelo Cowork (sem código):</strong></p><ol><li>Use o brief que você fez na preparação (M29)</li><li>Cowork > Customize > Plugins — instale os necessários</li><li>Crie skills custom pro workflow específico</li><li>Combine via slash command (ex: /relatorio-semanal)</li><li>Schedule (M3 - cowork-3) pra rodar automático</li><li>Configure logs/notificações</li><li>Teste 1 ciclo manual antes de deixar autônomo</li></ol>' },
     { type: 'study', label: '3 EXEMPLOS', body: '<p><strong>3 exemplos pra inspiração:</strong></p><ol><li><strong>Daily briefing</strong> — todo dia 7h, Cowork compila: agenda do dia, top 5 emails urgentes, 3 KPIs críticos, ações sugeridas. Salva em PDF, te manda no WhatsApp.</li><li><strong>Weekly review engine</strong> — toda sexta 18h: pega vendas, compara com semana anterior, identifica anomalias, drafta update pro grupo, salva relatório.</li><li><strong>Inbox triage automático</strong> — 3x ao dia: classifica novos emails, drafta respostas pra urgentes, arquiva spam, manda resumo da pilha "baixa".</li></ol><p>Pegue um desses, ou invente um seu. <strong>Critério:</strong> tem que ser problema real, recorrente, e medível.</p>' },
     { type: 'measure', label: 'CRITÉRIO DE SUCESSO', body: '<p><strong>Critério de sucesso:</strong></p><ul><li>Roda sem intervenção sua por pelo menos 3 ciclos consecutivos</li><li>Output tem qualidade aceitável (≥80% do que você faria manualmente)</li><li>Tempo de revisão sua é < 10 min/ciclo</li><li>Custo conhecido e dentro do esperado</li><li>Tem fallback se algo der errado (não silencia falhas)</li></ul><p>Quando atingir isso, você libera 2-5 horas/semana. <strong>Esse é o ROI real do Ato Autonomia.</strong></p>' },
-    { type: 'study', label: 'VERSÃO DEV (OPCIONAL)', body: '<p><em>Versão dev — agente autônomo via API.</em></p><p>Stack típico:</p><ul><li><strong>Trigger</strong>: cron (Linux) ou GitHub Actions ou cloud function</li><li><strong>Storage</strong>: SQLite local ou cloud DB (Postgres, DynamoDB)</li><li><strong>Compute</strong>: pode rodar local ou em VM/container</li><li><strong>API client</strong>: Anthropic SDK</li><li><strong>Notification</strong>: Slack webhook, email SMTP, Telegram bot</li></ul><p>Padrão de implementação:</p><pre class="code" data-lang="python">def autonomous_workflow():\n    # 1. Gather inputs\n    inputs = collect_data()\n    \n    # 2. Process with Claude\n    result = client.messages.create(\n        model="claude-sonnet-4-6",\n        tools=domain_tools,\n        messages=[{"role": "user", "content": format_prompt(inputs)}]\n    )\n    \n    # 3. Handle tool calls in loop\n    while result.stop_reason == "tool_use":\n        # ... agent loop\n    \n    # 4. Validate output\n    validated = guardrails(result.content)\n    \n    # 5. Deliver\n    save(validated)\n    notify_user(validated.summary)\n\n# Schedule\n# crontab: 0 7 * * * python autonomous_workflow.py</pre><p>Veja Trilha Engenharia missão eng-4 + eng-6 pra implementação production-ready.</p>' }
+    { type: 'study', label: 'VERSÃO DEV (OPCIONAL)', body: '<p><em>Versão dev — agente autônomo via API.</em></p><p>Stack típico:</p><ul><li><strong>Trigger</strong>: cron (Linux) ou GitHub Actions ou cloud function</li><li><strong>Storage</strong>: SQLite local ou cloud DB (Postgres, DynamoDB)</li><li><strong>Compute</strong>: pode rodar local ou em VM/container</li><li><strong>API client</strong>: Anthropic SDK</li><li><strong>Notification</strong>: Slack webhook, email SMTP, Telegram bot</li></ul><p>Padrão de implementação:</p><pre class="code" data-lang="python">def autonomous_workflow():\n    # 1. Gather inputs\n    inputs = collect_data()\n    \n    # 2. Process with Claude\n    result = client.messages.create(\n        model="claude-sonnet-4-6",\n        tools=domain_tools,\n        messages=[{"role": "user", "content": format_prompt(inputs)}]\n    )\n    \n    # 3. Handle tool calls in loop\n    while result.stop_reason == "tool_use":\n        # ... agent loop\n    \n    # 4. Validate output\n    validated = guardrails(result.content)\n    \n    # 5. Deliver\n    save(validated)\n    notify_user(validated.summary)\n\n# Schedule\n# crontab: 0 7 * * * python autonomous_workflow.py</pre><p>Veja Trilha Engenharia missão eng-4 + eng-6 pra implementação production-ready.</p>' },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q30-block">
+        <div class="boss-game-tag">⨀ Treino · Loop ReAct</div>
+        <p class="boss-intro">Antes de soltar um agente no mundo, <strong>entenda o loop interno</strong>. Todo agente autônomo roda <em>Think → Act → Observe</em>. Decida o melhor caminho em cada estágio. Erro num estágio quebra o agente todo.</p>
+        <div class="react-loop" id="boss-q30-loop"></div>
+        <div class="react-decision" id="boss-q30-decision"></div>
+        <div class="boss-result" id="boss-q30-result" style="display:none"></div>
+      </div>
+    ` }
   ]
 };
 
@@ -13776,6 +14228,18 @@ QUESTS[36] = {
           <div class="callout tip">Quando funcionar, esse sistema vira ferramenta diária. Você acessa documentos por pergunta, não por busca de arquivo.</div>
         </div>
       </div>
+    ` },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q36-block">
+        <div class="boss-game-tag">⨀ Treino · Pipeline de extração</div>
+        <p class="boss-intro">Veja o pipeline rodando ao vivo. Clique em <strong>Processar documento</strong> e acompanhe cada etapa: ingestão → extração → classificação → indexação → resumo. Esse é o fluxo que vai dentro do seu Document Intelligence Engine.</p>
+        <div class="doc-controls">
+          <button class="pipeline-btn" id="boss-q36-run" onclick="bossQ36Run()">▶ Processar documento</button>
+          <button class="pipeline-btn ghost" onclick="bossQ36Reset()">↺ Reset</button>
+        </div>
+        <div class="doc-stages" id="boss-q36-stages"></div>
+        <div class="doc-result" id="boss-q36-result" style="display:none"></div>
+      </div>
     ` }
   ]
 };
@@ -13872,7 +14336,31 @@ QUESTS[42] = {
     { type: 'study', label: 'O QUE ENTREGAR', body: '<p>Boss do Ato VI. Você pega <strong>um agente Cowork seu de verdade</strong> (o sistema de email da M21, ou um fluxo seu) e transforma de "rodando no laptop" em "rodando confiável em produção".</p><h3>O que você vai entregar</h3><p>Mesmo agente, mas com 5 camadas adicionadas:</p><ol><li>Observabilidade — você sabe se rodou, quanto demorou, quanto custou</li><li>Evals — você mede qualidade ao longo do tempo</li><li>Guardrails — output validado antes de chegar no usuário</li><li>Segurança — protegido contra prompt injection</li><li>Custo controlado — modelo certo, caching ativado, batch quando possível</li></ol>' },
     { type: 'build', label: 'PASSOS', body: '<p><strong>Passos da entrega:</strong></p><ol><li>Pegue um agente seu (skill ou plugin) que tá rodando regular</li><li>Adicione observability — configure dashboard mínimo (M37)</li><li>Crie golden set de 30 casos e rode evals atuais (M38) — quanto está acertando hoje?</li><li>Liste 3 falhas potenciais e adicione guardrails (M39)</li><li>Audite vetores de input externo (M40) — onde tá vulnerável?</li><li>Aplique alavancas de custo (M41) — modelo certo, caching, batch</li><li>Rode 1 semana e compare métricas antes/depois</li></ol>' },
     { type: 'measure', label: 'CRITÉRIO DE SUCESSO', body: '<p><strong>Critério de sucesso:</strong></p><ul><li>Métricas básicas em dashboard ativo (sucesso, custo, tempo)</li><li>Eval suite com 30+ casos rodando semanalmente</li><li>Pelo menos 3 guardrails ativos</li><li>Audit de segurança documentado</li><li>Custo por execução conhecido e controlado</li></ul><p>Esse é o agente que você usa profissionalmente todo dia. <strong>Endurecido, observável, confiável, barato.</strong></p>' },
-    { type: 'study', label: 'VERSÃO DEV (OPCIONAL)', body: '<p><em>Para quem está em produção via API.</em></p><p>Stack production-ready:</p><ul><li><strong>Observability</strong>: OpenTelemetry → Datadog/Honeycomb</li><li><strong>Evals</strong>: GitHub Actions rodando suite a cada PR + nightly</li><li><strong>Guardrails</strong>: Pydantic validators + Claude-as-judge para subjective</li><li><strong>Security</strong>: input wrapping, tool segregation, rate limiting</li><li><strong>Cost</strong>: model cascade, prompt caching, batch para non-urgent</li></ul><p>Veja Trilha Engenharia para implementação completa.</p>' }
+    { type: 'study', label: 'VERSÃO DEV (OPCIONAL)', body: '<p><em>Para quem está em produção via API.</em></p><p>Stack production-ready:</p><ul><li><strong>Observability</strong>: OpenTelemetry → Datadog/Honeycomb</li><li><strong>Evals</strong>: GitHub Actions rodando suite a cada PR + nightly</li><li><strong>Guardrails</strong>: Pydantic validators + Claude-as-judge para subjective</li><li><strong>Security</strong>: input wrapping, tool segregation, rate limiting</li><li><strong>Cost</strong>: model cascade, prompt caching, batch para non-urgent</li></ul><p>Veja Trilha Engenharia para implementação completa.</p>' },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q42-block">
+        <div class="boss-game-tag">⨀ Treino · Endurecimento de produção</div>
+        <p class="boss-intro">Antes de fazer o trabalho real, <strong>entenda as camadas</strong>. Liga e desliga cada uma e vê o impacto. Algumas são <em>críticas</em> (sem elas, app frágil). Outras otimizam custo. Tente chegar em "pronto pra produção".</p>
+        <div class="harden-grid" id="boss-q42-grid"></div>
+        <div class="harden-summary">
+          <div class="harden-stats">
+            <div class="harden-stat">
+              <div class="harden-stat-val" id="boss-q42-stat-cov">0%</div>
+              <div class="harden-stat-lbl">Cobertura</div>
+            </div>
+            <div class="harden-stat">
+              <div class="harden-stat-val" id="boss-q42-stat-crit">0/5</div>
+              <div class="harden-stat-lbl">Críticas</div>
+            </div>
+            <div class="harden-stat">
+              <div class="harden-stat-val" id="boss-q42-stat-cost">100%</div>
+              <div class="harden-stat-lbl">Custo</div>
+            </div>
+          </div>
+          <div class="harden-verdict" id="boss-q42-verdict">Liga as camadas e vê o veredito.</div>
+        </div>
+      </div>
+    ` }
   ]
 };
 
@@ -14442,6 +14930,27 @@ QUESTS[48] = {
           <div class="callout tip">Daqui em diante: você não é usuário do Claude. Você é operador que usa Claude como infraestrutura. Essa diferença vale carreira inteira.</div>
         </div>
       </div>
+    ` },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q48-block">
+        <div class="boss-game-tag">⨀ Treino · Arquitetura integrada</div>
+        <p class="boss-intro">Antes de construir o sistema final, <strong>monte a arquitetura mental</strong>. Quatro componentes precisam estar na ordem certa pra um sistema integrado funcionar. Selecione e encaixe.</p>
+        <div class="pipeline-pool" id="boss-q48-pool"></div>
+        <div class="pipeline-slots" id="boss-q48-slots">
+          <div class="pipeline-slot" data-slot="0"></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-slot" data-slot="1"></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-slot" data-slot="2"></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-slot" data-slot="3"></div>
+        </div>
+        <div class="pipeline-actions">
+          <button class="pipeline-btn" id="boss-q48-check" onclick="bossQ48Check()" disabled>Verificar</button>
+          <button class="pipeline-btn ghost" onclick="bossQ48Reset()">↺ Limpar</button>
+        </div>
+        <div class="boss-result" id="boss-q48-result" style="display:none"></div>
+      </div>
     ` }
   ]
 };
@@ -14676,6 +15185,14 @@ QUESTS[52] = {
           </ol>
           <div class="callout tip">Esse boss leva mais tempo que os outros porque envolve coordenar várias plataformas. Faz uma vez bem feito — e tudo que vier depois fica fácil.</div>
         </div>
+      </div>
+    ` },
+    { type: 'study', label: 'BOSS · MINI-JOGO INTERATIVO', body: `
+      <div class="boss-game" id="boss-q52-block">
+        <div class="boss-game-tag">⨀ Treino · Pre-launch checklist</div>
+        <p class="boss-intro">Antes de mandar o app pro mundo, <strong>passe pelo checklist</strong>. 6 categorias × 4 itens = 24 checks essenciais. Marque os que você já tem. Veja se tá pronto pra deploy real.</p>
+        <div class="launch-cats" id="boss-q52-cats"></div>
+        <div class="launch-summary" id="boss-q52-summary"></div>
       </div>
     ` }
   ]
@@ -19345,7 +19862,7 @@ function renderActiveQuest() {
   document.getElementById('aq-num').textContent = String(n).padStart(2, '0');
   document.getElementById('aq-tag-text').textContent = q.boss
     ? `BOSS · Act ${ACTS[q.act-1].roman}`
-    : `Missão ativa · ${ ({ study:'ESTUDO', build:'CONSTRUÇÃO', ship:'ENTREGA', measure:'MEDIÇÃO', boss:'BOSS' })[q.type] || q.type.toUpperCase() }`;
+    : `Missão ativa · ${ ({ study:'ESTUDO', build:'CONSTRUÇÃO', ship:'ENTREGA', measure:'AVALIAÇÃO', boss:'BOSS' })[q.type] || q.type.toUpperCase() }`;
   document.getElementById('aq-title').textContent = q.title;
   document.getElementById('aq-deck').textContent = q.deck;
   document.getElementById('aq-time').textContent = q.time || '—';
@@ -19367,8 +19884,11 @@ function questState(n) {
   if (n < state.startingPath) return 'review';
   const next = nextQuestNumber();
   if (n === next) return 'current';
+  // v100: removido fallback "if (state.completed.includes(n - 1)) return 'current'"
+  // que fazia o badge PRÓXIMA aparecer em múltiplos cards quando o usuário pulava
+  // missões. nextQuestNumber() já cobre o caso correto. Agora só a próxima REAL
+  // recebe 'current'.
   if (n > state.startingPath) {
-    if (state.completed.includes(n - 1)) return 'current';
     if (next && n - next <= 4) return 'path';
     return 'ahead';
   }
@@ -19927,13 +20447,13 @@ function renderQuests() {
 
     const typeLabel = (() => {
       if (st === 'completed') return 'CONCLUÍDA';
-      if (st === 'review')    return 'REVISÃO';
-      if (st === 'ahead')     return 'PULAR';
+      if (st === 'review')    return 'OPCIONAL';
+      if (st === 'ahead')     return 'AGUARDE';
       if (q.boss)             return 'BOSS';
       if (q.type === 'study')   return 'ESTUDO';
       if (q.type === 'build')   return 'CONSTRUIR';
       if (q.type === 'ship')    return 'ENTREGAR';
-      if (q.type === 'measure') return 'MEDIR';
+      if (q.type === 'measure') return 'AVALIAÇÃO';
       return '—';
     })();
 
@@ -20878,6 +21398,709 @@ function renderWs() {
   `;
 }
 
+// ════════════════════════════════════════════════════════════════
+// BOSSES (Tier 2) · v100 · mini-jogos interativos
+// ════════════════════════════════════════════════════════════════
+
+// === BOSS Q07 · TRIAGEM DE FEEDBACKS ============================
+const BOSS_Q07_DATA = [
+  { from: 'Cliente · Fernanda', text: 'O botão de "salvar" não funciona no iPhone. Já tentei 3 vezes e perdi o trabalho todo. Isso é absurdo.', correct: 'bug',
+    feedback: '<strong>BUG</strong> — relato concreto, reproducível, com impacto real. Vai pro topo da fila.' },
+  { from: 'Anônimo', text: 'O app muito bom!! Adorei usar parabéns equipe!!! ❤️❤️❤️', correct: 'elogio',
+    feedback: '<strong>ELOGIO</strong> — sem ação concreta. Arquiva, agradece, segue.' },
+  { from: 'Cliente · Roberto', text: 'Seria possível adicionar exportação em CSV? Hoje só tem PDF e isso me trava muita análise.', correct: 'feature',
+    feedback: '<strong>FEATURE</strong> — pedido legítimo, com justificativa de uso. Vai pro backlog priorizado.' },
+  { from: 'spam@nigerianprince.com', text: 'PARABENS VOCE GANHOU R$ 50.000!!! Clique aqui pra resgatar agora antes que expire!!!', correct: 'spam',
+    feedback: '<strong>SPAM</strong> — descarta sem ler.' },
+  { from: 'Cliente · Patrícia', text: 'A interface tá lenta no Firefox. Demora uns 5 segundos pra carregar a tela inicial.', correct: 'bug',
+    feedback: '<strong>BUG</strong> — performance issue específica. Reproduz, mede, prioriza.' }
+];
+let _bossQ07 = { answers: {}, score: 0 };
+
+function initBossQ07() {
+  const list = document.getElementById('boss-q07-list');
+  if (!list || list.dataset.initialized === '1') return;
+  _bossQ07 = { answers: {}, score: 0 };
+  list.innerHTML = BOSS_Q07_DATA.map((d, i) => `
+    <div class="triage-card" data-i="${i}">
+      <div class="triage-from">${d.from}</div>
+      <div class="triage-text">"${d.text}"</div>
+      <div class="triage-options">
+        <button class="triage-opt" data-i="${i}" data-v="bug">🐛 Bug</button>
+        <button class="triage-opt" data-i="${i}" data-v="feature">✨ Feature</button>
+        <button class="triage-opt" data-i="${i}" data-v="elogio">❤ Elogio</button>
+        <button class="triage-opt" data-i="${i}" data-v="spam">🚫 Spam</button>
+      </div>
+      <div class="triage-feedback" data-i="${i}" style="display:none"></div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.triage-opt').forEach(btn => {
+    btn.addEventListener('click', () => bossQ07Answer(parseInt(btn.dataset.i, 10), btn.dataset.v));
+  });
+  list.dataset.initialized = '1';
+  bossQ07Render();
+}
+function bossQ07Answer(i, v) {
+  if (_bossQ07.answers[i]) return;
+  _bossQ07.answers[i] = v;
+  const correct = BOSS_Q07_DATA[i].correct === v;
+  if (correct) _bossQ07.score++;
+  bossQ07Render();
+}
+function bossQ07Render() {
+  BOSS_Q07_DATA.forEach((d, i) => {
+    const card = document.querySelector(`.triage-card[data-i="${i}"]`);
+    if (!card) return;
+    const ans = _bossQ07.answers[i];
+    if (ans) {
+      const correct = d.correct === ans;
+      card.classList.toggle('answered', correct);
+      card.classList.toggle('wrong', !correct);
+      card.querySelectorAll('.triage-opt').forEach(b => {
+        b.disabled = true;
+        if (b.dataset.v === d.correct) b.classList.add('correct');
+        else if (b.dataset.v === ans && !correct) b.classList.add('incorrect');
+      });
+      const fb = card.querySelector('.triage-feedback');
+      fb.style.display = '';
+      fb.innerHTML = d.feedback;
+    }
+  });
+  const total = BOSS_Q07_DATA.length;
+  const done = Object.keys(_bossQ07.answers).length;
+  document.getElementById('boss-q07-progress').style.width = (done/total*100) + '%';
+  document.getElementById('boss-q07-score').textContent = _bossQ07.score + '/' + total;
+  if (done === total) {
+    const msgEl = document.getElementById('boss-q07-result');
+    let msg = '';
+    if (_bossQ07.score === total) msg = '<div class="boss-result-title">🎯 Acertou tudo</div><div class="boss-result-msg">Você tem o instinto certo de triagem. Esse é o tipo de calibragem que um Project + Skill bem feito automatiza pra rodar todo dia.</div>';
+    else if (_bossQ07.score >= 3) msg = '<div class="boss-result-title">⚡ Bom resultado</div><div class="boss-result-msg">' + _bossQ07.score + ' de ' + total + ' acertos. Volta a missão e vê onde tropeçou — geralmente é distinguir feature de elogio com tom positivo.</div>';
+    else msg = '<div class="boss-result-title">🤔 Calibre mais</div><div class="boss-result-msg">Triagem rápida exige critério claro. Bug = relato reproduzível com impacto. Feature = pedido com justificativa. Elogio = sem ação. Spam = descarta.</div>';
+    msgEl.innerHTML = msg + '<button class="boss-reset" onclick="bossQ07Reset()">↺ Tentar de novo</button>';
+    msgEl.style.display = '';
+  }
+}
+function bossQ07Reset() {
+  _bossQ07 = { answers: {}, score: 0 };
+  document.querySelectorAll('.triage-card').forEach(c => {
+    c.classList.remove('answered', 'wrong');
+    c.querySelectorAll('.triage-opt').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('correct', 'incorrect');
+    });
+    c.querySelector('.triage-feedback').style.display = 'none';
+  });
+  document.getElementById('boss-q07-result').style.display = 'none';
+  bossQ07Render();
+}
+
+// === BOSS Q14 · PIPELINE BUILDER ===============================
+const BOSS_Q14_BLOCKS = [
+  { id: 'project',  icon: '📁', name: 'Project', order: 1 },
+  { id: 'skill',    icon: '🎯', name: 'Skill', order: 2 },
+  { id: 'mcp',      icon: '🔌', name: 'MCP', order: 3 },
+  { id: 'workflow', icon: '⚙', name: 'Workflow', order: 4 }
+];
+const BOSS_Q14_HINTS = [
+  'Onde mora o contexto persistente?',
+  'O que codifica seu jeito de trabalhar?',
+  'O que conecta Claude a sistemas externos?',
+  'O que orquestra tudo numa rotina recorrente?'
+];
+let _bossQ14 = { slots: [null, null, null, null], checked: false };
+
+function initBossQ14() {
+  const block = document.getElementById('boss-q14-block');
+  if (!block || block.dataset.initialized === '1') return;
+  _bossQ14 = { slots: [null, null, null, null], checked: false };
+  // Pool aleatorizado
+  const pool = [...BOSS_Q14_BLOCKS].sort(() => Math.random() - 0.5);
+  document.getElementById('boss-q14-pool').innerHTML = '<div class="pipeline-pool-tag">Peças disponíveis</div>' +
+    pool.map(b => `<div class="pipeline-block" data-id="${b.id}"><span class="pipeline-block-icon">${b.icon}</span><span class="pipeline-block-name">${b.name}</span></div>`).join('');
+  document.querySelectorAll('#boss-q14-pool .pipeline-block').forEach(el => {
+    el.addEventListener('click', () => bossQ14SelectBlock(el.dataset.id));
+  });
+  document.querySelectorAll('#boss-q14-slots .pipeline-slot').forEach(slot => {
+    slot.addEventListener('click', () => bossQ14ClickSlot(parseInt(slot.dataset.slot, 10)));
+  });
+  block.dataset.initialized = '1';
+  bossQ14Render();
+}
+let _q14Selected = null;
+function bossQ14SelectBlock(id) {
+  if (_bossQ14.slots.includes(id)) return;
+  if (_bossQ14.checked) return;
+  _q14Selected = id;
+  document.querySelectorAll('#boss-q14-pool .pipeline-block').forEach(el => {
+    el.style.outline = el.dataset.id === id ? '2px solid var(--amber)' : 'none';
+  });
+}
+function bossQ14ClickSlot(slotIdx) {
+  if (_bossQ14.checked) return;
+  // Se slot ocupado, devolve a peça
+  if (_bossQ14.slots[slotIdx]) {
+    _bossQ14.slots[slotIdx] = null;
+    bossQ14Render();
+    return;
+  }
+  // Senão, encaixa peça selecionada
+  if (!_q14Selected) return;
+  _bossQ14.slots[slotIdx] = _q14Selected;
+  _q14Selected = null;
+  document.querySelectorAll('#boss-q14-pool .pipeline-block').forEach(el => el.style.outline = 'none');
+  bossQ14Render();
+}
+function bossQ14Render() {
+  document.querySelectorAll('#boss-q14-slots .pipeline-slot').forEach((slot, i) => {
+    const blockId = _bossQ14.slots[i];
+    slot.classList.remove('filled', 'correct', 'wrong');
+    if (blockId) {
+      const b = BOSS_Q14_BLOCKS.find(x => x.id === blockId);
+      slot.innerHTML = `<div class="pipeline-slot-num">${i + 1}.</div>${b.icon} ${b.name}`;
+      slot.classList.add('filled');
+      if (_bossQ14.checked) {
+        if (b.order === i + 1) slot.classList.add('correct');
+        else slot.classList.add('wrong');
+      }
+    } else {
+      slot.innerHTML = `<div class="pipeline-slot-num">${i + 1}.</div><div style="font-size:11px;line-height:1.4;font-style:italic;">${BOSS_Q14_HINTS[i]}</div>`;
+    }
+  });
+  document.querySelectorAll('#boss-q14-pool .pipeline-block').forEach(el => {
+    el.classList.toggle('placed', _bossQ14.slots.includes(el.dataset.id));
+  });
+  const allFilled = _bossQ14.slots.every(s => s !== null);
+  const checkBtn = document.getElementById('boss-q14-check');
+  if (checkBtn) checkBtn.disabled = !allFilled || _bossQ14.checked;
+}
+function bossQ14Check() {
+  _bossQ14.checked = true;
+  const correct = _bossQ14.slots.every((id, i) => {
+    const b = BOSS_Q14_BLOCKS.find(x => x.id === id);
+    return b && b.order === i + 1;
+  });
+  bossQ14Render();
+  const r = document.getElementById('boss-q14-result');
+  if (correct) {
+    r.innerHTML = '<div class="boss-result-title">🎯 Pipeline correto</div><div class="boss-result-msg">Project (contexto) → Skill (procedimento) → MCP (conexões) → Workflow (orquestração). Essa é a ordem em que você monta um motor que roda sozinho.</div><button class="boss-reset" onclick="bossQ14Reset()">↺ Refazer</button>';
+  } else {
+    const acertos = _bossQ14.slots.filter((id, i) => {
+      const b = BOSS_Q14_BLOCKS.find(x => x.id === id);
+      return b && b.order === i + 1;
+    }).length;
+    r.innerHTML = `<div class="boss-result-title">⚙ ${acertos}/4 corretos</div><div class="boss-result-msg">A ordem correta é: <strong>Project</strong> (contexto persistente) → <strong>Skill</strong> (procedimento) → <strong>MCP</strong> (conexões externas) → <strong>Workflow</strong> (orquestração). Cada peça depende da anterior.</div><button class="boss-reset" onclick="bossQ14Reset()">↺ Tentar de novo</button>`;
+  }
+  r.style.display = '';
+}
+function bossQ14Reset() {
+  _bossQ14 = { slots: [null, null, null, null], checked: false };
+  _q14Selected = null;
+  document.getElementById('boss-q14-result').style.display = 'none';
+  initBossQ14();
+}
+
+// === BOSS Q21 · TRIAGEM DE EMAIL ===============================
+const BOSS_Q21_DATA = [
+  { from: 'CEO · Sandra', text: 'Preciso do número de churn do Q3 antes da reunião de board hoje 15h. Crítico.', correct: 'urgente',
+    feedback: '<strong>URGENTE</strong> — CEO + prazo no mesmo dia + decisão de board. Topo absoluto.' },
+  { from: 'newsletter@medium.com', text: '5 things I learned this week about AI agents...', correct: 'baixa',
+    feedback: '<strong>BAIXA</strong> — newsletter, sem ação direta. Lê depois (ou nunca).' },
+  { from: 'Cliente · Marcelo', text: 'Conseguimos remarcar nossa call de quarta pra quinta? Mesma hora.', correct: 'importante',
+    feedback: '<strong>IMPORTANTE</strong> — pede ação sua mas não é hoje. Responde no dia, sem afobação.' },
+  { from: 'spam@unsubscribed.io', text: 'You\'ve won an iPhone! Click here to claim NOW...', correct: 'spam',
+    feedback: '<strong>SPAM</strong> — descarta direto.' },
+  { from: 'CFO · Ricardo', text: 'Olha esses números do fluxo de caixa quando puder, achei algo estranho. Sem pressa hoje.', correct: 'importante',
+    feedback: '<strong>IMPORTANTE</strong> — ele mesmo disse "sem pressa hoje". Importante mas não urgente.' }
+];
+let _bossQ21 = { answers: {}, score: 0 };
+
+function initBossQ21() {
+  const list = document.getElementById('boss-q21-list');
+  if (!list || list.dataset.initialized === '1') return;
+  _bossQ21 = { answers: {}, score: 0 };
+  list.innerHTML = BOSS_Q21_DATA.map((d, i) => `
+    <div class="triage-card" data-i="${i}">
+      <div class="triage-from">${d.from}</div>
+      <div class="triage-text">"${d.text}"</div>
+      <div class="triage-options">
+        <button class="triage-opt" data-i="${i}" data-v="urgente">🔴 Urgente</button>
+        <button class="triage-opt" data-i="${i}" data-v="importante">🟡 Importante</button>
+        <button class="triage-opt" data-i="${i}" data-v="baixa">🟢 Baixa</button>
+        <button class="triage-opt" data-i="${i}" data-v="spam">🚫 Spam</button>
+      </div>
+      <div class="triage-feedback" data-i="${i}" style="display:none"></div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.triage-opt').forEach(btn => {
+    btn.addEventListener('click', () => bossQ21Answer(parseInt(btn.dataset.i, 10), btn.dataset.v));
+  });
+  list.dataset.initialized = '1';
+  bossQ21Render();
+}
+function bossQ21Answer(i, v) {
+  if (_bossQ21.answers[i]) return;
+  _bossQ21.answers[i] = v;
+  if (BOSS_Q21_DATA[i].correct === v) _bossQ21.score++;
+  bossQ21Render();
+}
+function bossQ21Render() {
+  BOSS_Q21_DATA.forEach((d, i) => {
+    const card = document.querySelector(`#boss-q21-list .triage-card[data-i="${i}"]`);
+    if (!card) return;
+    const ans = _bossQ21.answers[i];
+    if (ans) {
+      const correct = d.correct === ans;
+      card.classList.toggle('answered', correct);
+      card.classList.toggle('wrong', !correct);
+      card.querySelectorAll('.triage-opt').forEach(b => {
+        b.disabled = true;
+        if (b.dataset.v === d.correct) b.classList.add('correct');
+        else if (b.dataset.v === ans && !correct) b.classList.add('incorrect');
+      });
+      const fb = card.querySelector('.triage-feedback');
+      fb.style.display = '';
+      fb.innerHTML = d.feedback;
+    }
+  });
+  const total = BOSS_Q21_DATA.length;
+  const done = Object.keys(_bossQ21.answers).length;
+  document.getElementById('boss-q21-progress').style.width = (done/total*100) + '%';
+  document.getElementById('boss-q21-score').textContent = _bossQ21.score + '/' + total;
+  if (done === total) {
+    const r = document.getElementById('boss-q21-result');
+    let msg = '';
+    if (_bossQ21.score === total) msg = '<div class="boss-result-title">🎯 Triagem perfeita</div><div class="boss-result-msg">Esse é o critério que vai dentro da Skill <em>triagem-email</em>. Codifica essas regras e Cowork roda automático todo dia 7h.</div>';
+    else if (_bossQ21.score >= 3) msg = '<div class="boss-result-title">⚡ Bom</div><div class="boss-result-msg">' + _bossQ21.score + '/' + total + '. Critérios mais comuns de erro: confundir importante com urgente quando há prazo distante, ou tratar pedido educado de cliente como baixa.</div>';
+    else msg = '<div class="boss-result-title">🤔 Recalibre</div><div class="boss-result-msg">Urgente = decisão hoje. Importante = ação sua, prazo dias. Baixa = ler quando sobrar tempo. Spam = descarta. Sem isso claro, automação não funciona.</div>';
+    r.innerHTML = msg + '<button class="boss-reset" onclick="bossQ21Reset()">↺ Tentar de novo</button>';
+    r.style.display = '';
+  }
+}
+function bossQ21Reset() {
+  _bossQ21 = { answers: {}, score: 0 };
+  document.querySelectorAll('#boss-q21-list .triage-card').forEach(c => {
+    c.classList.remove('answered', 'wrong');
+    c.querySelectorAll('.triage-opt').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('correct', 'incorrect');
+    });
+    c.querySelector('.triage-feedback').style.display = 'none';
+  });
+  document.getElementById('boss-q21-result').style.display = 'none';
+  bossQ21Render();
+}
+
+// === BOSS Q30 · REACT LOOP =====================================
+const BOSS_Q30_TASK = 'Criar relatório semanal de vendas e enviar pra equipe via Slack.';
+const BOSS_Q30_STEPS = [
+  {
+    name: 'THINK',
+    decisions: [
+      { id: 'a', text: 'Vou direto buscar os dados sem planejar.', correct: false, why: 'Sem plano, agente vira execução cega.' },
+      { id: 'b', text: 'Decompor a tarefa: (1) buscar dados, (2) gerar relatório, (3) enviar.', correct: true, why: 'Decomposição é a base de qualquer agente que funciona.' },
+      { id: 'c', text: 'Pedir mais contexto ao usuário.', correct: false, why: 'Tarefa já está clara. Pedir contexto desnecessário trava o loop.' }
+    ]
+  },
+  {
+    name: 'ACT',
+    decisions: [
+      { id: 'a', text: 'Chamar a tool "buscar-vendas" com período da última semana.', correct: true, why: 'Primeira ação concreta seguindo o plano.' },
+      { id: 'b', text: 'Gerar relatório sem ter os dados ainda.', correct: false, why: 'Não dá pra gerar relatório sem dados. Quebra a sequência.' },
+      { id: 'c', text: 'Enviar mensagem no Slack avisando que vai começar.', correct: false, why: 'Ruído desnecessário. Time só quer o relatório.' }
+    ]
+  },
+  {
+    name: 'OBSERVE',
+    decisions: [
+      { id: 'a', text: 'Ignorar o resultado e seguir pro próximo passo.', correct: false, why: 'Sem observar, agente não corrige curso quando algo dá errado.' },
+      { id: 'b', text: 'Verificar se os dados vieram completos. Se faltou semana, retentar.', correct: true, why: 'Observação é o que separa agente útil de robô burro.' },
+      { id: 'c', text: 'Pedir confirmação ao usuário antes de continuar.', correct: false, why: 'Trava o loop. Agente autônomo decide com base em critérios pré-definidos.' }
+    ]
+  }
+];
+let _bossQ30 = { stepIdx: 0, answers: {}, score: 0 };
+
+function initBossQ30() {
+  const block = document.getElementById('boss-q30-block');
+  if (!block || block.dataset.initialized === '1') return;
+  _bossQ30 = { stepIdx: 0, answers: {}, score: 0 };
+  block.dataset.initialized = '1';
+  bossQ30Render();
+}
+function bossQ30Answer(stepIdx, decId) {
+  if (_bossQ30.answers[stepIdx]) return;
+  _bossQ30.answers[stepIdx] = decId;
+  const dec = BOSS_Q30_STEPS[stepIdx].decisions.find(d => d.id === decId);
+  if (dec.correct) _bossQ30.score++;
+  setTimeout(() => {
+    if (stepIdx < BOSS_Q30_STEPS.length - 1 && dec.correct) {
+      _bossQ30.stepIdx = stepIdx + 1;
+    }
+    bossQ30Render();
+  }, 1200);
+  bossQ30Render();
+}
+function bossQ30Render() {
+  const stepsHtml = BOSS_Q30_STEPS.map((s, i) => {
+    let cls = '';
+    if (_bossQ30.answers[i]) {
+      const dec = s.decisions.find(d => d.id === _bossQ30.answers[i]);
+      cls = dec.correct ? 'done' : '';
+    }
+    if (i === _bossQ30.stepIdx && !_bossQ30.answers[i]) cls = 'active';
+    const content = _bossQ30.answers[i] ? `<em>${s.decisions.find(d => d.id === _bossQ30.answers[i]).text}</em>` : (i === _bossQ30.stepIdx ? '<em>aguardando decisão...</em>' : '<em>—</em>');
+    const icon = ['🧠', '⚡', '👁'][i];
+    return `<div class="react-step ${cls}">
+      <div class="react-step-icon">${icon}</div>
+      <div class="react-step-name">${s.name}</div>
+      <div class="react-step-content">${content}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('boss-q30-loop').innerHTML = stepsHtml;
+  // Decisão atual
+  const decBox = document.getElementById('boss-q30-decision');
+  const cur = _bossQ30.stepIdx;
+  if (cur >= BOSS_Q30_STEPS.length || (_bossQ30.answers[cur] && BOSS_Q30_STEPS[cur].decisions.find(d => d.id === _bossQ30.answers[cur]).correct && cur === BOSS_Q30_STEPS.length - 1)) {
+    decBox.style.display = 'none';
+    const r = document.getElementById('boss-q30-result');
+    let msg = '';
+    if (_bossQ30.score === 3) msg = '<div class="boss-result-title">🎯 Loop completo</div><div class="boss-result-msg">Think → Act → Observe → repete. Esse é o coração de qualquer agente. Sem o Observe, agente vira robô burro.</div>';
+    else msg = '<div class="boss-result-title">⚙ Loop ' + _bossQ30.score + '/3</div><div class="boss-result-msg">Think planeja, Act executa, Observe verifica. Os 3 são igualmente críticos. Pular qualquer um quebra o agente.</div>';
+    r.innerHTML = msg + '<button class="boss-reset" onclick="bossQ30Reset()">↺ Refazer</button>';
+    r.style.display = '';
+    return;
+  }
+  const step = BOSS_Q30_STEPS[cur];
+  const ans = _bossQ30.answers[cur];
+  decBox.innerHTML = `
+    <div class="react-decision-q">Tarefa: <strong>${BOSS_Q30_TASK}</strong><br>Estágio <em>${step.name}</em> — qual a melhor decisão?</div>
+    <div class="react-decision-opts">
+      ${step.decisions.map(d => {
+        let cls = '';
+        if (ans === d.id) cls = d.correct ? 'correct' : 'incorrect';
+        return `<button class="react-decision-opt ${cls}" data-step="${cur}" data-dec="${d.id}" ${ans ? 'disabled' : ''}>${d.text}${ans === d.id && !d.correct ? '<br><em style="font-size:10px;display:block;margin-top:4px;opacity:0.85">' + d.why + '</em>' : ''}${ans === d.id && d.correct ? '<br><em style="font-size:10px;display:block;margin-top:4px;opacity:0.85">' + d.why + '</em>' : ''}</button>`;
+      }).join('')}
+    </div>`;
+  decBox.querySelectorAll('.react-decision-opt').forEach(b => {
+    b.addEventListener('click', () => bossQ30Answer(parseInt(b.dataset.step, 10), b.dataset.dec));
+  });
+  decBox.style.display = '';
+}
+function bossQ30Reset() {
+  _bossQ30 = { stepIdx: 0, answers: {}, score: 0 };
+  document.getElementById('boss-q30-result').style.display = 'none';
+  bossQ30Render();
+}
+
+// === BOSS Q36 · DOC PROCESSOR ==================================
+const BOSS_Q36_STAGES = [
+  { name: 'Ingerir documento', dur: 600 },
+  { name: 'Extrair entidades (CNPJ, valores, datas)', dur: 900 },
+  { name: 'Classificar tipo (contrato, NF, parecer...)', dur: 700 },
+  { name: 'Indexar pra busca futura', dur: 500 },
+  { name: 'Gerar resumo executivo', dur: 800 }
+];
+const BOSS_Q36_RESULT = `<span class="hl">📄 Tipo:</span> Contrato de prestação de serviços
+<span class="hl">📅 Vigência:</span> 12 meses (renovação automática)
+<span class="hl">💰 Valor:</span> R$ 240.000,00 (parcelas mensais de R$ 20k)
+<span class="hl">🏢 Partes:</span> CNPJ 12.345.678/0001-90 ↔ CNPJ 98.765.432/0001-10
+
+<span class="hl-g">⚠ Cláusulas críticas detectadas:</span>
+  • Multa rescisória: 30% do saldo (cláusula 12.3)
+  • Foro: comarca distante (São Paulo/SP — você é do RJ)
+  • Reajuste: IGP-M (atenção em 2026 — alta volátil)
+
+<span class="hl-g">✓ Indexado.</span> Pesquisável por "fornecedor", "valor", ou data.`;
+let _bossQ36 = { running: false, completed: 0 };
+
+function initBossQ36() {
+  const block = document.getElementById('boss-q36-block');
+  if (!block || block.dataset.initialized === '1') return;
+  _bossQ36 = { running: false, completed: 0 };
+  block.dataset.initialized = '1';
+  bossQ36Render();
+}
+function bossQ36Run() {
+  if (_bossQ36.running) return;
+  _bossQ36.running = true;
+  _bossQ36.completed = 0;
+  bossQ36Render();
+  const runStage = (idx) => {
+    if (idx >= BOSS_Q36_STAGES.length) {
+      _bossQ36.running = false;
+      _bossQ36.completed = BOSS_Q36_STAGES.length;
+      bossQ36Render();
+      document.getElementById('boss-q36-result').style.display = '';
+      return;
+    }
+    setTimeout(() => {
+      _bossQ36.completed = idx + 1;
+      bossQ36Render();
+      runStage(idx + 1);
+    }, BOSS_Q36_STAGES[idx].dur);
+  };
+  runStage(0);
+}
+function bossQ36Render() {
+  const html = BOSS_Q36_STAGES.map((s, i) => {
+    let cls = '';
+    let status = '...';
+    if (i < _bossQ36.completed) { cls = 'done'; status = '✓'; }
+    else if (i === _bossQ36.completed && _bossQ36.running) { cls = 'running'; status = 'rodando'; }
+    return `<div class="doc-stage ${cls}">
+      <div class="doc-stage-num">${i + 1}.</div>
+      <div class="doc-stage-name">${s.name}</div>
+      <div class="doc-stage-status">${status}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('boss-q36-stages').innerHTML = html;
+  const btn = document.getElementById('boss-q36-run');
+  if (btn) btn.disabled = _bossQ36.running;
+  if (_bossQ36.completed === BOSS_Q36_STAGES.length && !_bossQ36.running) {
+    document.getElementById('boss-q36-result').innerHTML = BOSS_Q36_RESULT;
+  }
+}
+function bossQ36Reset() {
+  _bossQ36 = { running: false, completed: 0 };
+  document.getElementById('boss-q36-result').style.display = 'none';
+  document.getElementById('boss-q36-result').innerHTML = '';
+  bossQ36Render();
+}
+
+// === BOSS Q42 · HARDENING TOGGLES =============================
+const BOSS_Q42_LAYERS = [
+  { id: 'auth',     name: 'Autenticação + autorização', impact: 'Sem isso = qualquer um acessa', critical: true },
+  { id: 'ratelimit',name: 'Rate limiting por usuário', impact: 'Sem isso = 1 user pode te quebrar', critical: true },
+  { id: 'retry',    name: 'Retry com backoff exponencial', impact: 'Sem isso = falhas transitórias matam', critical: false },
+  { id: 'monitor',  name: 'Monitoring + alertas', impact: 'Sem isso = você descobre quando explode', critical: true },
+  { id: 'cache',    name: 'Cache de respostas frequentes', impact: 'Sem isso = custo até 10x maior', critical: false },
+  { id: 'fallback', name: 'Fallback pra modelo barato', impact: 'Sem isso = se Opus cair, app cai', critical: false },
+  { id: 'logging',  name: 'Logging estruturado', impact: 'Sem isso = debug impossível', critical: true },
+  { id: 'guardrail',name: 'Guardrails de output', impact: 'Sem isso = Claude pode vazar/inventar', critical: true }
+];
+let _bossQ42 = { on: new Set() };
+
+function initBossQ42() {
+  const block = document.getElementById('boss-q42-block');
+  if (!block || block.dataset.initialized === '1') return;
+  _bossQ42 = { on: new Set() };
+  document.getElementById('boss-q42-grid').innerHTML = BOSS_Q42_LAYERS.map(l => `
+    <div class="harden-row" data-id="${l.id}">
+      <div class="harden-toggle"></div>
+      <div class="harden-name">${l.name}</div>
+      <div class="harden-impact">${l.impact}</div>
+    </div>
+  `).join('');
+  document.querySelectorAll('#boss-q42-grid .harden-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.id;
+      if (_bossQ42.on.has(id)) _bossQ42.on.delete(id);
+      else _bossQ42.on.add(id);
+      bossQ42Render();
+    });
+  });
+  block.dataset.initialized = '1';
+  bossQ42Render();
+}
+function bossQ42Render() {
+  document.querySelectorAll('#boss-q42-grid .harden-row').forEach(row => {
+    row.classList.toggle('on', _bossQ42.on.has(row.dataset.id));
+  });
+  const total = BOSS_Q42_LAYERS.length;
+  const on = _bossQ42.on.size;
+  const criticalsOn = BOSS_Q42_LAYERS.filter(l => l.critical && _bossQ42.on.has(l.id)).length;
+  const criticalsTotal = BOSS_Q42_LAYERS.filter(l => l.critical).length;
+  const score = Math.round(on / total * 100);
+  document.getElementById('boss-q42-stat-cov').textContent = score + '%';
+  document.getElementById('boss-q42-stat-cov').className = 'harden-stat-val ' + (score >= 75 ? 'green' : score >= 40 ? '' : 'red');
+  document.getElementById('boss-q42-stat-crit').textContent = criticalsOn + '/' + criticalsTotal;
+  document.getElementById('boss-q42-stat-crit').className = 'harden-stat-val ' + (criticalsOn === criticalsTotal ? 'green' : 'red');
+  // Custo estimado: cache + fallback economizam
+  let cost = 100;
+  if (_bossQ42.on.has('cache')) cost -= 40;
+  if (_bossQ42.on.has('fallback')) cost -= 20;
+  document.getElementById('boss-q42-stat-cost').textContent = cost + '%';
+  document.getElementById('boss-q42-stat-cost').className = 'harden-stat-val ' + (cost <= 50 ? 'green' : cost <= 80 ? '' : '');
+  let verdict = '';
+  if (criticalsOn === criticalsTotal && on >= 6) verdict = '<strong>Pronto pra produção.</strong> Todas as camadas críticas ligadas. Custo otimizado. Deploy.';
+  else if (criticalsOn === criticalsTotal) verdict = '<strong>Críticas OK.</strong> Falta otimização de custo (cache + fallback). Deploy seguro mas caro.';
+  else if (criticalsOn >= criticalsTotal - 1) verdict = '<strong>Quase lá.</strong> Falta ' + (criticalsTotal - criticalsOn) + ' crítica. Não dá deploy ainda.';
+  else verdict = '<strong>Ainda frágil.</strong> ' + (criticalsTotal - criticalsOn) + ' camadas críticas faltando. Deploy hoje = explode em 1 semana.';
+  document.getElementById('boss-q42-verdict').innerHTML = verdict;
+}
+
+// === BOSS Q48 · ARQUITETURA INTEGRADA ==========================
+const BOSS_Q48_BLOCKS = [
+  { id: 'cowork',  icon: '🖥', name: 'Cowork',     order: 1 },
+  { id: 'mcp',     icon: '🔌', name: 'MCP Server', order: 2 },
+  { id: 'skills',  icon: '🎯', name: 'Skills',     order: 3 },
+  { id: 'code',    icon: '⌨', name: 'Claude Code', order: 4 }
+];
+const BOSS_Q48_HINTS = [
+  'Quem opera no computador do usuário?',
+  'Quem conecta a sistemas externos?',
+  'Onde mora o procedimento codificado?',
+  'Quem vira o pipeline em código real?'
+];
+let _bossQ48 = { slots: [null,null,null,null], checked: false };
+let _q48Selected = null;
+
+function initBossQ48() {
+  const block = document.getElementById('boss-q48-block');
+  if (!block || block.dataset.initialized === '1') return;
+  _bossQ48 = { slots: [null,null,null,null], checked: false };
+  const pool = [...BOSS_Q48_BLOCKS].sort(() => Math.random() - 0.5);
+  document.getElementById('boss-q48-pool').innerHTML = '<div class="pipeline-pool-tag">Componentes</div>' +
+    pool.map(b => `<div class="pipeline-block" data-id="${b.id}"><span class="pipeline-block-icon">${b.icon}</span><span class="pipeline-block-name">${b.name}</span></div>`).join('');
+  document.querySelectorAll('#boss-q48-pool .pipeline-block').forEach(el => {
+    el.addEventListener('click', () => bossQ48SelectBlock(el.dataset.id));
+  });
+  document.querySelectorAll('#boss-q48-slots .pipeline-slot').forEach(slot => {
+    slot.addEventListener('click', () => bossQ48ClickSlot(parseInt(slot.dataset.slot, 10)));
+  });
+  block.dataset.initialized = '1';
+  bossQ48Render();
+}
+function bossQ48SelectBlock(id) {
+  if (_bossQ48.slots.includes(id) || _bossQ48.checked) return;
+  _q48Selected = id;
+  document.querySelectorAll('#boss-q48-pool .pipeline-block').forEach(el => {
+    el.style.outline = el.dataset.id === id ? '2px solid var(--amber)' : 'none';
+  });
+}
+function bossQ48ClickSlot(slotIdx) {
+  if (_bossQ48.checked) return;
+  if (_bossQ48.slots[slotIdx]) {
+    _bossQ48.slots[slotIdx] = null;
+    bossQ48Render();
+    return;
+  }
+  if (!_q48Selected) return;
+  _bossQ48.slots[slotIdx] = _q48Selected;
+  _q48Selected = null;
+  document.querySelectorAll('#boss-q48-pool .pipeline-block').forEach(el => el.style.outline = 'none');
+  bossQ48Render();
+}
+function bossQ48Render() {
+  document.querySelectorAll('#boss-q48-slots .pipeline-slot').forEach((slot, i) => {
+    const id = _bossQ48.slots[i];
+    slot.classList.remove('filled', 'correct', 'wrong');
+    if (id) {
+      const b = BOSS_Q48_BLOCKS.find(x => x.id === id);
+      slot.innerHTML = `<div class="pipeline-slot-num">${i + 1}.</div>${b.icon} ${b.name}`;
+      slot.classList.add('filled');
+      if (_bossQ48.checked) slot.classList.add(b.order === i + 1 ? 'correct' : 'wrong');
+    } else {
+      slot.innerHTML = `<div class="pipeline-slot-num">${i + 1}.</div><div style="font-size:11px;line-height:1.4;font-style:italic;">${BOSS_Q48_HINTS[i]}</div>`;
+    }
+  });
+  document.querySelectorAll('#boss-q48-pool .pipeline-block').forEach(el => {
+    el.classList.toggle('placed', _bossQ48.slots.includes(el.dataset.id));
+  });
+  const allFilled = _bossQ48.slots.every(s => s !== null);
+  const checkBtn = document.getElementById('boss-q48-check');
+  if (checkBtn) checkBtn.disabled = !allFilled || _bossQ48.checked;
+}
+function bossQ48Check() {
+  _bossQ48.checked = true;
+  const correct = _bossQ48.slots.every((id, i) => {
+    const b = BOSS_Q48_BLOCKS.find(x => x.id === id);
+    return b && b.order === i + 1;
+  });
+  bossQ48Render();
+  const r = document.getElementById('boss-q48-result');
+  if (correct) {
+    r.innerHTML = '<div class="boss-result-title">🎯 Arquitetura correta</div><div class="boss-result-msg">Cowork (orquestrador local) → MCP (conexões externas) → Skills (procedimento) → Claude Code (codificação final). Esse é o stack pra um sistema real.</div><button class="boss-reset" onclick="bossQ48Reset()">↺ Refazer</button>';
+  } else {
+    const acertos = _bossQ48.slots.filter((id, i) => {
+      const b = BOSS_Q48_BLOCKS.find(x => x.id === id);
+      return b && b.order === i + 1;
+    }).length;
+    r.innerHTML = `<div class="boss-result-title">⚙ ${acertos}/4</div><div class="boss-result-msg">Ordem correta: <strong>Cowork</strong> (rodar no PC do usuário) → <strong>MCP</strong> (acessar Drive/Slack/etc) → <strong>Skills</strong> (procedimento codificado) → <strong>Claude Code</strong> (pra trechos que viram código).</div><button class="boss-reset" onclick="bossQ48Reset()">↺ Tentar de novo</button>`;
+  }
+  r.style.display = '';
+}
+function bossQ48Reset() {
+  _bossQ48 = { slots: [null,null,null,null], checked: false };
+  _q48Selected = null;
+  document.getElementById('boss-q48-result').style.display = 'none';
+  initBossQ48();
+}
+
+// === BOSS Q52 · LAUNCH CHECKLIST ===============================
+const BOSS_Q52_CATS = [
+  { name: '🔐 Segurança', items: ['Auth + autorização configurados', 'Secrets em variáveis de ambiente, não hardcoded', 'HTTPS forçado', 'Rate limiting por IP/user'] },
+  { name: '👁 Observabilidade', items: ['Logs estruturados', 'Alertas pra erros 5xx', 'Dashboard de uso e custo', 'Tracing de requests críticos'] },
+  { name: '💰 Custo', items: ['Cache de respostas frequentes', 'Fallback pra modelo barato', 'Limite de tokens por user', 'Alerta quando custo passar de X'] },
+  { name: '🛡 Confiabilidade', items: ['Retry com backoff', 'Timeout em chamadas externas', 'Health check endpoint', 'Backup do banco de dados'] },
+  { name: '👥 Usuário', items: ['Onboarding claro', 'Mensagens de erro humanas', 'Loading states', 'Feedback de ações destrutivas'] },
+  { name: '📋 Compliance', items: ['LGPD: política de privacidade', 'Termos de uso aceitos', 'Logs de acesso a dados sensíveis', 'Direito de exclusão implementado'] }
+];
+let _bossQ52 = { checked: new Set() };
+
+function initBossQ52() {
+  const block = document.getElementById('boss-q52-block');
+  if (!block || block.dataset.initialized === '1') return;
+  _bossQ52 = { checked: new Set() };
+  document.getElementById('boss-q52-cats').innerHTML = BOSS_Q52_CATS.map((cat, ci) => `
+    <div class="launch-cat" data-ci="${ci}">
+      <div class="launch-cat-h">
+        <div class="launch-cat-name">${cat.name}</div>
+        <div class="launch-cat-count" data-ci="${ci}">0/${cat.items.length}</div>
+      </div>
+      <div class="launch-items">
+        ${cat.items.map((item, ii) => `
+          <div class="launch-item" data-id="${ci}-${ii}">
+            <div class="launch-checkbox"></div>
+            <div class="launch-item-text">${item}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('#boss-q52-cats .launch-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      if (_bossQ52.checked.has(id)) _bossQ52.checked.delete(id);
+      else _bossQ52.checked.add(id);
+      bossQ52Render();
+    });
+  });
+  block.dataset.initialized = '1';
+  bossQ52Render();
+}
+function bossQ52Render() {
+  let totalChecked = 0;
+  let totalItems = 0;
+  BOSS_Q52_CATS.forEach((cat, ci) => {
+    let catChecked = 0;
+    cat.items.forEach((item, ii) => {
+      const id = ci + '-' + ii;
+      const el = document.querySelector(`.launch-item[data-id="${id}"]`);
+      if (el) {
+        const isChecked = _bossQ52.checked.has(id);
+        el.classList.toggle('checked', isChecked);
+        if (isChecked) catChecked++;
+      }
+    });
+    totalChecked += catChecked;
+    totalItems += cat.items.length;
+    const countEl = document.querySelector(`.launch-cat-count[data-ci="${ci}"]`);
+    if (countEl) {
+      countEl.textContent = catChecked + '/' + cat.items.length;
+      countEl.parentElement.parentElement.classList.toggle('complete', catChecked === cat.items.length);
+    }
+  });
+  const pct = Math.round(totalChecked / totalItems * 100);
+  const summary = document.getElementById('boss-q52-summary');
+  let msg = '';
+  if (pct === 100) msg = '<div class="launch-summary-h">🚀 Liberado pra produção</div><div class="launch-summary-msg">' + totalChecked + '/' + totalItems + ' itens. Você cobriu o essencial pra app real. Deploy.</div>';
+  else if (pct >= 75) msg = '<div class="launch-summary-h">⚡ Quase lá</div><div class="launch-summary-msg">' + totalChecked + '/' + totalItems + ' (' + pct + '%). Faltam ' + (totalItems - totalChecked) + ' itens. Deploy possível mas frágil em produção real.</div>';
+  else if (pct >= 50) msg = '<div class="launch-summary-h">🛠 Trabalho a fazer</div><div class="launch-summary-msg">' + totalChecked + '/' + totalItems + ' (' + pct + '%). Não dá pra ir pra produção ainda. Foque nas categorias mais fracas.</div>';
+  else msg = '<div class="launch-summary-h">🔨 Ainda em desenvolvimento</div><div class="launch-summary-msg">' + totalChecked + '/' + totalItems + ' (' + pct + '%). Nem perto de produção. App protótipo só.</div>';
+  summary.innerHTML = msg;
+}
+
 function _openQuestDirect(n) {
   const q = QUESTS[n];
   if (!q) return;
@@ -20905,7 +22128,7 @@ function _openQuestDirect(n) {
     study: 'var(--study)', build: 'var(--build)', ship: 'var(--ship)',
     measure: 'var(--measure)', boss: 'var(--boss)'
   };
-  const TYPE_LABELS_PT = { study: 'ESTUDO', build: 'CONSTRUÇÃO', ship: 'ENTREGA', measure: 'MEDIÇÃO', boss: 'BOSS' };
+  const TYPE_LABELS_PT = { study: 'ESTUDO', build: 'CONSTRUÇÃO', ship: 'ENTREGA', measure: 'AVALIAÇÃO', boss: 'BOSS' };
   const typeLabel = q.boss ? `BOSS · ATO ${ACTS[q.act-1].roman}`
     : `MISSÃO ${String(n).padStart(2,'0')} · ${TYPE_LABELS_PT[q.type] || q.type.toUpperCase()}`;
 
@@ -21029,6 +22252,15 @@ function _openQuestDirect(n) {
   if (n === 9 && typeof initMem === 'function') setTimeout(initMem, 50);
   if (n === 10 && typeof initSkillTree === 'function') setTimeout(initSkillTree, 50);
   if (n === 11 && typeof initMcp === 'function') setTimeout(initMcp, 50);
+  // v100: hooks dos 8 Bosses
+  if (n === 7  && typeof initBossQ07 === 'function') setTimeout(initBossQ07, 50);
+  if (n === 14 && typeof initBossQ14 === 'function') setTimeout(initBossQ14, 50);
+  if (n === 21 && typeof initBossQ21 === 'function') setTimeout(initBossQ21, 50);
+  if (n === 30 && typeof initBossQ30 === 'function') setTimeout(initBossQ30, 50);
+  if (n === 36 && typeof initBossQ36 === 'function') setTimeout(initBossQ36, 50);
+  if (n === 42 && typeof initBossQ42 === 'function') setTimeout(initBossQ42, 50);
+  if (n === 48 && typeof initBossQ48 === 'function') setTimeout(initBossQ48, 50);
+  if (n === 52 && typeof initBossQ52 === 'function') setTimeout(initBossQ52, 50);
 }
 
 function closeModal() {
