@@ -4490,6 +4490,10 @@ body:has(.modal-bg.active) .squirrel-widget {
   pointer-events: none;
   z-index: 9999;
 }
+/* v100: cor da máscara — dark default, light mode usa tom marrom escuro
+   suave em vez de quase-preto pra não esmagar toolbar/balão claros */
+.tour-mask-fill { fill: rgba(6, 8, 12, 0.82); }
+html[data-theme="light"] .tour-mask-fill { fill: rgba(56, 38, 18, 0.55); }
 
 /* Halo around target element */
 .tour-halo {
@@ -4615,7 +4619,8 @@ body:has(.modal-bg.active) .squirrel-widget {
 .tour-balloon-skip {
   background: transparent;
   border: none;
-  color: #b8a98e;
+  /* v100: cor mais clara pra ter contraste melhor sobre toolbar dark */
+  color: #d4c8a8;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.18em;
@@ -4646,8 +4651,9 @@ body:has(.modal-bg.active) .squirrel-widget {
 .tour-balloon-btn:hover { background: #f4c560; transform: translateY(-1px); }
 .tour-balloon-btn.ghost {
   background: transparent;
-  color: var(--ivory-2);
-  border: 1px solid var(--line-strong);
+  /* v100: cor + border mais visíveis (era --ivory-2 + --line-strong, sumia) */
+  color: #f0e6cc;
+  border: 1px solid #6b5c3e;
 }
 .tour-balloon-btn.ghost:hover { background: var(--char); color: var(--amber); border-color: var(--amber); }
 
@@ -4660,16 +4666,15 @@ body:has(.modal-bg.active) .squirrel-widget {
      e da barra de gestos do Safari. Sem isso, botão Próximo fica atrás da barra. */
   bottom: env(safe-area-inset-bottom, 0);
   z-index: 250;
-  background: linear-gradient(180deg, rgba(20, 17, 13, 0.85), rgba(20, 17, 13, 0.97));
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-top: 1px solid var(--line-strong);
+  /* v100: fundo SÓLIDO (era semi-transparente — ilegível) */
+  background: #14110d;
+  border-top: 1px solid var(--amber);
   padding: 14px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: 0 -8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.5);
   pointer-events: auto;
   /* v100: garante que a toolbar nunca seja escondida ou afetada por outros estilos */
   visibility: visible !important;
@@ -4679,18 +4684,20 @@ body:has(.modal-bg.active) .squirrel-widget {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: var(--ivory-3);
+  /* v100: cor mais clara (era --ivory-3, sutil demais) */
+  color: #d4c8a8;
   flex: 1;
   text-align: center;
 }
 .tour-toolbar-hint kbd {
   display: inline-block;
   padding: 2px 7px;
-  border: 1px solid var(--line-strong);
+  /* v100: border + bg mais visíveis */
+  border: 1px solid #6b5c3e;
   border-bottom-width: 2px;
   border-radius: 4px;
-  background: var(--char);
-  color: var(--ivory-1);
+  background: #2a221a;
+  color: #f4ede0;
   font-family: var(--mono);
   font-size: 10px;
   margin: 0 1px;
@@ -4700,6 +4707,40 @@ body:has(.modal-bg.active) .squirrel-widget {
   .tour-toolbar-hint { display: none; }
   .tour-balloon-skip { font-size: 9px; padding: 6px 4px; }
   .tour-balloon-btn { padding: 8px 12px; font-size: 9px; }
+}
+
+/* v100: light mode — toolbar e botões do tour com cores legíveis sobre fundo claro.
+   Sem isso, botões e texto ficam quase invisíveis (mesma cor do tema dark). */
+html[data-theme="light"] .tour-toolbar {
+  background: #fff8eb;
+  border-top: 1px solid #d4a437;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.18);
+}
+html[data-theme="light"] .tour-toolbar-hint {
+  color: #6b5d44;
+}
+html[data-theme="light"] .tour-toolbar-hint kbd {
+  background: #fff;
+  color: #2a221a;
+  border-color: #c8b591;
+}
+html[data-theme="light"] .tour-balloon-skip,
+html[data-theme="light"] .tour-balloon-skip-inline {
+  color: #6b5d44;
+}
+html[data-theme="light"] .tour-balloon-skip:hover,
+html[data-theme="light"] .tour-balloon-skip-inline:hover {
+  color: #b88a1f;
+}
+html[data-theme="light"] .tour-balloon-btn.ghost {
+  background: #fff;
+  color: #2a221a;
+  border-color: #c8b591;
+}
+html[data-theme="light"] .tour-balloon-btn.ghost:hover {
+  background: #fff;
+  color: #b88a1f;
+  border-color: #b88a1f;
 }
 
 /* Progress dots inside balloon */
@@ -27164,7 +27205,7 @@ const TOUR_STOPS = [
   // ─── 1: TOPBAR (visão única dos menus superiores) ───
   {
     target: '.topbar',
-    tag: 'Parada 01 / 08',
+    tag: 'Parada 01 / 10',
     title: 'Os menus superiores',
     text: 'Aqui em cima ficam suas ferramentas (Mapa, Árvore, Stats, Diplomas, Minha Jornada) e seus indicadores: Rank, XP, Sequência e Pontos Bônus. Fica fixa no topo — acessível de qualquer lugar.'
   },
@@ -27172,7 +27213,7 @@ const TOUR_STOPS = [
   // ─── 2: QUICK-NAV (atalhos abaixo da topbar) ───
   {
     target: '.quick-nav',
-    tag: 'Parada 02 / 08',
+    tag: 'Parada 02 / 10',
     title: 'Atalhos rápidos',
     text: 'Logo abaixo da topbar tem 5 atalhos pra rolar direto pras seções: Trilhas Gerais, Trilhas Pro, Trilhas Pessoais, Conquistas e Esquilos.'
   },
@@ -27180,7 +27221,7 @@ const TOUR_STOPS = [
   // ─── 3: PERFIL + SKILL RADAR (dashboard-hero) ───
   {
     target: '.dashboard-hero',
-    tag: 'Parada 03 / 08',
+    tag: 'Parada 03 / 10',
     title: 'Seu perfil + Skill Radar',
     text: 'Sua identidade (nome, rank, próximas conquistas) e o Skill Radar — gráfico das suas 14 dimensões de habilidade que se preenche conforme você completa missões. No desktop ficam lado a lado; no celular, um abaixo do outro.'
   },
@@ -27188,7 +27229,7 @@ const TOUR_STOPS = [
   // ─── 4: MISSÃO ATIVA ───
   {
     target: '#active-quest',
-    tag: 'Parada 04 / 08',
+    tag: 'Parada 04 / 10',
     title: 'Missão Ativa',
     text: 'Sua próxima missão sempre fica aqui em destaque. Tempo estimado, XP que você vai ganhar, e abre direto pra começar. É por aqui que você avança.'
   },
@@ -27196,31 +27237,47 @@ const TOUR_STOPS = [
   // ─── 5: O CAMINHO ───
   {
     target: '#quests-grid',
-    tag: 'Parada 05 / 08',
+    tag: 'Parada 05 / 10',
     title: 'O Caminho · 52 missões',
     text: 'O tabuleiro completo. 8 atos, cada um termina num Boss (M07, M14, M21, M30, M36, M42, M48, M52). O badge "SEU DESTINO" marca onde sua trilha calibrada termina; atos além ficam esmaecidos como bônus.'
   },
 
-  // ─── 6: TRILHAS (grupo) — vêm logo após o caminho ───
+  // ─── 6: TRILHAS GERAIS (por área de atuação) ───
   {
     target: '#tracks-section',
-    tag: 'Parada 06 / 08',
-    title: 'As Trilhas',
-    text: 'Logo após o caminho: 9 Trilhas Gerais (por área de atuação), 18 Trilhas Profissionais (por profissão) e 8 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus dão Pontos Bônus (uma pontuação separada do XP), e são opcionais — treino contextual.'
+    tag: 'Parada 06 / 10',
+    title: 'Trilhas Gerais',
+    text: '9 trilhas por área de atuação (Engenharia, Negócios, Direito, etc). Cada uma com 6 aulas focadas em casos da sua área — não substituem a trilha principal, são treinos contextuais. Dão Pontos Bônus.'
   },
 
-  // ─── 7: CONQUISTAS + ESQUILOS (grupo) ───
+  // ─── 7: TRILHAS PRO (por profissão) ───
+  {
+    target: '#pro-tracks-section',
+    tag: 'Parada 07 / 10',
+    title: 'Trilhas Profissionais',
+    text: '18 trilhas por profissão específica (CFO, Designer, Médico, Advogado, etc). Mais aprofundadas que as Gerais — entram em prompts, fluxos e ferramentas do dia-a-dia da função. Bônus, recomendado depois da Claude Mastery (52 missões).'
+  },
+
+  // ─── 8: TRILHAS PESSOAIS (vida fora do trabalho) ───
+  {
+    target: '#life-tracks-section',
+    tag: 'Parada 08 / 10',
+    title: 'Trilhas Pessoais',
+    text: '8 trilhas pra vida fora do trabalho: finanças pessoais, rotina, paternidade, saúde, cozinha, viagem, aprendizado contínuo. Também dão Pontos Bônus. Pra organizar o dia a dia além do escritório.'
+  },
+
+  // ─── 9: CONQUISTAS + ESQUILOS (grupo) ───
   {
     target: '#achievements',
-    tag: 'Parada 07 / 08',
+    tag: 'Parada 09 / 10',
     title: 'Conquistas e Galeria',
     text: 'Mais abaixo ficam as Conquistas (medalhas pra desbloquear) e a Galeria de Esquilos — cada um dos 9 ranks tem um esquilo único, do Aspirante ao Sistema. Coleção visual paralela ao seu rank.'
   },
 
-  // ─── 8: ESQUILO ───
+  // ─── 10: ESQUILO ───
   {
     target: '#squirrel-widget',
-    tag: 'Parada 08 / 08',
+    tag: 'Parada 10 / 10',
     title: 'Esse sou eu 🐿️',
     text: 'Eu apareço com mensagens conforme você usa o app. No desktop, clique direito abre meu menu. No celular/tablet, use o botão "menu" ao meu lado. Você pode trocar minha personalidade lá (Coach, Sarcástico, Filósofo ou Caótico).',
     showSquirrelWidget: true
@@ -27288,7 +27345,7 @@ function startTour() {
             <rect id="tour-spotlight-rect" x="0" y="0" width="0" height="0" rx="12" fill="black"/>
           </mask>
         </defs>
-        <rect width="100%" height="100%" fill="rgba(6,8,12,0.82)" mask="url(#tour-spotlight-mask)"/>
+        <rect class="tour-mask-fill" width="100%" height="100%" mask="url(#tour-spotlight-mask)"/>
       </svg>
       <div class="tour-halo" id="tour-halo" style="display:none;"></div>
       <div class="tour-squirrel" id="tour-squirrel"></div>
@@ -27466,7 +27523,9 @@ function positionTourStop(stop, _retryCount) {
   // visualViewport.height é a área REALMENTE visível. Usa quando disponível.
   const Hraw = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
   const H = Hraw - TOOLBAR_H; // área usável (acima da toolbar fixa, ou tela toda em mobile)
-  const maxHaloH = Math.min(320, Math.round(H * 0.42));
+  // v100: halo cobre até 60% da viewport (era 320px fixo, ficava pequeno em seções altas)
+  // mantém mínimo de 320 pra não ficar minúsculo em viewports pequenas
+  const maxHaloH = Math.max(320, Math.round(H * 0.60));
   const haloLogicalH = Math.min(fullR.height, maxHaloH);
   
   // v100: sempre forçar scroll pra alinhar o topo do alvo a 100px do topo do viewport.
