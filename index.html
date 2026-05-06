@@ -11373,7 +11373,7 @@ html[data-theme="light"] .scroll-to-top {
       <span>Trilhas Pro</span>
       <em class="quick-nav-count" id="qn-pro-tracks">?</em>
     </button>
-    <button class="quick-nav-item" data-qn="life-tracks" onclick="jumpTo('life-tracks-section')" type="button" title="Trilhas Pessoais — 9 trilhas pra começar do zero ou pra vida fora do trabalho (Primeiros Passos, Finanças, Treinos, Cozinha, etc.)">
+    <button class="quick-nav-item" data-qn="life-tracks" onclick="jumpTo('life-tracks-section')" type="button" title="Trilhas Pessoais — 8 trilhas pra vida fora do trabalho (Finanças, Treinos, Cozinha, Viagem, Parentalidade, etc.)">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
       </svg>
@@ -11537,7 +11537,7 @@ html[data-theme="light"] .scroll-to-top {
     <section class="pro-tracks-section life-tracks-section" id="life-tracks-section">
       <div class="pro-tracks-head">
         <div class="pro-tracks-tag">⨀ Trilhas pessoais · BÔNUS</div>
-        <div class="pro-tracks-meta">9 TRILHAS</div>
+        <div class="pro-tracks-meta">8 TRILHAS</div>
       </div>
       <div class="pro-tracks-title">Pra <em>vida pessoal</em></div>
       <div class="pro-tracks-deck">Pra organizar o dia-a-dia fora do trabalho. <em>São bônus</em> — não dão XP nem chapéu da trilha principal, mas dão <strong style="color:#7fb98a;">⨀ Pontos Bônus</strong>. Termine a <em>Claude Mastery</em> antes de focar aqui.</div>
@@ -17342,90 +17342,6 @@ E-mail abaixo:
 
 // Trilhas pessoais — vida cotidiana (em desenvolvimento)
 const LIFE_TRACKS = {
-  primeiros_passos: {
-    icon: '🌱',
-    title: 'Primeiros passos com Claude',
-    deck: 'Pra quem nunca usou IA. Em 1-2 dias você sai do zero e tá pronto pra Claude Mastery.',
-    color: '#d4a437',
-    bonus: true,
-    quests: [
-      {
-        id: 'pp-1',
-        title: 'O que Claude é (e o que não é)',
-        deck: 'Antes de prompt, contexto. Claude não é Google nem oráculo. É um colaborador que pensa com você.',
-        time: '10 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'A IDEIA', body: '<p><strong>Claude é um modelo de IA conversacional</strong> da Anthropic. Você fala com ele em português normal e ele responde em português normal. Ponto.</p><p>Mas tem 3 mal-entendidos que travam quem tá começando:</p><p><strong>1. Claude não é Google.</strong> Não busca na web por padrão (precisa ativar). Não tem informação fresca de hoje (o conhecimento dele tem data-limite). Pra <em>fato atual</em>, ative busca; pra <em>raciocínio</em>, é direto com ele.</p><p><strong>2. Claude não é oráculo.</strong> Ele erra. Erra nome, erra número, inventa citação. Tudo que sai dele importante <em>você revisa</em>. Pense nele como estagiário muito esperto: rápido, mas precisa de supervisão.</p><p><strong>3. Claude não é mágico.</strong> A qualidade da resposta depende da qualidade do contexto que você dá. Resume meu e-mail é ruim; Resume este e-mail em 3 bullets pra mim mostrar pro chefe focando nas decisões pendentes é ótimo.</p><p>O resto deste curso te ensina a tirar 100x mais valor dele que o uso pergunta-e-resposta raso.</p>' },
-          { type: 'study', label: 'O QUE ELE FAZ BEM', body: '<ul><li><strong>Escrita estruturada</strong> — e-mail, artigo, resumo, ata, relatório</li><li><strong>Análise</strong> — você cola um documento, ele extrai padrões, pontos críticos, contradições</li><li><strong>Tradução de complexo pra simples</strong> — pega texto técnico/jurídico/financeiro e devolve em linguagem clara</li><li><strong>Brainstorm crítico</strong> — você joga uma ideia, ele aponta furos, oportunidades, alternativas</li><li><strong>Código</strong> — escreve, debug, refatora, explica</li><li><strong>Conversa</strong> — pra desabafar, pensar em voz alta, treinar argumento antes de uma reunião difícil</li></ul>' },
-          { type: 'study', label: 'O QUE EVITAR', body: '<ul><li><strong>Pergunta sem contexto</strong>: qual a melhor estratégia de marketing? — vai dar resposta genérica de blog</li><li><strong>Confiar sem revisar em decisão importante</strong>: contrato, parecer médico, número financeiro</li><li><strong>Esperar atualização ao vivo</strong>: pra notícia de hoje, ative busca explicitamente ou peça pra ele te dizer não sei</li></ul>' }
-        ]
-      },
-      {
-        id: 'pp-2',
-        title: 'Free, Pro, Max — qual plano você precisa',
-        deck: 'Diferença real entre os planos sem marketing. Quando vale pagar, quando o grátis resolve.',
-        time: '8 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'OS 3 PLANOS PESSOAIS', body: '<p><strong>Free (R$ 0):</strong> Acesso ao Sonnet (modelo principal), Memory ligada, busca na web, Artifacts. Limite de mensagens por janela de horas. <em>Pra quem usa esporadicamente.</em></p><p><strong>Pro (~R$ 110/mês ou ~US$ 20):</strong> Limite ~5x maior, acesso ao Opus (modelo mais inteligente), Extended Thinking, Cowork em preview, prioridade nos picos de demanda. <em>Sweet spot pra quem usa todo dia profissionalmente.</em></p><p><strong>Max (~US$ 100-200/mês):</strong> Limite enorme, Opus como default, prioridade alta, melhor pra quem roda sessões longas de Claude Code ou Cowork pesado. <em>Só pra power user de verdade.</em></p>' },
-          { type: 'study', label: 'A REGRA SIMPLES', body: '<p>Comece no <strong>Free</strong>. Use por uma semana. Se você bater limite todo dia ou sentir falta do Opus pra tarefa complexa, sobe pra Pro. Maioria das pessoas fica feliz no Pro.</p><p>Max só vale se você é dev usando Claude Code intensivamente, ou se sua empresa paga.</p>' },
-          { type: 'study', label: 'B2B (Team / Enterprise)', body: '<p>Pra time/empresa, tem <strong>Team</strong> (~US$ 30/seat com mínimo de seats) e <strong>Enterprise</strong> (preço sob consulta, com SSO, controles admin, retenção customizada). Se a empresa cobrir, peça Team — vale o admin centralizado e os controles de segurança.</p>' }
-        ]
-      },
-      {
-        id: 'pp-3',
-        title: 'Claude vs Cowork vs Claude Code',
-        deck: '3 produtos diferentes, 3 propósitos diferentes. Saber qual usar quando.',
-        time: '12 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'OS 3 SUPER-RESUMIDOS', body: '<p><strong>Claude (claude.ai):</strong> chat. Você conversa. Ele responde. Bom pra escrita, análise, brainstorm, qualquer coisa textual.</p><p><strong>Cowork:</strong> Claude que <em>age</em> no seu computador. Cria arquivo, mexe em planilha, navega em site, agenda tarefa recorrente. Disponível como app desktop. <em>Pra quem quer delegar tarefa, não só conversar.</em></p><p><strong>Claude Code:</strong> Claude no terminal, focado em código. Lê e edita arquivos do seu projeto, roda comandos, faz commit. Pra desenvolvedor (ou pra quem aceita aprender comandos básicos pra construir coisas).</p>' },
-          { type: 'study', label: 'QUAL USAR QUANDO', body: '<ul><li><strong>Me ajuda a escrever este e-mail</strong> → Claude</li><li><strong>Resume este PDF</strong> → Claude (anexa o arquivo)</li><li><strong>Organiza as fotos da minha pasta Downloads em pastas por mês</strong> → Cowork</li><li><strong>Toda segunda 8h, gera relatório das vendas da semana e me envia por e-mail</strong> → Cowork (Scheduled Tasks)</li><li><strong>Constrói um site simples pro meu negócio</strong> → Claude Code (ou Cowork pra começar)</li><li><strong>Refatora este código Python</strong> → Claude Code</li><li><strong>Conecta nosso CRM ao nosso e-mail</strong> → Claude Code (com MCP)</li></ul>' },
-          { type: 'study', label: 'EXISTE TAMBÉM', body: '<p><strong>Claude no Chrome (extensão):</strong> Claude lateral em qualquer site. Multi-tab, navegação assistida. Bom pra pesquisa.</p><p><strong>Claude API:</strong> dev pega Claude e embute no produto dele. Não é pra usuário final. Mas é o que faz Claude rodar nos apps que você já usa (alguns).</p><p>Pra a Claude Mastery (52 missões) você vai usar majoritariamente <strong>Claude (chat)</strong> e <strong>Cowork</strong>. Claude Code aparece dos atos avançados em diante.</p>' }
-        ]
-      },
-      {
-        id: 'pp-4',
-        title: 'Sua primeira tarefa real — resumir um e-mail',
-        deck: 'Primeira vez. Tarefa boba mas que ensina o método: contexto + pedido + formato.',
-        time: '10 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'O EXERCÍCIO', body: '<p>Pega um e-mail real da sua caixa. Pode ser qualquer um — um chefe, um cliente, uma newsletter. Cola pro Claude e pede pra resumir.</p><p>Mas não pede só resume. O método é: <strong>contexto + pedido + formato</strong>.</p>' },
-          { type: 'build', label: 'PROMPT', body: '<div class="prompt-card"><button class="copy" onclick="copyPrompt(this)">Copiar</button>Vou colar um e-mail abaixo. Quero que você me ajude com ele.\n\nContexto:\n- Quem mandou: [QUEM E QUAL O RELACIONAMENTO]\n- Pra mim, esse e-mail é: [URGENTE / IMPORTANTE / FYI / INCERTEZA]\n- Vou usar o resumo pra: [LER NO CELULAR / DECIDIR ALGO / REPASSAR PRO TIME]\n\nResume em:\n1. **TL;DR** (1 frase, o ponto principal)\n2. **Decisões pendentes** (que esperam minha resposta)\n3. **Prazos** (datas mencionadas, mesmo implícitas)\n4. **Próximos passos sugeridos** (o que faria sentido eu fazer)\n\nE-mail:\n[COLE AQUI]</div>' },
-          { type: 'study', label: 'POR QUE ISSO ENSINA TUDO', body: '<p>Esse padrão é o que vai aparecer em TODA a Claude Mastery:</p><ul><li><strong>Contexto</strong> diz pro Claude o que ele precisa saber pra ajustar tom e profundidade</li><li><strong>Pedido</strong> é o que você quer (resumir, analisar, escrever, comparar)</li><li><strong>Formato</strong> é como você quer a saída (bullets, tabela, parágrafo, JSON)</li></ul><p>Sem contexto, ele chuta. Com contexto, ele acerta. <em>Esse é o jogo todo.</em></p>' }
-        ]
-      },
-      {
-        id: 'pp-5',
-        title: 'Como colar contexto sem virar bagunça',
-        deck: 'A diferença entre prompt ruim e prompt bom é como você cola o contexto. 5 técnicas práticas.',
-        time: '10 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'AS 5 TÉCNICAS', body: '<p><strong>1. Use marcadores claros pro que é texto colado.</strong></p><p>Ruim: leia isto e me diga o que acha + 800 palavras coladas em sequência.</p><p>Bom: leia o documento abaixo entre marcadores e me diga o que acha. ===INÍCIO=== [conteúdo] ===FIM===</p><p><strong>2. Sumarize você mesmo o que importa antes do conteúdo.</strong></p><p>Em vez de colar 20 páginas e perguntar o que tá errado, diga: este é um contrato de prestação de serviço entre A e B, vigência 12 meses, valor R$X. Quero que você procure 3 coisas: cláusulas que me prendem, ambiguidades em entrega, e ausência de SLA. Aí cola o documento.</p><p><strong>3. Anexe quando for arquivo grande.</strong></p><p>Claude aceita PDF, Word, Excel, imagem. Anexar é melhor que colar 50 páginas — preserva formatação e Claude lê melhor.</p><p><strong>4. Para conversas em sequência, lembre o que importa.</strong></p><p>Numa conversa longa, Claude pode esquecer detalhes do início. Quando for crítico (a empresa do cliente é X, ramo Y, faturamento Z), repita brevemente nos prompts seguintes.</p><p><strong>5. Use Projects pra contexto que se repete.</strong></p><p>Se você fala da mesma empresa, do mesmo time, das mesmas regras toda hora, crie um Project no Claude. Cola o contexto uma vez, ele aplica em todas as conversas dentro daquele Project. <em>Game changer.</em></p>' }
-        ]
-      },
-      {
-        id: 'pp-6',
-        title: 'Os 3 erros que todo iniciante comete',
-        deck: 'Antes de você cometer, aprende a evitar. Os clássicos: vago demais, confiar cegamente, não iterar.',
-        time: '8 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'ERRO 1 — VAGO DEMAIS', body: '<p>Me ajuda com vendas. Faz um post pro Instagram. Escreve um e-mail.</p><p>Claude responde, mas a resposta sai genérica. Você lê, pensa tá meio fraco, abandona, e acha que IA não serve.</p><p><strong>Correção:</strong> sempre dê 3 dimensões — público (pra quem), objetivo (o que quer que aconteça), formato (como entrega). Post pro Instagram do meu salão de beleza, alvo são clientes mulheres 30-50 que já vieram, objetivo é trazer de volta pro corte de inverno, formato carrossel de 5 slides com texto curto é totalmente diferente.</p>' },
-          { type: 'study', label: 'ERRO 2 — CONFIAR CEGAMENTE', body: '<p>Claude pode inventar nome de pessoa, número, lei, citação, link. <em>Toda vez</em> que sair algo que vai pra produção/decisão/cliente, você revisa.</p><p><strong>Especialmente perigoso:</strong> citação jurídica, número estatístico, dado financeiro, referência a estudo científico, URL.</p><p><strong>Hábito que salva:</strong> ao receber qualquer fato novo, pergunte fonte específica, com link verificável. Se ele não tiver, marque como alegação não verificada.</p>' },
-          { type: 'study', label: 'ERRO 3 — NÃO ITERAR', body: '<p>Você manda prompt, ele responde, você não gosta, fecha o chat. <em>Errado.</em></p><p>Claude é colaborador, não máquina de uma tentativa. Resposta que veio meia-boca? Diga: essa parte ficou rasa, aprofunda no item 3 com exemplo concreto, ou muda o tom, tá formal demais, queria conversacional, ou encurta pra metade.</p><p>3-4 iterações tipicamente levam de eh tá ok pra exatamente o que eu queria. Quem itera tira 10x mais valor.</p>' }
-        ]
-      },
-      {
-        id: 'pp-7',
-        title: 'Pronto pra Claude Mastery',
-        deck: 'Você tem o suficiente pra começar a M01. Resumo do que sabe agora e o que vem pela frente.',
-        time: '5 min', xp: 0, level: 'fácil',
-        sections: [
-          { type: 'study', label: 'O QUE VOCÊ JÁ SABE', body: '<ul><li>Claude é colaborador, não oráculo nem Google</li><li>Free pra começar, Pro quando bater limite</li><li>Claude (chat) pra texto/análise, Cowork pra ação no computador, Claude Code pra programar</li><li>Método: contexto + pedido + formato</li><li>Como colar contexto sem virar bagunça</li><li>Os 3 erros pra evitar</li></ul>' },
-          { type: 'study', label: 'O QUE VEM AGORA', body: '<p>A <strong>Claude Mastery</strong> (52 missões) começa com Diagnóstico — que vai te perguntar como você usa Claude hoje, e calibrar o caminho de acordo com sua realidade.</p><p>Você vai passar por:</p><ul><li><strong>Atos I-II:</strong> prompts, contexto, Artifacts, sub-agentes, Projects, Memory, Skills, MCP</li><li><strong>Atos III-IV:</strong> Cowork em produção, MCP servidor, Claude Code, agentes</li><li><strong>Atos V-VI:</strong> vision, áudio, RAG, evals, guardrails, custos</li><li><strong>Atos VII-VIII:</strong> pipelines reais, app multi-usuário, deploy</li></ul><p>No fim, você sai com <strong>portfólio real</strong>: motor de revisão semanal, motor de triagem de e-mail, sistema de documentos inteligentes, app em produção. Não é teoria — é coisa que vai ser usada na sua vida ou trabalho.</p>' },
-          { type: 'study', label: 'BORA?', body: '<p>Se você seguiu até aqui, você tem o equipamento básico. Agora abre a missão 01 — Diagnóstico — e começa.</p><p><em>Lembrete:</em> esta trilha de primeiros passos é bônus. Não dá XP, não conta pro rank. Você pode voltar nela quando quiser, ou indicar pra um amigo que quer começar.</p>' }
-        ]
-      }
-    ]
-  },
   finance_pers: {
     icon: '💰',
     title: 'Finanças Pessoais',
@@ -26018,7 +25934,7 @@ const TOUR_STOPS = [
     target: '#tracks-section',
     tag: 'Parada 06 / 08',
     title: 'As Trilhas',
-    text: 'Logo após o caminho: 9 Trilhas Gerais (por área de atuação), 18 Trilhas Profissionais (por profissão) e 9 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus dão Pontos Bônus (uma pontuação separada do XP), e são opcionais — treino contextual.'
+    text: 'Logo após o caminho: 9 Trilhas Gerais (por área de atuação), 18 Trilhas Profissionais (por profissão) e 8 Trilhas Pessoais (vida fora do trabalho). Trilhas bônus dão Pontos Bônus (uma pontuação separada do XP), e são opcionais — treino contextual.'
   },
 
   // ─── 7: CONQUISTAS + ESQUILOS (grupo) ───
